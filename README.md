@@ -4,7 +4,7 @@
 + [Motivation](https://github.com/Rachel-AG/CP2106-Orbital#motivation)
 + [Aim](https://github.com/Rachel-AG/CP2106-Orbital#aim)
 + [User Stories](https://github.com/Rachel-AG/CP2106-Orbital#user-stories)
-+ [Features](https://github.com/Rachel-AG/CP2106-Orbital#feautures)
++ [Features](https://github.com/Rachel-AG/CP2106-Orbital#features)
 + [Timeline and Development Plan](https://github.com/Rachel-AG/CP2106-Orbital#timeline-and-development-plan)
 + [Tech Stack](https://github.com/Rachel-AG/CP2106-Orbital#tech-stack)
 + [Useful Links](https://github.com/Rachel-AG/CP2106-Orbital#tech-stack)
