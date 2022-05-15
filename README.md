@@ -1,13 +1,13 @@
 # Retreat
 
 ## Table of Contents
-+ [Motivation](https://github.com/Rachel-AG/Orbital/new/main?readme=1#motivation)
-+ [Aim](https://github.com/Rachel-AG/Orbital/new/main?readme=1#aim)
-+ [User Stories](https://github.com/Rachel-AG/Orbital/new/main?readme=1#user-stories)
-+ [Features](https://github.com/Rachel-AG/Orbital/new/main?readme=1#features)
-+ [Timeline and Development Plan](https://github.com/Rachel-AG/Orbital/new/main?readme=1#timeline-and-development-plan)
-+ [Tech Stack](https://github.com/Rachel-AG/Orbital/new/main?readme=1#tech-stack)
-+ [Useful Links](https://github.com/Rachel-AG/Orbital/new/main?readme=1#useful-links)
++ [Motivation](https://github.com/Rachel-AG/CP2106-Orbital/edit/main/README.md#motivation)
++ [Aim](https://github.com/Rachel-AG/CP2106-Orbital/edit/main/README.md#aim)
++ [User Stories](https://github.com/Rachel-AG/CP2106-Orbital/edit/main/README.md#user-stories)
++ [Features](https://github.com/Rachel-AG/CP2106-Orbital/edit/main/README.md#user-stories)
++ [Timeline and Development Plan](https://github.com/Rachel-AG/CP2106-Orbital/edit/main/README.md#timeline-and-development-plan)
++ [Tech Stack](https://github.com/Rachel-AG/CP2106-Orbital/edit/main/README.md#tech-stack)
++ [Useful Links](https://github.com/Rachel-AG/CP2106-Orbital/edit/main/README.md#tech-stack)
  
 ## Motivation
 Tracking our expenses is important to maintain good financial health. Unfortunately, many of us often give up halfway during the repetitive and dull process of recording each of our transactions. Fret not, **Retreat** will re-engineer your experience in budgeting! Introducing Retreat, a gamified money management app that can help you develop healthy spending habits.
