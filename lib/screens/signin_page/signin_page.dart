@@ -1,10 +1,10 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:retreat/screens/signup_page/signup_page.dart';
+import 'package:retreat/constants/app_colors.dart';
+import 'package:retreat/services/supabase_manager.dart';
 import 'package:retreat/widgets/custom_button.dart';
 import 'package:retreat/widgets/custom_formfield.dart';
 import 'package:retreat/widgets/password_field.dart';
-import '../home_page/homepage.dart';
 
 class SignInPage extends StatefulWidget {
   const SignInPage({Key? key}) : super(key: key);
@@ -14,11 +14,19 @@ class SignInPage extends StatefulWidget {
 }
 
 class _SignInPageState extends State<SignInPage> {
+  final _supabaseClient = SupabaseManager();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
   String get email => _emailController.text.trim().toLowerCase();
   String get password => _passwordController.text.trim();
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,25 +57,19 @@ class _SignInPageState extends State<SignInPage> {
               ),
               CustomButton(
                 text: "Sign In",
-                onTap: () {
-                  Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              const HomePage(title: 'Welcome to Retreat!')));
+                onTap: () async {
+                  await _supabaseClient.signInUser(context,
+                      email: email, password: password);
                 },
               ),
               RichText(
                   text: TextSpan(children: [
                 TextSpan(
                   text: "Don't have an account? Sign Up",
-                  style: const TextStyle(color: Colors.black),
+                  style: const TextStyle(color: AppColors.darkblue),
                   recognizer: TapGestureRecognizer()
                     ..onTap = () {
-                      Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => const SignUpPage()));
+                      Navigator.pushReplacementNamed(context, '/signup');
                     },
                 )
               ]))
