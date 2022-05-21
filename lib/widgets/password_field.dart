@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../constants/text_styles.dart';
+
 class PasswordField extends StatefulWidget {
   const PasswordField(
       {Key? key,
@@ -40,8 +42,11 @@ class _PasswordFieldState extends State<PasswordField> {
           border: const UnderlineInputBorder(),
           filled: true,
           hintText: widget.hintText,
+          hintStyle: TextStyles.textFieldHintStyle,
           labelText: widget.labelText,
+          labelStyle: TextStyles.textFieldHeading,
           helperText: widget.helperText,
+          helperStyle: TextStyles.textFieldHintStyle,
           suffixIcon: GestureDetector(
             onTap: () {
               setState(() {

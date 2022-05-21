@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../constants/text_styles.dart';
+
 class CustomFormField extends StatelessWidget {
   const CustomFormField(
       {Key? key,
@@ -23,7 +25,9 @@ class CustomFormField extends StatelessWidget {
         border: const UnderlineInputBorder(),
         filled: true,
         labelText: labelText,
+        labelStyle: TextStyles.textFieldHeading,
         hintText: hintText,
+        hintStyle: TextStyles.textFieldHintStyle,
       ),
     );
   }
