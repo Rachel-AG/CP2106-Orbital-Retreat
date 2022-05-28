@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:retreat/constants/app_colors.dart';
+import 'package:retreat/constants/auth_state.dart';
 import 'package:retreat/services/supabase_manager.dart';
 import 'package:retreat/widgets/custom_button.dart';
 import 'package:retreat/widgets/custom_formfield.dart';
@@ -13,7 +14,7 @@ class SignInPage extends StatefulWidget {
   State<SignInPage> createState() => _SignInPageState();
 }
 
-class _SignInPageState extends State<SignInPage> {
+class _SignInPageState extends AuthState<SignInPage> {
   final _supabaseClient = SupabaseManager();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -52,9 +53,6 @@ class _SignInPageState extends State<SignInPage> {
                   helperText: 'No more than 25 characters',
                   labelText: 'Password',
                   controller: _passwordController),
-              const SizedBox(
-                height: 24,
-              ),
               CustomButton(
                 text: "Sign In",
                 onTap: () async {
@@ -69,7 +67,23 @@ class _SignInPageState extends State<SignInPage> {
                   style: const TextStyle(color: AppColors.darkblue),
                   recognizer: TapGestureRecognizer()
                     ..onTap = () {
-                      Navigator.pushReplacementNamed(context, '/signup');
+                      stopAuthObserver();
+                      Navigator.pushNamed(context, '/signup')
+                          .then((_) => startAuthObserver());
+                    },
+                )
+              ])),
+              const SizedBox(
+                height: 16,
+              ),
+              RichText(
+                  text: TextSpan(children: [
+                TextSpan(
+                  text: "Forget password?",
+                  style: const TextStyle(color: AppColors.darkblue),
+                  recognizer: TapGestureRecognizer()
+                    ..onTap = () {
+                      Navigator.pushNamed(context, '/forgetpassword');
                     },
                 )
               ]))

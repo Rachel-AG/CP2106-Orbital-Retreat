@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:retreat/constants/auth_state.dart';
 import 'package:retreat/services/supabase_manager.dart';
 import 'package:retreat/widgets/custom_button.dart';
 import 'package:retreat/widgets/custom_formfield.dart';
@@ -11,7 +12,7 @@ class SignUpPage extends StatefulWidget {
   State<SignUpPage> createState() => _SignUpPageState();
 }
 
-class _SignUpPageState extends State<SignUpPage> {
+class _SignUpPageState extends AuthState<SignUpPage> {
   final _supabaseClient = SupabaseManager();
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();

@@ -1,0 +1,73 @@
+import 'package:flutter/material.dart';
+import 'package:retreat/constants/auth_required_state.dart';
+import 'package:retreat/services/supabase_manager.dart';
+import 'package:retreat/widgets/custom_button.dart';
+import 'package:retreat/widgets/custom_formfield.dart';
+import 'package:retreat/widgets/password_field.dart';
+
+class ChangePasswordPage extends StatefulWidget {
+  const ChangePasswordPage({Key? key}) : super(key: key);
+
+  @override
+  State<ChangePasswordPage> createState() => _ChangePasswordPageState();
+}
+
+class _ChangePasswordPageState extends AuthRequiredState<ChangePasswordPage> {
+  final _supabaseClient = SupabaseManager();
+  final TextEditingController _passwordCopyController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  String get passwordCopy => _passwordCopyController.text.trim();
+  String get password => _passwordController.text.trim();
+
+  @override
+  void dispose() {
+    _passwordCopyController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  bool validatePassword() {
+    return password == passwordCopy;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+        child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              const SizedBox(
+                height: 24,
+              ),
+              // email form
+
+              PasswordField(
+                  helperText: 'No more than 25 characters',
+                  labelText: 'New Password',
+                  controller: _passwordController),
+              CustomFormField(
+                labelText: 'Re-type Your Password',
+                controller: _passwordCopyController,
+                obscureText: true,
+              ),
+              CustomButton(
+                text: "Confirm",
+                onTap: () async {
+                  if (validatePassword()) {
+                    _supabaseClient.changePassword(context, password: password);
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                      content: Text('Password does not match'),
+                      duration: Duration(seconds: 2),
+                    ));
+                  }
+                },
+              ),
+            ]),
+      ),
+    );
+  }
+}
