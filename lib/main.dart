@@ -36,7 +36,7 @@ class MyApp extends StatelessWidget {
         '/forgetpassword': (_) => const ForgetPasswordPage(),
         '/signup': (_) => const SignUpPage(),
         '/home': (_) => const HomePage(),
-        '/changepassword': (_) => const ChangePasswordPage()
+        '/changepassword': (_) => const ChangePasswordPage(),
       },
     );
   }
