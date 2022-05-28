@@ -11,11 +11,16 @@ class DropdownButtonExample extends StatefulWidget {
 
 class _DropdownButtonExampleState extends State<DropdownButtonExample> {
   static const menuItems = <String>[ //?? HOW TO DO THE LINKING TO SUPABASE FOR THE CATEGORY
+    'Education',
+    'Entertainment',
     'Food & Drink',
     'Groceries',
-    'Utilities',
+    'Health',
+    'Housing',
+    'Tax',
     'Transportation',
-    'Entertainment',
+    'Utilities',
+    'Work',
     'Others',
   ];
   final List<DropdownMenuItem<String>> _dropDownMenuItems = menuItems

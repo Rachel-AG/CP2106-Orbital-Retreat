@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:retreat/widgets/custom_formfield.dart';
 import 'package:retreat/widgets/dropdown_button.dart';
+import 'package:retreat/services/transactions_service.dart';
+import 'package:retreat/widgets/numeric_formfield.dart';
+import 'package:retreat/widgets/custom_button.dart';
 
 class RecordTransactionsPage extends StatefulWidget {
   const RecordTransactionsPage({Key? key}) : super(key: key);
@@ -10,27 +13,22 @@ class RecordTransactionsPage extends StatefulWidget {
 }
 
 class _RecordTransactionsPageState extends State<RecordTransactionsPage> {
-  // final TextEditingController _nameController = TextEditingController();
-  // final TextEditingController _priceController = TextEditingController();
-  // final TextEditingController _timeController = TextEditingController();
-  // final TextEditingController _categoryController = TextEditingController();
-  //
-  // @override
-  // void dispose() {
-  //   _nameController.dispose();
-  //   _priceController.dispose();
-  //   _timeController.dispose();
-  //   _categoryController.dispose();
-  //   super.dispose();
-  // }
-  //
-  // String get name => _nameController.text.trim();
-  // String get price => _priceController.text.trim();
-  // String get time => _timeController.text.trim();
-  // String get category => _categoryController.text.trim();
+  final _supabaseClient = TransactionService();
+  final TextEditingController _notesController = TextEditingController();
+  final TextEditingController _amountController = TextEditingController();
+  final TextEditingController _categoryController = TextEditingController();
+  
+  @override
+  void dispose() {
+    _notesController.dispose();
+    _amountController.dispose();
+    _categoryController.dispose();
+    super.dispose();
+  }
 
-  String name = "";
-  String price = "";
+  String get notes => _notesController.text.trim();
+  double get amount => double.parse(_amountController.text);
+  String get category => _categoryController.text.trim();
 
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,32 +41,32 @@ class _RecordTransactionsPageState extends State<RecordTransactionsPage> {
         child: Form(
           child: Column(
             children: <Widget>[
-              SizedBox(height: 20.0),
-              TextFormField(
-                  decoration: InputDecoration(
-                    hintText: 'Notes on the transactions',
-                  ),
-                  onChanged: (val) {
-                    setState(() => name = val);
-                  }),
-              SizedBox(height: 20.0),
-              TextFormField(
-                  decoration: InputDecoration(
-                    hintText: 'Amount',
-                  ),
-                  onChanged: (val) {
-                    setState(() =>
-                        price = val); //HOW TO CHANGE THIS STRING TO DOUBLE BZzZ
-                  }),
-              SizedBox(height: 20.0),
-              DropdownButtonExample(),
-              SizedBox(height: 20.0),
-              RaisedButton(
-                  child: Text('Record'),
-                  onPressed: () async {
-                    print(name);
-                    print(price);
-                  }),
+              const SizedBox(height: 20.0),
+              CustomFormField(
+                hintText: 'insert some description',
+                labelText: 'Notes',
+                controller: _notesController,
+                ),
+              const SizedBox(height: 20.0),
+              NumericFormField(
+                hintText: 'insert price',
+                labelText:'Amount',
+                controller: _amountController,
+              ),
+              const SizedBox(height: 20.0),
+              CustomFormField(
+                hintText: 'insert category',
+                labelText: 'Category',
+                controller: _categoryController,
+                ),
+              const SizedBox(height: 20.0),
+              CustomButton(
+                  text: "Record",
+                  onTap: () async {
+                    await _supabaseClient.insertTransaction(context,
+                        amount: amount, notes: notes, category: category);
+                  },
+              ),
             ],
           ),
         ),
