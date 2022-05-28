@@ -5,7 +5,8 @@ class AuthState<T extends StatefulWidget> extends SupabaseAuthState<T> {
   @override
   void onUnauthenticated() {
     if (mounted) {
-      Navigator.of(context).pushNamedAndRemoveUntil('signin', (route) => false);
+      Navigator.of(context)
+          .pushNamedAndRemoveUntil('/signin', (route) => false);
     }
   }
 

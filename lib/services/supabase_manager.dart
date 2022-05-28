@@ -25,7 +25,6 @@ class SupabaseManager {
         duration: const Duration(seconds: 2),
       ));
     }
-
     insertProfile(context, username: username);
   }
 
@@ -55,13 +54,8 @@ class SupabaseManager {
         content: Text('Error: ${result.error!.message.toString()}'),
         duration: const Duration(seconds: 2),
       ));
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('Sign out successful'),
-        duration: Duration(seconds: 2),
-      ));
     }
-    Navigator.pushReplacementNamed(context, 'signin');
+    Navigator.pushReplacementNamed(context, '/signin');
   }
 
   Future<void> magicLink(context, {required String email}) async {
@@ -115,13 +109,14 @@ class SupabaseManager {
 
   Future<Profile> getProfile(context) async {
     print('current user: ${client.auth.currentUser?.id}');
-    print('current user email: ${client.auth.session()}');
 
     final result = await client
         .from('profiles')
         .select()
         .eq('id', client.auth.currentUser?.id)
         .execute();
+
+    print('Data: ${result.data.toString()}');
 
     if (result.error?.message != null) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -130,6 +125,9 @@ class SupabaseManager {
       ));
     }
     final dataList = result.data as List;
+
+    print('Data: ${result.data.toString()}');
+
     return dataList.map((e) => Profile.fromJson(e)).toList().elementAt(0);
   }
 }

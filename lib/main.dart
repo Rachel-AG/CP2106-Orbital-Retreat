@@ -4,6 +4,7 @@ import 'package:retreat/screens/forgetpassword_page/forgetpassword_page.dart';
 import 'package:retreat/screens/home_page/home_page.dart';
 import 'package:retreat/screens/signin_page/signin_page.dart';
 import 'package:retreat/screens/signup_page/signup_page.dart';
+import 'package:retreat/screens/splash_page/splash_page.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 void main() async {
@@ -27,9 +28,11 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blueGrey,
       ),
-      home: const SignInPage(),
+      //home: const HomePage(),
+      initialRoute: '/',
       routes: {
-        'signin': (_) => const SignInPage(),
+        '/': (_) => const SplashPage(),
+        '/signin': (_) => const SignInPage(),
         '/forgetpassword': (_) => const ForgetPasswordPage(),
         '/signup': (_) => const SignUpPage(),
         '/home': (_) => const HomePage(),

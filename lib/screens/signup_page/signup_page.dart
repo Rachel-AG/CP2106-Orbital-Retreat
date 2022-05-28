@@ -67,14 +67,6 @@ class _SignUpPageState extends AuthState<SignUpPage> {
                 const SizedBox(
                   height: 24,
                 ),
-                // // re-type password field
-                // CustomFormField(
-                //     labelText: 'Re-type password',
-                //     obscureText: true,
-                //     controller: _passwordController),
-                // const SizedBox(
-                //   height: 24,
-                // ),
                 CustomButton(
                   text: "Sign Up",
                   onTap: () async {
