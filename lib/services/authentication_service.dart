@@ -18,14 +18,14 @@ class AuthenticationService {
         content: Text('Registration successful'),
         duration: Duration(seconds: 2),
       ));
+      await ProfileService().insertProfile(context, username: username);
+      Navigator.pushNamed(context, '/');
     } else if (result.error?.message != null) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('Error: ${result.error!.message.toString()}'),
         duration: const Duration(seconds: 2),
       ));
     }
-    await ProfileService().insertProfile(context, username: username);
-    Navigator.of(context).pushReplacementNamed('/home');
   }
 
   Future<void> signInUser(context,
@@ -37,7 +37,7 @@ class AuthenticationService {
         content: Text('Sign in successful'),
         duration: Duration(seconds: 2),
       ));
-      Navigator.pushReplacementNamed(context, '/home');
+      Navigator.pushReplacementNamed(context, '/');
     } else if (result.error?.message != null) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('Error: ${result.error!.message.toString()}'),

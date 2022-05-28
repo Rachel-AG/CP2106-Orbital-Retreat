@@ -68,7 +68,7 @@ class _SignInPageState extends AuthState<SignInPage> {
                   recognizer: TapGestureRecognizer()
                     ..onTap = () {
                       stopAuthObserver();
-                      Navigator.pushReplacementNamed(context, '/signup')
+                      Navigator.pushNamed(context, '/signup')
                           .then((_) => startAuthObserver());
                     },
                 )
