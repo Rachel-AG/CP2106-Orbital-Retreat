@@ -3,8 +3,9 @@ import 'package:retreat/constants/app_colors.dart';
 import 'package:retreat/constants/auth_required_state.dart';
 import 'package:retreat/constants/text_styles.dart';
 import 'package:retreat/models/profile.dart';
+import 'package:retreat/services/profile_service.dart';
 
-import 'package:retreat/services/supabase_manager.dart';
+import 'package:retreat/services/authentication_service.dart';
 import 'package:retreat/widgets/custom_button.dart';
 
 class HomePage extends StatefulWidget {
@@ -15,7 +16,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends AuthRequiredState<HomePage> {
-  final _supabaseClient = SupabaseManager();
+  final _profileClient = ProfileService();
+  final _supabaseClient = AuthenticationService();
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +33,7 @@ class _HomePageState extends AuthRequiredState<HomePage> {
       body: Column(
         children: [
           FutureBuilder<Profile>(
-            future: _supabaseClient.getProfile(context),
+            future: _profileClient.getProfile(context),
             builder: (context, AsyncSnapshot<Profile> snapshot) {
               return Card(
                 color: AppColors.steelteal,

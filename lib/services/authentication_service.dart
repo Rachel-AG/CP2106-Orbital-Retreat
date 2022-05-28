@@ -1,11 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:retreat/services/profile_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:supabase/supabase.dart' as supabase;
 
-import '../models/profile.dart';
-
-class SupabaseManager {
+class AuthenticationService {
   final client = Supabase.instance.client;
 
   Future<void> signUpUser(context,
@@ -25,7 +24,8 @@ class SupabaseManager {
         duration: const Duration(seconds: 2),
       ));
     }
-    insertProfile(context, username: username);
+    await ProfileService().insertProfile(context, username: username);
+    Navigator.of(context).pushReplacementNamed('/home');
   }
 
   Future<void> signInUser(context,
@@ -55,7 +55,6 @@ class SupabaseManager {
         duration: const Duration(seconds: 2),
       ));
     }
-    Navigator.pushReplacementNamed(context, '/signin');
   }
 
   Future<void> magicLink(context, {required String email}) async {
@@ -91,43 +90,5 @@ class SupabaseManager {
         duration: Duration(seconds: 2),
       ));
     }
-  }
-
-  Future<void> insertProfile(context, {required String username}) async {
-    // if no user is logged in, will an error be thrown?
-    final result = await client.from('profiles').insert([
-      {'id': client.auth.user()?.id, 'username': username}
-    ]).execute();
-
-    if (result.error?.message != null) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Error: ${result.error!.message.toString()}'),
-        duration: const Duration(seconds: 2),
-      ));
-    }
-  }
-
-  Future<Profile> getProfile(context) async {
-    print('current user: ${client.auth.currentUser?.id}');
-
-    final result = await client
-        .from('profiles')
-        .select()
-        .eq('id', client.auth.currentUser?.id)
-        .execute();
-
-    print('Data: ${result.data.toString()}');
-
-    if (result.error?.message != null) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Error: ${result.error!.message.toString()}'),
-        duration: const Duration(seconds: 2),
-      ));
-    }
-    final dataList = result.data as List;
-
-    print('Data: ${result.data.toString()}');
-
-    return dataList.map((e) => Profile.fromJson(e)).toList().elementAt(0);
   }
 }

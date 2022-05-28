@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:retreat/constants/auth_required_state.dart';
-import 'package:retreat/services/supabase_manager.dart';
+import 'package:retreat/services/authentication_service.dart';
 import 'package:retreat/widgets/custom_button.dart';
 import 'package:retreat/widgets/custom_formfield.dart';
 import 'package:retreat/widgets/password_field.dart';
@@ -13,7 +13,7 @@ class ChangePasswordPage extends StatefulWidget {
 }
 
 class _ChangePasswordPageState extends AuthRequiredState<ChangePasswordPage> {
-  final _supabaseClient = SupabaseManager();
+  final _supabaseClient = AuthenticationService();
   final TextEditingController _passwordCopyController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
