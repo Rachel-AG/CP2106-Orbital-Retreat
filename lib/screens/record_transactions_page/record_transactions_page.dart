@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:retreat/constants/auth_required_state.dart';
 import 'package:retreat/widgets/custom_formfield.dart';
-import 'package:retreat/widgets/dropdown_button.dart';
 import 'package:retreat/services/transactions_service.dart';
 import 'package:retreat/widgets/numeric_formfield.dart';
 import 'package:retreat/widgets/custom_button.dart';
@@ -12,12 +12,13 @@ class RecordTransactionsPage extends StatefulWidget {
   State<RecordTransactionsPage> createState() => _RecordTransactionsPageState();
 }
 
-class _RecordTransactionsPageState extends State<RecordTransactionsPage> {
+class _RecordTransactionsPageState
+    extends AuthRequiredState<RecordTransactionsPage> {
   final _supabaseClient = TransactionService();
   final TextEditingController _notesController = TextEditingController();
   final TextEditingController _amountController = TextEditingController();
   final TextEditingController _categoryController = TextEditingController();
-  
+
   @override
   void dispose() {
     _notesController.dispose();
@@ -52,11 +53,11 @@ class _RecordTransactionsPageState extends State<RecordTransactionsPage> {
                 hintText: 'insert some description',
                 labelText: 'Notes',
                 controller: _notesController,
-                ),
+              ),
               const SizedBox(height: 20.0),
               NumericFormField(
                 hintText: 'insert price',
-                labelText:'Amount',
+                labelText: 'Amount',
                 controller: _amountController,
               ),
               const SizedBox(height: 20.0),
@@ -64,7 +65,7 @@ class _RecordTransactionsPageState extends State<RecordTransactionsPage> {
                 hintText: 'insert category',
                 labelText: 'Category',
                 controller: _categoryController,
-                ),
+              ),
               const SizedBox(height: 20.0),
               CustomButton(
                   text: "Record",

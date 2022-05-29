@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:retreat/services/display_transactions.dart';
+import 'package:retreat/constants/auth_required_state.dart';
 
 import '../../models/transactions.dart';
 
@@ -11,7 +12,9 @@ class DisplayTransactionsPage extends StatefulWidget {
       _DisplayTransactionsPageState();
 }
 
-class _DisplayTransactionsPageState extends State<DisplayTransactionsPage> {
+class _DisplayTransactionPageState
+    extends AuthRequiredState<DisplayTransactionPage> {
+    
   final _supabaseClient = DisplayTransactionsService();
 
   @override
