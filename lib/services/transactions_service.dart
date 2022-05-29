@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:retreat/models/profile.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class TransactionService {
