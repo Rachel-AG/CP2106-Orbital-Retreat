@@ -30,14 +30,20 @@ class _RecordTransactionsPageState extends State<RecordTransactionsPage> {
   double get amount => double.parse(_amountController.text);
   String get category => _categoryController.text.trim();
 
+  Future record() async {
+                    await _supabaseClient.insertTransaction(context,
+                        amount: amount, notes: notes, category: category);
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('record transactions'),
+        title: const Text('record transactions'),
         centerTitle: true,
       ),
       body: Container(
-        padding: EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
+        padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
         child: Form(
           child: Column(
             children: <Widget>[
@@ -63,8 +69,12 @@ class _RecordTransactionsPageState extends State<RecordTransactionsPage> {
               CustomButton(
                   text: "Record",
                   onTap: () async {
-                    await _supabaseClient.insertTransaction(context,
-                        amount: amount, notes: notes, category: category);
+                    await record();
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text('Transaction recorded'),
+                    duration: const Duration(seconds: 2),
+                    ));
+                    Navigator.pushReplacementNamed(context, '/display');
                   },
               ),
             ],

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:retreat/constants/text_styles.dart';
 import 'package:retreat/models/profile.dart';
 import 'package:retreat/services/supabase_manager.dart';
-import 'package:retreat/screens/record_transactions_page/record_transactions_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);

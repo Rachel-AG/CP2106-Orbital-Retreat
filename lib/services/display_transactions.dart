@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:retreat/models/transactions.dart';
 
-class TransactionService {
+class DisplayTransactionsService {
   final client = Supabase.instance.client;
 
-  Future<Transactions> getTransactions(context) async {
+  Future<List<Transactions>> getTransactions(context) async {
     print('current user: ${client.auth.currentUser?.id}');
 
     final result = await client
         .from('transactions')
         .select()
-        .eq('id', client.auth.currentUser?.id)
+        .eq('created_by', client.auth.currentUser?.id)
         .execute();
 
     print('Data: ${result.data.toString()}');
@@ -26,6 +26,6 @@ class TransactionService {
 
     print('Data: ${result.data.toString()}');
 
-    return dataList.map((e) => Transactions.fromJson(e)).toList().elementAt(0);
+    return dataList.map((e) => Transactions.fromJson(e)).toList();
   }
 }
