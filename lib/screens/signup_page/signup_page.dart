@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:retreat/services/supabase_manager.dart';
+import 'package:retreat/constants/auth_state.dart';
+import 'package:retreat/services/authentication_service.dart';
 import 'package:retreat/widgets/custom_button.dart';
 import 'package:retreat/widgets/custom_formfield.dart';
 import 'package:retreat/widgets/password_field.dart';
@@ -11,8 +12,8 @@ class SignUpPage extends StatefulWidget {
   State<SignUpPage> createState() => _SignUpPageState();
 }
 
-class _SignUpPageState extends State<SignUpPage> {
-  final _supabaseClient = SupabaseManager();
+class _SignUpPageState extends AuthState<SignUpPage> {
+  final _supabaseClient = AuthenticationService();
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -66,14 +67,6 @@ class _SignUpPageState extends State<SignUpPage> {
                 const SizedBox(
                   height: 24,
                 ),
-                // // re-type password field
-                // CustomFormField(
-                //     labelText: 'Re-type password',
-                //     obscureText: true,
-                //     controller: _passwordController),
-                // const SizedBox(
-                //   height: 24,
-                // ),
                 CustomButton(
                   text: "Sign Up",
                   onTap: () async {
