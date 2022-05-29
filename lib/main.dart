@@ -7,8 +7,6 @@ import 'package:retreat/screens/signup_page/signup_page.dart';
 import 'package:retreat/screens/record_transactions_page/record_transactions_page.dart';
 import 'package:retreat/screens/display_transactions_page/display_transactions_page.dart';
 import 'package:retreat/screens/splash_page/splash_page.dart';
-import 'package:retreat/screens/splash_page/splash_page.dart';
-import 'package:retreat/screens/record_transactions_page/record_transactions_page.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 void main() async {

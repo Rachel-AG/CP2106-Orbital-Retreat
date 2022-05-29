@@ -26,7 +26,7 @@ class _HomePageState extends AuthRequiredState<HomePage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.pushReplacementNamed(context, '/record');
+          Navigator.pushNamed(context, '/record');
         },
         tooltip: 'Button',
         child: const Icon(Icons.add),
@@ -54,6 +54,11 @@ class _HomePageState extends AuthRequiredState<HomePage> {
               );
             },
           ),
+          CustomButton(
+              text: 'My Transactions',
+              onTap: () {
+                Navigator.pushNamed(context, '/display');
+              }),
           CustomButton(
               text: 'Change Password',
               onTap: () {
