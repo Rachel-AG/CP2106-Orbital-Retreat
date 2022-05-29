@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:retreat/constants/auth_required_state.dart';
 
 class DisplayTransactionPage extends StatefulWidget {
   const DisplayTransactionPage({Key? key}) : super(key: key); //??
@@ -7,16 +8,16 @@ class DisplayTransactionPage extends StatefulWidget {
   State<DisplayTransactionPage> createState() => _DisplayTransactionPageState();
 }
 
-class _DisplayTransactionPageState extends State<DisplayTransactionPage> {
+class _DisplayTransactionPageState
+    extends AuthRequiredState<DisplayTransactionPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('display transactions'),
+        title: const Text('display transactions'),
         centerTitle: true,
       ),
-      body: Text('transactionss'),
+      body: const Text('transactionss'),
     );
   }
 }
-

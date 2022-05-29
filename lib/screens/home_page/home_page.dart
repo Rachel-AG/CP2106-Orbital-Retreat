@@ -3,15 +3,9 @@ import 'package:retreat/constants/app_colors.dart';
 import 'package:retreat/constants/auth_required_state.dart';
 import 'package:retreat/constants/text_styles.dart';
 import 'package:retreat/models/profile.dart';
-<<<<<<< HEAD
 import 'package:retreat/services/profile_service.dart';
-
 import 'package:retreat/services/authentication_service.dart';
 import 'package:retreat/widgets/custom_button.dart';
-=======
-import 'package:retreat/services/supabase_manager.dart';
-import 'package:retreat/screens/record_transactions_page/record_transactions_page.dart';
->>>>>>> origin/transactions
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -31,7 +25,9 @@ class _HomePageState extends AuthRequiredState<HomePage> {
         title: const Text('Welcome to Retreat'),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {Navigator.pushReplacementNamed(context, '/record');},
+        onPressed: () {
+          Navigator.pushReplacementNamed(context, '/record');
+        },
         tooltip: 'Button',
         child: const Icon(Icons.add),
       ),
