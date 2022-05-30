@@ -4,7 +4,6 @@ import 'package:retreat/constants/auth_required_state.dart';
 import 'package:retreat/constants/text_styles.dart';
 import 'package:retreat/models/profile.dart';
 import 'package:retreat/services/profile_service.dart';
-
 import 'package:retreat/services/authentication_service.dart';
 import 'package:retreat/widgets/custom_button.dart';
 
@@ -26,7 +25,9 @@ class _HomePageState extends AuthRequiredState<HomePage> {
         title: const Text('Welcome to Retreat'),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          Navigator.pushNamed(context, '/record');
+        },
         tooltip: 'Button',
         child: const Icon(Icons.add),
       ),
@@ -53,6 +54,11 @@ class _HomePageState extends AuthRequiredState<HomePage> {
               );
             },
           ),
+          CustomButton(
+              text: 'My Transactions',
+              onTap: () {
+                Navigator.pushNamed(context, '/display');
+              }),
           CustomButton(
               text: 'Change Password',
               onTap: () {
