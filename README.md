@@ -86,8 +86,9 @@ Retreat has a global leaderboard system based on users’ island progress to fur
 |--------|-------------------------------------------|----------------------------------------------------------------------------------------------------|-----------------|-------------------|
 | 1      | Preliminary research into app development | Familiarize ourselves with Flutter and Supabase, learn how to integrate front-end with back-end    | Rachel Vinessa  | 12 - 22 May       |
 |        | Account                                   | Account creation, login and logout, and account retrieval                                          | Rachel          | 22 - 30 May       |
-|        | Basic Bookkeeping Functions               | Record and delete expenses, categorize expenses, set budget                                        | Vinessa         | 22 - 30 May       |
-| 2      | User Interface                            |                                                                                                    | Rachel  Vinessa | Week 5 - Week 6   |
+|        | Basic Bookkeeping Functions               | Record and display expenses, categorize expenses                                        | Vinessa         | 22 - 30 May       |
+| 2      | Bookkeeping Functions                           | Delete and edit expenses, add time, set budget                                    | Vinessa | Week 5 - Week 6   |
+|        | User Interface                            |                                                                                                    | Rachel  Vinessa | Week 5 - Week 6   |
 |        | Charts and Graphs                         | Produce charts from existing data                                                                  | Rachel          | Week 7            |
 |        | Island Building Mechanics                 | Tile object system, basic functionalities for building the island (eg. moving the pieces)          | Rachel Vinessa  | Week 7 -  Week 8  |
 | 3      | COINS System                              | Complete system to be used for in-game currency, Builder Store                                     | Rachel Vinessa  | Week 9 -  Week 11 |
