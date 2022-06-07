@@ -28,7 +28,7 @@ class _RecordTransactionsPageState
     super.dispose();
   }
 
-  static const menuItems = <String>[ 
+  static const menuItems = <String>[
     'Education',
     'Entertainment',
     'Food & Drink',
@@ -42,24 +42,25 @@ class _RecordTransactionsPageState
     'Others',
   ];
   CustomDropdownButton dropDownCategory = CustomDropdownButton(
-    menuItems: menuItems, 
+    menuItems: menuItems,
     title: "Category: ",
-    hint: "Select a category",);
+    hint: "Select a category",
+  );
 
   String get notes => _notesController.text.trim();
   double get amount => double.parse(_amountController.text);
-  String get category => dropDownCategory.btnSelectedVal?? "No category";
+  String get category => dropDownCategory.btnSelectedVal ?? "No category";
 
   Future record() async {
-                    await _supabaseClient.insertTransaction(context,
-                        amount: amount, notes: notes, category: category);
+    await _supabaseClient.insertTransaction(context,
+        amount: amount, notes: notes, category: category);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('record transactions'),
+        title: const Text('Record Transactions'),
         centerTitle: true,
       ),
       body: Container(
@@ -86,23 +87,22 @@ class _RecordTransactionsPageState
               // ),
               const SizedBox(height: 20.0),
               CustomButton(
-                  text: "Record",
-                  onTap: () async {
-                    if(_amountController.text.isEmpty) {
-                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                text: "Record",
+                onTap: () async {
+                  if (_amountController.text.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                       content: Text('Insert amount'),
                       duration: Duration(seconds: 2),
-                      )
-                      );
-                    } else {
+                    ));
+                  } else {
                     await record();
                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                    content: Text('Transaction recorded'),
-                    duration: Duration(seconds: 2),
+                      content: Text('Transaction recorded'),
+                      duration: Duration(seconds: 2),
                     ));
                     Navigator.pushReplacementNamed(context, '/display');
-                    }
-                  },
+                  }
+                },
               ),
             ],
           ),
