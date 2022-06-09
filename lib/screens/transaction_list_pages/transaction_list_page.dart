@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:retreat/constants/app_colors.dart';
 import 'package:retreat/constants/auth_required_state.dart';
+import 'package:retreat/screens/transaction_list_pages/budget_history_page.dart';
 import 'package:retreat/screens/transaction_list_pages/display_transactions_page.dart';
 import 'package:retreat/screens/transaction_list_pages/transaction_breakdown_page.dart';
 
@@ -16,8 +17,9 @@ class _TransactionListPageState extends AuthRequiredState<TransactionListPage>
   late TabController _tabController;
 
   static const _nTabPages = <Widget>[
-    DisplayTransactionsPage(),
     TransactionBreakdownPage(),
+    DisplayTransactionsPage(),
+    BudgetHistoryPage(),
   ];
 
   static const _nTabs = <Tab>[
@@ -30,6 +32,11 @@ class _TransactionListPageState extends AuthRequiredState<TransactionListPage>
       height: 48,
       icon: Icon(Icons.list_alt_rounded),
       //text: 'Transactions History',
+    ),
+    Tab(
+      height: 48,
+      icon: Icon(Icons.wallet_giftcard_rounded),
+      //text: 'Budget History',
     ),
   ];
 

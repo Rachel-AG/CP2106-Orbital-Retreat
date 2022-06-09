@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:retreat/models/category.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:retreat/models/transactions.dart';
 
@@ -54,22 +53,46 @@ class TransactionService {
         content: Text('Error: ${result.error!.message.toString()}'),
         duration: const Duration(seconds: 2),
       ));
+    } else if (result.data == null) {
+      print('no transactions recorded');
     }
     final dataList = result.data as List;
     return dataList.map((e) => Transactions.fromJson(e)).toList();
   }
 
-  //NOT TESTED: MIGHT NOT WORK PROPERLY DUE TO SUPABASE POLICY
-  Future<List<Category>> getCategories(context) async {
-    final result = await client.from('categories').select().execute();
+  Future<List<String>> getAllCategories(context) async {
+    return <String>[
+      'Education',
+      'Entertainment',
+      'Food & Drink',
+      'Groceries',
+      'Health',
+      'Housing',
+      'Tax',
+      'Transportation',
+      'Utilities',
+      'Work',
+      'Others',
+    ];
+  }
 
-    if (result.error?.message != null) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Error: ${result.error!.message.toString()}'),
-        duration: const Duration(seconds: 2),
-      ));
+  Future<Map<String, double>> getBreakdownByCategoryFromList(context,
+      {required List<Transactions> transactionList}) async {
+    final categoryList = await getAllCategories(context);
+    final amountList = List<double>.filled(categoryList.length, 0.0);
+    for (var element in transactionList) {
+      int index =
+          categoryList.indexWhere((category) => category == element.category);
+      amountList[index] += element.amount;
     }
-    final dataList = result.data as List;
-    return dataList.map((e) => Category.fromJson(e)).toList();
+    return Map.fromIterables(categoryList, amountList);
+  }
+
+  Future<Map<String, double>> getBreakdownByCategoryFromTime(context,
+      {required int month, required int year}) async {
+    final transactionList =
+        await getMonthTransaction(context, month: month, year: year);
+    return getBreakdownByCategoryFromList(context,
+        transactionList: transactionList);
   }
 }
