@@ -71,7 +71,7 @@ class _HomePageState extends AuthRequiredState<HomePage> {
             children: <Widget>[
               IconButton(
                   onPressed: () {
-                    Navigator.pushNamed(context, '/display');
+                    Navigator.pushNamed(context, '/transactionlist');
                   },
                   icon: const Icon(
                     Icons.analytics_rounded,

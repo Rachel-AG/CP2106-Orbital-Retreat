@@ -100,7 +100,8 @@ class _RecordTransactionsPageState
                       content: Text('Transaction recorded'),
                       duration: Duration(seconds: 2),
                     ));
-                    Navigator.pushReplacementNamed(context, '/display');
+                    Navigator.pushReplacementNamed(
+                        context, '/transactionlist/display');
                   }
                 },
               ),

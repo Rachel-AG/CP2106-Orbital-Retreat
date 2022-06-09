@@ -31,7 +31,8 @@ class _SettingPageState extends AuthRequiredState<SettingPage> {
             height: 8,
           ),
           const SettingTitle(text: "Account", icon: Icons.person),
-          SettingOption(onTap: () {}, text: "Update Account"),
+          SettingOption(onTap: () {}, text: "Change Username"),
+          SettingOption(onTap: () {}, text: "Change Avatar"),
           SettingOption(
               onTap: () {
                 Navigator.pushNamed(context, '/changepassword');
