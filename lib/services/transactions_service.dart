@@ -11,6 +11,7 @@ class TransactionService {
       {'amount': amount, 'notes': notes, 'category': category}
     ]).execute();
 
+    // NO ERROR HANDLING
     if (result.error?.message != null) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('Error: ${result.error!.message.toString()}'),
@@ -85,7 +86,11 @@ class TransactionService {
           categoryList.indexWhere((category) => category == element.category);
       amountList[index] += element.amount;
     }
-    return Map.fromIterables(categoryList, amountList);
+
+    var result = Map.fromIterables(categoryList,
+        amountList.map((e) => double.parse((e).toStringAsFixed(2))));
+    result.removeWhere((key, value) => value == 0.0);
+    return result;
   }
 
   Future<Map<String, double>> getBreakdownByCategoryFromTime(context,
@@ -95,4 +100,8 @@ class TransactionService {
     return getBreakdownByCategoryFromList(context,
         transactionList: transactionList);
   }
+
+  // TODO: BreakdownByExpenseFromList, BreakdownByExpenseFromTime
+  // TODO: BreakdownByIncomeFromList, BreakdownByIncomeFromTime
+
 }

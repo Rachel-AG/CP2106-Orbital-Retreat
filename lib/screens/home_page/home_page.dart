@@ -4,6 +4,7 @@ import 'package:retreat/constants/auth_required_state.dart';
 import 'package:retreat/constants/text_styles.dart';
 import 'package:retreat/models/profile.dart';
 import 'package:retreat/services/profile_service.dart';
+import 'package:retreat/widgets/avatar.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -34,34 +35,49 @@ class _HomePageState extends AuthRequiredState<HomePage> {
             style: TextStyles.buttonTextStyle,
           ),
           onPressed: () {
-            Navigator.pushNamed(context, '/record');
+            Navigator.pushNamed(context, '/home/record');
           },
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        body: Column(
-          children: [
-            FutureBuilder<Profile>(
-              future: _profileClient.getProfile(context),
-              builder: (context, AsyncSnapshot<Profile> snapshot) {
-                return Card(
-                  color: AppColors.steelteal,
-                  margin: const EdgeInsets.all(24),
-                  child: SizedBox(
-                    height: 100,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
+        body: Container(
+          padding: const EdgeInsets.all(24.0),
+          width: MediaQuery.of(context).size.width,
+          child: Card(
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+            color: AppColors.steelteal,
+            child: Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: FutureBuilder<Profile>(
+                future: _profileClient.getCurrentUserProfile(context),
+                builder: (context, AsyncSnapshot<Profile> snapshot) {
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    return Row(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
+                        if (snapshot.data?.avatarUrl != null)
+                          Avatar(
+                            imageUrl: snapshot.data!.avatarUrl!,
+                          )
+                        else
+                          const Avatar(),
+                        const SizedBox(
+                          width: 16.0,
+                        ),
                         Text(
                           'Hello, ${snapshot.data?.username}!',
                           style: TextStyles.headerTextStyle,
                         ),
                       ],
-                    ),
-                  ),
-                );
-              },
+                    );
+                  } else {
+                    return const SizedBox();
+                  }
+                },
+              ),
             ),
-          ],
+          ),
         ),
         bottomNavigationBar: BottomAppBar(
           color: AppColors.darkblue,
@@ -71,7 +87,7 @@ class _HomePageState extends AuthRequiredState<HomePage> {
             children: <Widget>[
               IconButton(
                   onPressed: () {
-                    Navigator.pushNamed(context, '/transactionlist');
+                    Navigator.pushNamed(context, '/home/transactionlist');
                   },
                   icon: const Icon(
                     Icons.analytics_rounded,

@@ -20,16 +20,9 @@ class _DisplayTransactionsPageState
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          title: const Text('My Transactions'),
-          centerTitle: true,
-          leading: GestureDetector(
-              onTap: () {
-                //Navigator.pushReplacementNamed(context, '/home');
-                Navigator.canPop(context);
-              },
-              child: const Icon(
-                Icons.home,
-              ))),
+        title: const Text('My Transactions'),
+        centerTitle: true,
+      ),
       body: FutureBuilder<List<Transactions>>(
           future: _supabaseClient.getAllTransactions(context),
           builder: (context, AsyncSnapshot<List<Transactions>> snapshot) {

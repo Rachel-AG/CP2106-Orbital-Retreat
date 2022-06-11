@@ -3,7 +3,7 @@ import 'package:retreat/constants/app_colors.dart';
 import 'package:retreat/constants/auth_required_state.dart';
 import 'package:retreat/screens/transaction_list_pages/budget_history_page.dart';
 import 'package:retreat/screens/transaction_list_pages/display_transactions_page.dart';
-import 'package:retreat/screens/transaction_list_pages/transaction_breakdown_page.dart';
+import 'package:retreat/screens/transaction_list_pages/overview_page.dart';
 
 class TransactionListPage extends StatefulWidget {
   const TransactionListPage({Key? key}) : super(key: key);
@@ -17,7 +17,7 @@ class _TransactionListPageState extends AuthRequiredState<TransactionListPage>
   late TabController _tabController;
 
   static const _nTabPages = <Widget>[
-    TransactionBreakdownPage(),
+    OverviewPage(),
     DisplayTransactionsPage(),
     BudgetHistoryPage(),
   ];
