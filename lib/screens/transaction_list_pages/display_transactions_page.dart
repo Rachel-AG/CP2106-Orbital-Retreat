@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:retreat/constants/auth_required_state.dart';
 import 'package:retreat/constants/app_colors.dart';
 import 'package:retreat/services/transactions_service.dart';
-import '../../models/transactions.dart';
+import '../../models/transaction.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 
 class DisplayTransactionsPage extends StatefulWidget {
   const DisplayTransactionsPage({Key? key}) : super(key: key); //??
@@ -25,14 +26,14 @@ class _DisplayTransactionsPageState
           leading: GestureDetector(
               onTap: () {
                 //Navigator.pushReplacementNamed(context, '/home');
-                Navigator.canPop(context);
+                Navigator.popUntil(context, ModalRoute.withName('/home'));
               },
               child: const Icon(
                 Icons.home,
               ))),
-      body: FutureBuilder<List<Transactions>>(
-          future: _supabaseClient.getAllTransactions(context),
-          builder: (context, AsyncSnapshot<List<Transactions>> snapshot) {
+      body: FutureBuilder<List<Transaction>>(
+          future: _supabaseClient.getAllTransactionsSorted(context),
+          builder: (context, AsyncSnapshot<List<Transaction>> snapshot) {
             switch (snapshot.connectionState) {
               case ConnectionState.waiting:
                 return const Text('Loading....');
@@ -49,20 +50,20 @@ class _DisplayTransactionsPageState
                       String amountString =
                           transaction?.amount.toString() ?? "No amount";
                       String notesString = transaction?.notes ?? "";
-                      String timeStamp =
-                          transaction?.time.substring(0, 10) ?? "";
+                      String timeTransaction =
+                          transaction?.timeTransaction ?? "No date";
                       return Container(
-                        decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(4.0),
-                            border: Border.all(
-                                width: 1.0,
-                                style: BorderStyle.solid,
-                                color: AppColors.steelteal)),
-                        margin: const EdgeInsets.all(12.0),
+                        // decoration: BoxDecoration(
+                        //     borderRadius: BorderRadius.circular(4.0),
+                        //     border: Border.all(
+                        //         width: 1.0,
+                        //         style: BorderStyle.solid,
+                        //         color: AppColors.steelteal)),
+                        // margin: const EdgeInsets.all(12.0),
                         child: ListTile(
                           title: Text("\$ $amountString"),
                           subtitle:
-                              Text("Notes: $notesString \nTime: $timeStamp"),
+                              Text("Notes: $notesString \nTime: $timeTransaction"),
                           isThreeLine: true,
                         ),
                       );
