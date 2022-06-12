@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:retreat/constants/app_colors.dart';
 import 'package:retreat/screens/changepassword_page/changepasword_page.dart';
-import 'package:retreat/screens/transaction_list_pages/transaction_breakdown_page.dart';
 import 'package:retreat/screens/forgetpassword_page/forgetpassword_page.dart';
 import 'package:retreat/screens/home_page/home_page.dart';
 import 'package:retreat/screens/setting_page/setting_page.dart';
 import 'package:retreat/screens/signin_page/signin_page.dart';
 import 'package:retreat/screens/signup_page/signup_page.dart';
+<<<<<<< HEAD
 import 'package:retreat/screens/record_transactions_page/record_transaction_page.dart';
 import 'package:retreat/screens/transaction_list_pages/display_transactions_page.dart';
+=======
+import 'package:retreat/screens/record_transactions_page/record_transactions_page.dart';
+>>>>>>> origin/ui
 import 'package:retreat/screens/splash_page/splash_page.dart';
 import 'package:retreat/screens/transaction_list_pages/transaction_list_page.dart';
+import 'package:retreat/screens/update_profile_page/update_profile_page.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 void main() async {
@@ -50,7 +54,7 @@ class MyApp extends StatelessWidget {
       ),
       //home: const HomePage(),
 
-      initialRoute: '/home/settings',
+      initialRoute: '/',
       routes: {
         '/': (_) => const SplashPage(),
         '/signin': (_) => const SignInPage(),
@@ -58,11 +62,12 @@ class MyApp extends StatelessWidget {
         '/signup': (_) => const SignUpPage(),
         '/home': (_) => const HomePage(),
         '/home/settings': (_) => const SettingPage(),
-        '/changepassword': (_) => const ChangePasswordPage(),
-        '/record': (_) => const RecordTransactionPage(),
-        '/transactionlist': (_) => const TransactionListPage(),
-        '/transactionlist/display': (_) => const DisplayTransactionsPage(),
-        '/transactionlist/breakdown': (_) => const TransactionBreakdownPage(),
+        '/home/settings/changepassword': (_) => const ChangePasswordPage(),
+        '/home/settings/updateprofile': (_) => const UpdateProfilePage(),
+        '/home/record': (_) => const RecordTransactionPage(),
+        '/home/transactionlist': (_) => const TransactionListPage(),
+        // '/home/transactionlist/display': (_) => const DisplayTransactionsPage(),
+        // '/home/transactionlist/overview': (_) => const OverviewPage(),
       },
     );
   }

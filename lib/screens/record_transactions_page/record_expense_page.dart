@@ -120,8 +120,9 @@ class _RecordExpensePageState
                       content: Text('Expense recorded'),
                       duration: Duration(seconds: 2),
                     ));
+
                     Navigator.pushReplacementNamed(
-                        context, '/transactionlist/display');
+                        context, '/home/transactionlist');
                   }
                 },
               ),

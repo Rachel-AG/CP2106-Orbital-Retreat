@@ -70,8 +70,13 @@ class _SignUpPageState extends AuthState<SignUpPage> {
                 CustomButton(
                   text: "Sign Up",
                   onTap: () async {
-                    await _supabaseClient.signUpUser(context,
-                        email: email, password: password, username: username);
+                    await _supabaseClient
+                        .signUpUser(context,
+                            email: email,
+                            password: password,
+                            username: username)
+                        .then((value) =>
+                            value ? Navigator.pushNamed(context, '/') : false);
                   },
                 ),
               ]),

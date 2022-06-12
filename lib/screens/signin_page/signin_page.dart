@@ -56,8 +56,11 @@ class _SignInPageState extends AuthState<SignInPage> {
               CustomButton(
                 text: "Sign In",
                 onTap: () async {
-                  await _supabaseClient.signInUser(context,
-                      email: email, password: password);
+                  await _supabaseClient
+                      .signInUser(context, email: email, password: password)
+                      .then((value) => value
+                          ? Navigator.pushReplacementNamed(context, '/')
+                          : null);
                 },
               ),
               RichText(

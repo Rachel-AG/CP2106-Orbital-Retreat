@@ -7,88 +7,94 @@ import 'package:supabase/supabase.dart' as supabase;
 class AuthenticationService {
   final client = Supabase.instance.client;
 
-  Future<void> signUpUser(context,
+  Future<bool> signUpUser(context,
       {required String email,
       required String password,
       required String username}) async {
-    final result = await client.auth.signUp(email, password);
+    final result1 = await client.auth.signUp(email, password);
 
-    if (result.data != null) {
+    // check if email is registered successfully
+    if (result1.error != null) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Error: ${result1.error!.message.toString()}'),
+        duration: const Duration(seconds: 2),
+      ));
+      return false;
+    }
+
+    final result2 =
+        await ProfileService().insertProfile(context, username: username);
+
+    // check if user profile is created successfully
+    if (result2) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text('Registration successful'),
         duration: Duration(seconds: 2),
       ));
-      await ProfileService().insertProfile(context, username: username);
-      Navigator.pushNamed(context, '/');
-    } else if (result.error?.message != null) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Error: ${result.error!.message.toString()}'),
-        duration: const Duration(seconds: 2),
-      ));
+      return true;
     }
+
+    return false;
   }
 
-  Future<void> signInUser(context,
+  Future<bool> signInUser(context,
       {required String email, required String password}) async {
     final result = await client.auth.signIn(email: email, password: password);
 
-    if (result.data != null) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('Sign in successful'),
-        duration: Duration(seconds: 2),
-      ));
-      Navigator.pushReplacementNamed(context, '/');
-    } else if (result.error?.message != null) {
+    // check if user has logged in successfully
+    if (result.error != null) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('Error: ${result.error!.message.toString()}'),
         duration: const Duration(seconds: 2),
       ));
+      return false;
     }
+    return true;
   }
 
-  Future<void> signOutUser(context) async {
+  Future<bool> signOutUser(context) async {
     final result = await client.auth.signOut();
 
-    if (result.error?.message != null) {
+    // check if user has logged out successfully
+    if (result.error != null) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('Error: ${result.error!.message.toString()}'),
         duration: const Duration(seconds: 2),
       ));
+      return false;
     }
+    return true;
   }
 
-  Future<void> magicLink(context, {required String email}) async {
+  Future<bool> magicLink(context, {required String email}) async {
     final result = await client.auth.signIn(
         email: email,
         options: supabase.AuthOptions(
             redirectTo:
                 kIsWeb ? null : 'io.supabase.retreat://login-callback/'));
 
-    if (result.error?.message != null) {
+    // check if login link is sent successfully
+    if (result.error != null) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('Error: ${result.error!.message.toString()}'),
         duration: const Duration(seconds: 2),
       ));
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('Sent login link to email'),
-        duration: Duration(seconds: 2),
-      ));
+      return false;
     }
+    return true;
   }
 
-  Future<void> changePassword(context, {required String password}) async {
+  Future<bool> changePassword(context, {required String password}) async {
     final result = await client.auth.update(UserAttributes(password: password));
-    if (result.error?.message != null) {
+
+    // check if pasword is changed successfully
+    if (result.error != null) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('Error: ${result.error!.message.toString()}'),
         duration: const Duration(seconds: 2),
       ));
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('Successfully changed password'),
-        duration: Duration(seconds: 2),
-      ));
+      return false;
     }
+    return true;
   }
 }

@@ -29,7 +29,7 @@ class TextStyles {
 
   static const optionTextStyle = TextStyle(
     color: AppColors.darkblue,
-    fontSize: 20,
+    fontSize: 16,
     fontWeight: FontWeight.w500,
   );
 
@@ -38,4 +38,12 @@ class TextStyles {
     fontSize: 28,
     fontWeight: FontWeight.w700,
   );
+
+  static TextStyle chartLabelStyle() => TextStyle(
+      color: AppColors.darkblue,
+      background: Paint()
+        ..strokeWidth = 18.0
+        ..color = Colors.white.withOpacity(0.5)
+        ..style = PaintingStyle.stroke
+        ..strokeJoin = StrokeJoin.round);
 }
