@@ -54,7 +54,7 @@ class _UpdateProfilePage extends AuthRequiredState<UpdateProfilePage> {
                               height: 16.0,
                             ),
                             Text(
-                              snapshot.data!.username!,
+                              snapshot.data!.username,
                               style: TextStyles.optionTextStyle,
                             ),
                           ],

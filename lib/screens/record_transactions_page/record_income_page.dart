@@ -117,7 +117,7 @@ class _RecordIncomePageState extends AuthRequiredState<RecordIncomePage> {
                       duration: Duration(seconds: 2),
                     ));
                     Navigator.pushReplacementNamed(
-                        context, '/transactionlist/display');
+                        context, '/home/transactionlist');
                   }
                 },
               ),

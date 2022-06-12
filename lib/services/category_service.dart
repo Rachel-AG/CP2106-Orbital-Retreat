@@ -3,13 +3,13 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:retreat/models/category.dart';
 
 class CategoryService {
-  final client = Supabase.instance.client;
+  static final client = Supabase.instance.client;
 
-  Future<List<Category>> getExpenseCategories(context) async {
+  static Future<List<Category>> getExpenseCategories(context) async {
     final result = await client
         .from('categories')
         .select()
-        .eq('isExpense', true)
+        .eq('is_expense', true)
         .execute();
 
     if (result.error?.message != null) {
@@ -20,15 +20,14 @@ class CategoryService {
     }
     final dataList = result.data as List;
 
-    return List.from(
-        dataList.map((e) => Category.fromJson(e)).toList());
+    return dataList.map((e) => Category.fromJson(e)).toList();
   }
 
-  Future<List<Category>> getIncomeCategories(context) async {
+  static Future<List<Category>> getIncomeCategories(context) async {
     final result = await client
         .from('categories')
         .select()
-        .eq('isExpense', false)
+        .eq('is_expense', false)
         .execute();
 
     if (result.error?.message != null) {
@@ -39,7 +38,6 @@ class CategoryService {
     }
     final dataList = result.data as List;
 
-    return List.from(
-        dataList.map((e) => Category.fromJson(e)).toList().reversed);
+    return dataList.map((e) => Category.fromJson(e)).toList();
   }
 }
