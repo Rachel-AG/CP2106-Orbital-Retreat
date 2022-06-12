@@ -4,27 +4,27 @@ class Transaction {
   final double amount;
   final String timeTransaction;
   final String timeCreated;
-  final String created_by;
-  final String category;
+  final String createdBy;
   final bool isExpense;
+  final int categoryId;
 
-  Transaction(this.id, this.notes, this.amount, this.timeTransaction, this.timeCreated,
-  this.created_by, this.category, this.isExpense);
+  Transaction(this.id, this.notes, this.amount, this.timeTransaction,
+      this.timeCreated, this.createdBy, this.isExpense, this.categoryId);
 
   factory Transaction.fromJson(Map<String, dynamic> json) {
     return Transaction(
         json['id'] as String,
         json['notes'] as String,
         json['amount'].toDouble() as double,
-        json['timeTransaction'] as String,
-        json['timeCreated'] as String,
+        json['time_transaction'] as String,
+        json['time_created'] as String,
         json['created_by'] as String,
-        json['category'] as String,
-        json['isExpense'] as bool);
+        json['is_expense'] as bool,
+        json['category_id'] as int);
   }
 
   @override
   String toString() {
-    return 'id: $id, notes: $notes, amount: $amount, time: $timeTransaction, created by: $created_by, category: $category, isExpense: $isExpense';
+    return 'id: $id, notes: $notes, amount: $amount, time: $timeTransaction, created by: $createdBy, isExpense: $isExpense';
   }
 }

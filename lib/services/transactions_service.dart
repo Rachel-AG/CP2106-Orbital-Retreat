@@ -10,16 +10,16 @@ class TransactionService {
   Future<void> insertTransaction(context,
       {required double amount,
       String? notes,
-      required String category,
+      required int categoryId,
       required DateTime timeTransaction,
       required bool isExpense}) async {
     final result = await client.from('transactions').insert([
       {
         'amount': amount,
         'notes': notes,
-        'category': category,
-        'timeTransaction': timeTransaction.toIso8601String(),
-        'isExpense': isExpense
+        'category_id': categoryId,
+        'time_transaction': timeTransaction.toIso8601String(),
+        'is_expense': isExpense
       }
     ]).execute();
 
@@ -61,12 +61,13 @@ class TransactionService {
     return List.from(dataList.map((e) => Transaction.fromJson(e)).toList());
   }
 
+  // is this get all transactions or all expenses?
   Future<List<Transaction>> getAllTransactionsSorted(context) async {
     final result = await client
         .from('transactions')
         .select()
         .eq('created_by', client.auth.currentUser?.id)
-        .eq('isExpense', true)
+        .eq('is_expense', true)
         .execute();
 
     if (result.error?.message != null) {
@@ -105,9 +106,9 @@ class TransactionService {
         .from('transactions')
         .select()
         .eq('created_by', client.auth.currentUser?.id)
-        .eq('isExpense', isExpense)
-        .gte('timeTransaction', DateTime.utc(year, month).toIso8601String())
-        .lt('timeTransaction', DateTime.utc(year, month + 1).toIso8601String())
+        .eq('is_expense', isExpense)
+        .gte('time_transaction', DateTime.utc(year, month).toIso8601String())
+        .lt('time_transaction', DateTime.utc(year, month + 1).toIso8601String())
         .execute();
 
     if (result.error?.message != null) {
@@ -132,7 +133,7 @@ class TransactionService {
     for (var element in transactionList) {
       // optimization: compare using category id instead
       int index = categoryList
-          .indexWhere((category) => category.name == element.category);
+          .indexWhere((category) => category.id == element.categoryId);
       amountList[index] += element.amount;
     }
 

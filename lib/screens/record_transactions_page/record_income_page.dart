@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:retreat/constants/auth_required_state.dart';
+import 'package:retreat/models/category.dart';
+import 'package:retreat/services/category_service.dart';
 import 'package:retreat/widgets/custom_formfield.dart';
 import 'package:retreat/services/transactions_service.dart';
 import 'package:retreat/widgets/custom_dropdown.dart';
@@ -25,41 +27,50 @@ class _RecordIncomePageState extends AuthRequiredState<RecordIncomePage> {
     super.dispose();
   }
 
-  static const menuItems = <String>[
-    'Salary',
-    'Allowance',
-    'Bonus',
-    'Investment',
-    'Others'
-  ];
-
-  CustomDropdownButton dropDownCategory = CustomDropdownButton(
-    menuItems: menuItems,
-    title: "Category: ",
-    hint: "Select a category",
-  );
+  List<Category>? categoryList;
 
   String get notes => _notesController.text.trim();
   double get amount => double.parse(_amountController.text);
-  String get category => dropDownCategory.btnSelectedVal ?? "No category";
+  String category = "No category selected";
+  int categoryId = -1;
   DateTime selectedDate = DateTime.now();
 
+  CustomDropdownButton dropDownCategory =
+      CustomDropdownButton(menuItems: List.empty());
+
   Future record() async {
+    Category selectedCategory = categoryList![
+        categoryList!.indexWhere((element) => element.name == category)];
+    categoryId = selectedCategory.id;
     await _supabaseClient.insertTransaction(context,
         amount: amount,
         notes: notes,
-        category: category,
+        categoryId: categoryId,
         timeTransaction: selectedDate,
         isExpense: false);
+  }
+
+  FutureBuilder<List<Category>> _dropDownCategoryBuilder() {
+    return FutureBuilder<List<Category>>(
+        future: CategoryService.getIncomeCategories(context),
+        builder: (context, AsyncSnapshot<List<Category>> snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            categoryList = snapshot.data;
+            dropDownCategory = CustomDropdownButton(
+              menuItems: categoryList!.map((e) => e.name).toList(),
+              title: "Category: ",
+              hint: "Select a category",
+            );
+            return dropDownCategory;
+          } else {
+            return const LinearProgressIndicator();
+          }
+        });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(
-      //   title: const Text('Record Transactions'),
-      //   centerTitle: true,
-      // ),
       body: Container(
         padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
         child: Form(
@@ -95,7 +106,7 @@ class _RecordIncomePageState extends AuthRequiredState<RecordIncomePage> {
                 ],
               ),
               const SizedBox(height: 20.0),
-              dropDownCategory,
+              _dropDownCategoryBuilder(),
               const SizedBox(height: 20.0),
               CustomFormField(
                 labelText: 'Notes',
@@ -110,14 +121,21 @@ class _RecordIncomePageState extends AuthRequiredState<RecordIncomePage> {
                       content: Text('Insert amount'),
                       duration: Duration(seconds: 2),
                     ));
-                  } else {
-                    await record();
+                  } else if (dropDownCategory.btnSelectedVal == null) {
                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                      content: Text('Income recorded'),
+                      content: Text('Select Category'),
                       duration: Duration(seconds: 2),
                     ));
-                    Navigator.pushReplacementNamed(
-                        context, '/home/transactionlist');
+                  } else {
+                    category = dropDownCategory.btnSelectedVal!;
+                    await record()
+                        .then((_) => ScaffoldMessenger.of(context)
+                                .showSnackBar(const SnackBar(
+                              content: Text('Income recorded'),
+                              duration: Duration(seconds: 2),
+                            )))
+                        .then((_) => Navigator.pushReplacementNamed(
+                            context, '/home/transactionlist'));
                   }
                 },
               ),
