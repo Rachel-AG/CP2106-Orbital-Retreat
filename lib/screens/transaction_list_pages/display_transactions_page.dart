@@ -53,13 +53,13 @@ class _DisplayTransactionsPageState
                       String timeTransaction =
                           transaction?.timeTransaction ?? "No date";
                       return Container(
-                        // decoration: BoxDecoration(
-                        //     borderRadius: BorderRadius.circular(4.0),
-                        //     border: Border.all(
-                        //         width: 1.0,
-                        //         style: BorderStyle.solid,
-                        //         color: AppColors.steelteal)),
-                        // margin: const EdgeInsets.all(12.0),
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(4.0),
+                            border: Border.all(
+                                width: 1.0,
+                                style: BorderStyle.solid,
+                                color: AppColors.steelteal)),
+                        margin: const EdgeInsets.all(12.0),
                         child: ListTile(
                           title: Text("\$ $amountString"),
                           subtitle:

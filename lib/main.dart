@@ -6,12 +6,7 @@ import 'package:retreat/screens/home_page/home_page.dart';
 import 'package:retreat/screens/setting_page/setting_page.dart';
 import 'package:retreat/screens/signin_page/signin_page.dart';
 import 'package:retreat/screens/signup_page/signup_page.dart';
-<<<<<<< HEAD
 import 'package:retreat/screens/record_transactions_page/record_transaction_page.dart';
-import 'package:retreat/screens/transaction_list_pages/display_transactions_page.dart';
-=======
-import 'package:retreat/screens/record_transactions_page/record_transactions_page.dart';
->>>>>>> origin/ui
 import 'package:retreat/screens/splash_page/splash_page.dart';
 import 'package:retreat/screens/transaction_list_pages/transaction_list_page.dart';
 import 'package:retreat/screens/update_profile_page/update_profile_page.dart';
