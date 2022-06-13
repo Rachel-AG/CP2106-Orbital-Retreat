@@ -8,9 +8,7 @@ import 'package:retreat/screens/signin_page/signin_page.dart';
 import 'package:retreat/screens/signup_page/signup_page.dart';
 import 'package:retreat/screens/record_transactions_page/record_transaction_page.dart';
 import 'package:retreat/screens/splash_page/splash_page.dart';
-import 'package:retreat/screens/transaction_list_pages/display_transactions_page.dart';
-import 'package:retreat/screens/transaction_list_pages/overview_page.dart';
-import 'package:retreat/screens/transaction_list_pages/transaction_list_page.dart';
+import 'package:retreat/screens/transaction_list_page/transaction_list_page.dart';
 import 'package:retreat/screens/update_profile_page/update_profile_page.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
