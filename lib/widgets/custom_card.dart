@@ -6,9 +6,11 @@ class CustomCard extends StatelessWidget {
     Key? key,
     required this.title,
     required this.child,
+    this.padding = const EdgeInsets.fromLTRB(32.0, 0, 32.0, 24.0),
   }) : super(key: key);
 
   final String title;
+  final EdgeInsetsGeometry padding;
   final Widget child;
 
   @override
@@ -16,12 +18,12 @@ class CustomCard extends StatelessWidget {
     return Card(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
       color: Colors.white70,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 24.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Row(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(32.0, 24.0, 32.0, 0.0),
+            child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Text(
@@ -30,12 +32,15 @@ class CustomCard extends StatelessWidget {
                 ),
               ],
             ),
-            const SizedBox(
-              height: 24,
-            ),
-            child,
-          ],
-        ),
+          ),
+          const SizedBox(
+            height: 24,
+          ),
+          Padding(
+            padding: padding,
+            child: child,
+          ),
+        ],
       ),
     );
   }

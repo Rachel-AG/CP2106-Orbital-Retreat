@@ -23,7 +23,7 @@ class AuthenticationService {
     }
 
     final result2 =
-        await ProfileService().insertProfile(context, username: username);
+        await ProfileService.insertProfile(context, username: username);
 
     // check if user profile is created successfully
     if (result2) {

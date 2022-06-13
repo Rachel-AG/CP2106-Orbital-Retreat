@@ -1,6 +1,5 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:retreat/constants/auth_required_state.dart';
 import 'package:retreat/constants/text_styles.dart';
 import 'package:retreat/models/category.dart';
@@ -55,6 +54,7 @@ class _OverviewPageState extends AuthRequiredState<OverviewPage> {
               ),
               CustomCard(
                   title: 'Monthly Cash Flow',
+                  padding: const EdgeInsets.symmetric(horizontal: 0.0),
                   child: barChartBuilder(_totalTransactionListByMonth())),
               const SizedBox(
                 height: 16.0,
@@ -194,7 +194,7 @@ class _OverviewPageState extends AuthRequiredState<OverviewPage> {
               return Column(
                 children: [
                   Padding(
-                    padding: const EdgeInsets.all(24.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 48.0),
                     child: AspectRatio(
                         aspectRatio: 1,
                         child: PieChart(pieChartMainData(snapshot.data!))),
@@ -239,7 +239,7 @@ class _OverviewPageState extends AuthRequiredState<OverviewPage> {
     return BarChartData(
       barGroups: listOfGroupData,
       alignment: BarChartAlignment.center,
-      groupsSpace: 12.0,
+      groupsSpace: 10.0,
       baselineY: 0.0,
       titlesData: FlTitlesData(
           show: true,
@@ -249,16 +249,21 @@ class _OverviewPageState extends AuthRequiredState<OverviewPage> {
           topTitles: AxisTitles(
             sideTitles: SideTitles(showTitles: false),
           ),
+          leftTitles: AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
           bottomTitles: AxisTitles(
               sideTitles: SideTitles(
-                  reservedSize: 42.0,
+                  reservedSize: 56.0,
                   showTitles: true,
                   getTitlesWidget: (double value, TitleMeta meta) {
                     return SideTitleWidget(
                       axisSide: meta.axisSide,
                       space: 16,
-                      child:
-                          Text(Month.fromIntToStringShorten(value.toInt() + 1)),
+                      child: RotatedBox(
+                          quarterTurns: -1,
+                          child: Text(
+                              Month.fromIntToStringShorten(value.toInt() + 1))),
                     );
                   }))),
       gridData: FlGridData(show: false),
@@ -273,13 +278,16 @@ class _OverviewPageState extends AuthRequiredState<OverviewPage> {
         builder: (context, AsyncSnapshot<List<List<double>>> snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
             return SizedBox(
-              height: 180.0,
+              height: 240.0,
               width: 500.0,
               child: BarChart(barChartMainData(
                   barChartGroupMainData(snapshot.data![0], snapshot.data![1]))),
             );
           } else {
-            return const CircularProgressIndicator();
+            return const Padding(
+              padding: EdgeInsets.all(24.0),
+              child: CircularProgressIndicator(),
+            );
           }
         });
   }
