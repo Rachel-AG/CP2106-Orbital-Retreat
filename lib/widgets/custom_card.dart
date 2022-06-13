@@ -5,11 +5,11 @@ class CustomCard extends StatelessWidget {
   const CustomCard({
     Key? key,
     required this.title,
-    required this.widget,
+    required this.child,
   }) : super(key: key);
 
   final String title;
-  final Widget widget;
+  final Widget child;
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +33,7 @@ class CustomCard extends StatelessWidget {
             const SizedBox(
               height: 24,
             ),
-            widget,
+            child,
           ],
         ),
       ),

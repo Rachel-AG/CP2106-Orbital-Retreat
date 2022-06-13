@@ -100,6 +100,11 @@ class TransactionService {
     return resultList;
   }
 
+  /// Retrieve transactions that occurs within the specified time frame.
+  ///
+  /// [month] and [year] specify the time of the transactions.
+  /// The transaction list obtained are all expenses if [isExpense] is true.
+  /// The transaction list obtained are all incomes if [isExpense] is false.
   Future<List<Transaction>> getMonthTransactions(context,
       {required int month, required int year, required bool isExpense}) async {
     final result = await client
@@ -123,6 +128,11 @@ class TransactionService {
     return dataList.map((e) => Transaction.fromJson(e)).toList();
   }
 
+  /// Retrieve the total amount of money in each category based on a list of transactions.
+  ///
+  /// [transactionList] is the list of transactions to be calculated.
+  /// The list of categories used are Expenses' categories if [isExpense] is true.
+  /// The list of categories used are Incomes' categories if [isExpense] is false.
   Future<Map<Category, double>> getBreakdownByCategoryFromList(context,
       {required List<Transaction> transactionList,
       required bool isExpense}) async {
@@ -143,11 +153,39 @@ class TransactionService {
     return result;
   }
 
+  /// Retrieve the total amount of money in each category based on transactions that occur in specified time frame.
+  ///
+  /// [month] and [year] specify the time of the transactions.
+  /// The list of categories used are Expenses' categories if [isExpense] is true.
+  /// The list of categories used are Incomes' categories if [isExpense] is false.
   Future<Map<Category, double>> getBreakdownByCategoryFromTime(context,
       {required int month, required int year, required bool isExpense}) async {
     final transactionList = await getMonthTransactions(context,
         month: month, year: year, isExpense: isExpense);
     return getBreakdownByCategoryFromList(context,
         transactionList: transactionList, isExpense: isExpense);
+  }
+
+  /// Retrieve the total amount of expense/income obtained in the specified time frame.
+  ///
+  /// [month] and [year] specify the time of the transactions.
+  /// Total amount of expense is returned if [isExpense] is true.
+  /// Total amount of income is returned if [isExpense] is false.
+  Future<double> getMonthTotalTransactions(context,
+      {required int month, required int year, required bool isExpense}) async {
+    final transactionList = await getMonthTransactions(context,
+        month: month, year: year, isExpense: isExpense);
+    return transactionList.fold<double>(
+        0.0, (previousValue, element) => previousValue + element.amount);
+  }
+
+  Future<List<double>> getTotalTransactionListByMonth(context,
+      {required int year, required bool isExpense}) async {
+    List<double> result = List.filled(12, 0.0);
+    for (int i = 0; i < result.length; i++) {
+      result[i] = await getMonthTotalTransactions(context,
+          month: i + 1, year: year, isExpense: isExpense);
+    }
+    return result;
   }
 }

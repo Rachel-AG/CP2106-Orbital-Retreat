@@ -8,14 +8,18 @@ import 'package:retreat/widgets/custom_dropdown.dart';
 import 'package:retreat/widgets/numeric_formfield.dart';
 import 'package:retreat/widgets/custom_button.dart';
 
-class RecordIncomePage extends StatefulWidget {
-  const RecordIncomePage({Key? key}) : super(key: key);
+class RecordTransactionTab extends StatefulWidget {
+  const RecordTransactionTab({Key? key, required this.isExpense})
+      : super(key: key);
+
+  final bool isExpense;
 
   @override
-  State<RecordIncomePage> createState() => _RecordIncomePageState();
+  State<RecordTransactionTab> createState() => _RecordTransactionTabState();
 }
 
-class _RecordIncomePageState extends AuthRequiredState<RecordIncomePage> {
+class _RecordTransactionTabState
+    extends AuthRequiredState<RecordTransactionTab> {
   final _supabaseClient = TransactionService();
   final TextEditingController _notesController = TextEditingController();
   final TextEditingController _amountController = TextEditingController();
@@ -27,37 +31,39 @@ class _RecordIncomePageState extends AuthRequiredState<RecordIncomePage> {
     super.dispose();
   }
 
-  List<Category>? categoryList;
-
   String get notes => _notesController.text.trim();
   double get amount => double.parse(_amountController.text);
   String category = "No category selected";
   int categoryId = -1;
   DateTime selectedDate = DateTime.now();
 
-  CustomDropdownButton dropDownCategory =
-      CustomDropdownButton(menuItems: List.empty());
+  late List<Category> categoryList;
+  late CustomDropdownButton dropDownCategory;
 
   Future record() async {
-    Category selectedCategory = categoryList![
-        categoryList!.indexWhere((element) => element.name == category)];
+    Category selectedCategory = categoryList[
+        categoryList.indexWhere((element) => element.name == category)];
     categoryId = selectedCategory.id;
     await _supabaseClient.insertTransaction(context,
         amount: amount,
         notes: notes,
         categoryId: categoryId,
         timeTransaction: selectedDate,
-        isExpense: false);
+        isExpense: widget.isExpense);
   }
 
   FutureBuilder<List<Category>> _dropDownCategoryBuilder() {
     return FutureBuilder<List<Category>>(
-        future: CategoryService.getIncomeCategories(context),
+        future: widget.isExpense
+            ? CategoryService.getExpenseCategories(context)
+            : CategoryService.getIncomeCategories(context),
         builder: (context, AsyncSnapshot<List<Category>> snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
-            categoryList = snapshot.data;
+            // initialize category list
+            categoryList = snapshot.data!;
+            // initialize dropDownCategory
             dropDownCategory = CustomDropdownButton(
-              menuItems: categoryList!.map((e) => e.name).toList(),
+              menuItems: categoryList.map((e) => e.name).toList(),
               title: "Category: ",
               hint: "Select a category",
             );
@@ -66,6 +72,12 @@ class _RecordIncomePageState extends AuthRequiredState<RecordIncomePage> {
             return const LinearProgressIndicator();
           }
         });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _dropDownCategoryBuilder();
   }
 
   @override
@@ -131,7 +143,7 @@ class _RecordIncomePageState extends AuthRequiredState<RecordIncomePage> {
                     await record()
                         .then((_) => ScaffoldMessenger.of(context)
                                 .showSnackBar(const SnackBar(
-                              content: Text('Income recorded'),
+                              content: Text('Transaction recorded'),
                               duration: Duration(seconds: 2),
                             )))
                         .then((_) => Navigator.pushReplacementNamed(

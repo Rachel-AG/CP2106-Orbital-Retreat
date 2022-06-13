@@ -1,8 +1,10 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:retreat/constants/auth_required_state.dart';
 import 'package:retreat/constants/text_styles.dart';
 import 'package:retreat/models/category.dart';
+import 'package:retreat/models/month.dart';
 import 'package:retreat/services/transactions_service.dart';
 import 'package:retreat/widgets/custom_card.dart';
 import 'package:retreat/widgets/custom_dropdown.dart';
@@ -20,25 +22,9 @@ class _OverviewPageState extends AuthRequiredState<OverviewPage> {
   int month = DateTime.now().month;
   int year = DateTime.now().year;
 
-  // TODO: show available months
-  static final _monthString = <String>[
-    'January',
-    'February',
-    'March',
-    'April',
-    'May',
-    'June',
-    'July',
-    'August',
-    'September',
-    'October',
-    'November',
-    'December'
-  ];
-
   // TODO: show earliest year
   static final List<String> _yearString =
-      List<int>.generate(50, (index) => DateTime.now().year - index)
+      List<int>.generate(10, (index) => DateTime.now().year - index)
           .map((e) => e.toString())
           .toList();
 
@@ -53,40 +39,49 @@ class _OverviewPageState extends AuthRequiredState<OverviewPage> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: ListView(children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+        child: ListView(
+            shrinkWrap: true,
+            scrollDirection: Axis.vertical,
             children: [
-              monthYearPopUpButton(),
-              Text(
-                '${_monthString[month - 1]}, $year',
-                style: TextStyles.optionTextStyle,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  monthYearPopUpButton(),
+                  Text(
+                    '${Month.fromIntToString(month)}, $year',
+                    style: TextStyles.optionTextStyle,
+                  ),
+                ],
               ),
-            ],
-          ),
-          CustomCard(
-            title: 'Expenses',
-            widget: pieChartBuilder(
-                _supabaseClient.getBreakdownByCategoryFromTime(context,
-                    month: month, year: year, isExpense: true)),
-          ),
-          const SizedBox(
-            height: 16.0,
-          ),
-          CustomCard(
-            title: 'Income',
-            widget: pieChartBuilder(
-                _supabaseClient.getBreakdownByCategoryFromTime(context,
-                    month: month, year: year, isExpense: false)),
-          )
-        ]),
+              CustomCard(
+                  title: 'Monthly Cash Flow',
+                  child: barChartBuilder(_totalTransactionListByMonth())),
+              const SizedBox(
+                height: 16.0,
+              ),
+              CustomCard(
+                title: 'Outflow',
+                child: pieChartBuilder(
+                    _supabaseClient.getBreakdownByCategoryFromTime(context,
+                        month: month, year: year, isExpense: true)),
+              ),
+              const SizedBox(
+                height: 16.0,
+              ),
+              CustomCard(
+                title: 'Inflow',
+                child: pieChartBuilder(
+                    _supabaseClient.getBreakdownByCategoryFromTime(context,
+                        month: month, year: year, isExpense: false)),
+              )
+            ]),
       ),
     );
   }
 
   IconButton monthYearPopUpButton() {
     CustomDropdownButton selectMonth = CustomDropdownButton(
-      menuItems: _monthString,
+      menuItems: Month.monthString,
       title: "Month",
     );
     CustomDropdownButton selectYear = CustomDropdownButton(
@@ -114,8 +109,7 @@ class _OverviewPageState extends AuthRequiredState<OverviewPage> {
                     } else {
                       setState(() {
                         month =
-                            _monthString.indexOf(selectMonth.btnSelectedVal!) +
-                                1;
+                            Month.fromStringtoInt(selectMonth.btnSelectedVal!);
                         year = int.parse(selectYear.btnSelectedVal!);
                       });
                       Navigator.of(context).pop();
@@ -213,6 +207,77 @@ class _OverviewPageState extends AuthRequiredState<OverviewPage> {
                 'No Transactions Recorded',
               );
             }
+          } else {
+            return const CircularProgressIndicator();
+          }
+        });
+  }
+
+  Future<List<List<double>>> _totalTransactionListByMonth() async {
+    return Future.wait([
+      _supabaseClient.getTotalTransactionListByMonth(context,
+          year: year, isExpense: true),
+      _supabaseClient.getTotalTransactionListByMonth(context,
+          year: year, isExpense: false),
+    ]);
+  }
+
+  List<BarChartGroupData> barChartGroupMainData(
+      List<double> totalExpenseList, List<double> totalIncomeList) {
+    return List.generate(
+        totalExpenseList.length,
+        (index) => BarChartGroupData(x: index, barsSpace: 4.0, barRods: [
+              BarChartRodData(
+                  toY: totalExpenseList[index], color: Colors.red, width: 6.0),
+              BarChartRodData(
+                  toY: totalIncomeList[index], color: Colors.green, width: 6.0)
+            ]));
+  }
+
+  BarChartData barChartMainData(List<BarChartGroupData> listOfGroupData) {
+    // TODO: finish titlesData
+    return BarChartData(
+      barGroups: listOfGroupData,
+      alignment: BarChartAlignment.center,
+      groupsSpace: 12.0,
+      baselineY: 0.0,
+      titlesData: FlTitlesData(
+          show: true,
+          rightTitles: AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
+          topTitles: AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
+          bottomTitles: AxisTitles(
+              sideTitles: SideTitles(
+                  reservedSize: 42.0,
+                  showTitles: true,
+                  getTitlesWidget: (double value, TitleMeta meta) {
+                    return SideTitleWidget(
+                      axisSide: meta.axisSide,
+                      space: 16,
+                      child:
+                          Text(Month.fromIntToStringShorten(value.toInt() + 1)),
+                    );
+                  }))),
+      gridData: FlGridData(show: false),
+      borderData: FlBorderData(show: false),
+    );
+  }
+
+  FutureBuilder<List<List<double>>> barChartBuilder(
+      Future<List<List<double>>> totalTransactionList) {
+    return FutureBuilder<List<List<double>>>(
+        future: totalTransactionList,
+        builder: (context, AsyncSnapshot<List<List<double>>> snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            return SizedBox(
+              height: 180.0,
+              width: 500.0,
+              child: BarChart(barChartMainData(
+                  barChartGroupMainData(snapshot.data![0], snapshot.data![1]))),
+            );
           } else {
             return const CircularProgressIndicator();
           }

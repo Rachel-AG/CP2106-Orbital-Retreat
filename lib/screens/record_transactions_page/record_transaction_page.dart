@@ -1,13 +1,6 @@
-
 import 'package:flutter/material.dart';
 import 'package:retreat/constants/auth_required_state.dart';
-import 'package:retreat/screens/record_transactions_page/record_expense_page.dart';
-import 'package:retreat/screens/record_transactions_page/record_income_page.dart';
-import 'package:retreat/widgets/custom_formfield.dart';
-import 'package:retreat/services/transactions_service.dart';
-import 'package:retreat/widgets/custom_dropdown.dart';
-import 'package:retreat/widgets/numeric_formfield.dart';
-import 'package:retreat/widgets/custom_button.dart';
+import 'package:retreat/screens/record_transactions_page/record_transaction_tab.dart';
 
 class RecordTransactionPage extends StatefulWidget {
   const RecordTransactionPage({Key? key}) : super(key: key);
@@ -18,27 +11,30 @@ class RecordTransactionPage extends StatefulWidget {
 
 class _RecordTransactionPageState
     extends AuthRequiredState<RecordTransactionPage> {
+  List<Widget> nTabs = <Widget>[
+    const RecordTransactionTab(
+      isExpense: true,
+    ),
+    const RecordTransactionTab(isExpense: false)
+  ];
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: 2,
       child: Scaffold(
         appBar: AppBar(
-          bottom: TabBar(
+          bottom: const TabBar(
             tabs: [
               Tab(text: "Expense"),
               Tab(text: "Income"),
             ],
           ),
-          title: Text('Record Transaction'),
+          title: const Text('Record Transaction'),
         ),
         body: TabBarView(
-          children: [
-            RecordExpensePage(),
-            RecordIncomePage(),
-          ],
+          children: nTabs,
         ),
-        
       ),
     );
   }
