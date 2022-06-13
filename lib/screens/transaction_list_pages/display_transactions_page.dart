@@ -25,7 +25,6 @@ class _DisplayTransactionsPageState
           centerTitle: true,
           leading: GestureDetector(
               onTap: () {
-                //Navigator.pushReplacementNamed(context, '/home');
                 Navigator.popUntil(context, ModalRoute.withName('/home'));
               },
               child: const Icon(
