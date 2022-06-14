@@ -7,6 +7,7 @@ import 'package:retreat/models/transaction.dart';
 class TransactionService {
   final client = Supabase.instance.client;
 
+  ///Inserts transaction to the database
   Future<void> insertTransaction(context,
       {required double amount,
       String? notes,
@@ -23,7 +24,6 @@ class TransactionService {
       }
     ]).execute();
 
-    // NO ERROR HANDLING
     if (result.error?.message != null) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('Error: ${result.error!.message.toString()}'),
@@ -32,6 +32,7 @@ class TransactionService {
     }
   }
 
+  /// Deletes transaction
   Future<void> deleteTransaction(context, {required String id}) async {
     final result =
         await client.from('transactions').delete().eq('id', id).execute();
@@ -43,6 +44,57 @@ class TransactionService {
     }
   }
 
+  Future<bool> updateTransaction(context,
+      {required String id,
+      required double amount,
+      String? notes,
+      required int categoryId,
+      required DateTime timeTransaction,
+      required bool isExpense}) async {
+    final result = await client
+        .from('transactions')
+        .update({
+          'amount': amount,
+          'notes': notes,
+          'category_id': categoryId,
+          'time_transaction': timeTransaction.toIso8601String(),
+          'is_expense': isExpense
+        })
+        .eq('id', id)
+        .execute();
+
+    // check if transaction is updated successfully
+    if (result.error != null) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Error: ${result.error!.message.toString()}'),
+        duration: const Duration(seconds: 2),
+      ));
+      return false;
+    }
+    return true;
+}
+
+  /// Retrieves a transaction
+  Future<List<Transaction>> getTransaction(context, String id) async {
+    final result = await client
+        .from('transactions')
+        .select()
+        .eq('id', id)
+        .eq('created_by', client.auth.currentUser?.id)
+        .execute();
+
+    if (result.error?.message != null) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Error: ${result.error!.message.toString()}'),
+        duration: const Duration(seconds: 2),
+      ));
+    }
+    final data = result.data;
+
+    return data.map((e) => Transaction.fromJson(e));
+  }
+
+  /// Retrieves all transactions recorded by the user
   Future<List<Transaction>> getAllTransactions(context) async {
     final result = await client
         .from('transactions')
@@ -61,13 +113,14 @@ class TransactionService {
     return List.from(dataList.map((e) => Transaction.fromJson(e)).toList());
   }
 
-  // is this get all transactions or all expenses?
+  /// Retrieves all transactions recorded by the user that are sorted as following:
+  /// transaction with the most recent date of transaction is at the top most
+  /// if the date of transaction is the same, the one that was recorded last is on top
   Future<List<Transaction>> getAllTransactionsSorted(context) async {
     final result = await client
         .from('transactions')
         .select()
         .eq('created_by', client.auth.currentUser?.id)
-        .eq('is_expense', true)
         .execute();
 
     if (result.error?.message != null) {

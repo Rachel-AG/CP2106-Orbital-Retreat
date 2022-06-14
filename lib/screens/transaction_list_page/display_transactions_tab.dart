@@ -17,6 +17,10 @@ class _DisplayTransactionsPageState
     extends AuthRequiredState<DisplayTransactionsPage> {
   final _supabaseClient = TransactionService();
 
+  Future delete(String id) async {
+    await _supabaseClient.deleteTransaction(context, id: id);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,10 +46,11 @@ class _DisplayTransactionsPageState
                   // } else if (!snapshot.hasData || snapshot.data == null) {
                   //   return const Text('You have not recorded any transactions');
                 } else {
+                  var transactions = snapshot.data;
                   return ListView.builder(
-                    itemCount: snapshot.data?.length,
+                    itemCount: transactions?.length,
                     itemBuilder: (BuildContext ctxt, int index) {
-                      var transaction = snapshot.data?[index];
+                      var transaction = transactions?[index];
                       String amountString =
                           transaction?.amount.toString() ?? "No amount";
                       String notesString = transaction?.notes ?? "";
@@ -61,9 +66,31 @@ class _DisplayTransactionsPageState
                         margin: const EdgeInsets.all(12.0),
                         child: ListTile(
                           title: Text("\$ $amountString"),
-                          subtitle:
-                              Text("Notes: $notesString \nTime: $timeTransaction"),
+                          subtitle: Text(
+                              "Notes: $notesString \nTime: $timeTransaction"),
                           isThreeLine: true,
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                //if else here for isexpense and navigate accordingly
+                                  onPressed: () {}, icon: Icon(Icons.edit)),
+                              IconButton(
+                                  icon: Icon(Icons.delete),
+                                  onPressed: () async {
+                                    await delete(transaction?.id ?? "").then( 
+                                        (_) => ScaffoldMessenger.of(context)
+                                                .showSnackBar(const SnackBar(
+                                              content:
+                                                  Text('Transaction deleted'),
+                                              duration: Duration(seconds: 2),
+                                            )));
+                                    setState(() {
+                                      transactions?.remove(transaction);
+                                    });
+                                  }),
+                            ],
+                          ),
                         ),
                       );
                     },
