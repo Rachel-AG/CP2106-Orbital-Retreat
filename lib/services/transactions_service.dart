@@ -174,9 +174,7 @@ class TransactionService {
         content: Text('Error: ${result.error!.message.toString()}'),
         duration: const Duration(seconds: 2),
       ));
-    } else if (result.data == null) {
-      print('no transactions recorded');
-    }
+    } 
     final dataList = result.data as List;
     return dataList.map((e) => Transaction.fromJson(e)).toList();
   }

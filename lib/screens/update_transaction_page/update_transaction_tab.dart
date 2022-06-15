@@ -7,22 +7,25 @@ import 'package:retreat/services/transactions_service.dart';
 import 'package:retreat/widgets/custom_dropdown.dart';
 import 'package:retreat/widgets/numeric_formfield.dart';
 import 'package:retreat/widgets/custom_button.dart';
+import 'package:retreat/models/transaction.dart';
 
-class RecordTransactionTab extends StatefulWidget {
-  const RecordTransactionTab({Key? key, required this.isExpense})
+class UpdateTransactionTab extends StatefulWidget {
+
+  const UpdateTransactionTab({Key? key, required this.isExpense, required this.initialTransaction})
       : super(key: key);
 
+  final Transaction initialTransaction;
   final bool isExpense;
 
   @override
-  State<RecordTransactionTab> createState() => _RecordTransactionTabState();
+  State<UpdateTransactionTab> createState() => _UpdateTransactionTabState();
 }
 
-class _RecordTransactionTabState
-    extends AuthRequiredState<RecordTransactionTab> {
+class _UpdateTransactionTabState
+    extends AuthRequiredState<UpdateTransactionTab> {
   final _supabaseClient = TransactionService();
-  final TextEditingController _notesController = TextEditingController();
-  final TextEditingController _amountController = TextEditingController();
+  TextEditingController _notesController = TextEditingController();
+  TextEditingController _amountController = TextEditingController();
 
   @override
   void dispose() {
@@ -40,12 +43,12 @@ class _RecordTransactionTabState
   late List<Category> categoryList;
   late CustomDropdownButton dropDownCategory;
 
-  Future record() async {
+  Future update() async {
     Category selectedCategory = categoryList[
         categoryList.indexWhere((element) => element.name == category)];
     categoryId = selectedCategory.id;
     await _supabaseClient.updateTransaction(context,
-        id: id,
+        id: widget.initialTransaction.id,
         amount: amount,
         notes: notes,
         categoryId: categoryId,
@@ -63,10 +66,14 @@ class _RecordTransactionTabState
             // initialize category list
             categoryList = snapshot.data!;
             // initialize dropDownCategory
+            int initialCategoryId = widget.initialTransaction.categoryId;
+            Category selectedCategory = categoryList[
+              categoryList.indexWhere((element) => element.id == initialCategoryId)];
             dropDownCategory = CustomDropdownButton(
               menuItems: categoryList.map((e) => e.name).toList(),
               title: "Category: ",
               hint: "Select a category",
+              btnSelectedVal: selectedCategory.name,
             );
             return dropDownCategory;
           } else {
@@ -79,6 +86,9 @@ class _RecordTransactionTabState
   void initState() {
     super.initState();
     _dropDownCategoryBuilder();
+    _notesController.text = widget.initialTransaction.notes;
+    _amountController.text = widget.initialTransaction.amount.toString();
+    selectedDate = DateTime.parse(widget.initialTransaction.timeTransaction);
   }
 
   @override
@@ -93,6 +103,7 @@ class _RecordTransactionTabState
               NumericFormField(
                 labelText: 'Amount',
                 controller: _amountController,
+                //initialValue: widget.initialTransaction.amount.toString(),
               ),
               const SizedBox(height: 20.0),
               Row(
@@ -124,10 +135,11 @@ class _RecordTransactionTabState
               CustomFormField(
                 labelText: 'Notes',
                 controller: _notesController,
+                //initialValue: widget.initialTransaction.notes,
               ),
               const SizedBox(height: 20.0),
               CustomButton(
-                text: "Record",
+                text: "Update",
                 onTap: () async {
                   if (_amountController.text.isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
@@ -141,10 +153,10 @@ class _RecordTransactionTabState
                     ));
                   } else {
                     category = dropDownCategory.btnSelectedVal!;
-                    await record()
+                    await update()
                         .then((_) => ScaffoldMessenger.of(context)
                                 .showSnackBar(const SnackBar(
-                              content: Text('Transaction recorded'),
+                              content: Text('Transaction updated'),
                               duration: Duration(seconds: 2),
                             )))
                         .then((_) => Navigator.pushReplacementNamed(

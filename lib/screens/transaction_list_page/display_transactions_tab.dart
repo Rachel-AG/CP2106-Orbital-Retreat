@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:retreat/constants/auth_required_state.dart';
 import 'package:retreat/constants/app_colors.dart';
+import 'package:retreat/screens/update_transaction_page/update_transaction_page.dart';
 import 'package:retreat/services/transactions_service.dart';
 import '../../models/transaction.dart';
-import 'package:flutter_slidable/flutter_slidable.dart';
+// import 'package:flutter_slidable/flutter_slidable.dart';
 
 class DisplayTransactionsPage extends StatefulWidget {
   const DisplayTransactionsPage({Key? key}) : super(key: key); //??
@@ -73,8 +74,10 @@ class _DisplayTransactionsPageState
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               IconButton(
-                                //if else here for isexpense and navigate accordingly
-                                  onPressed: () {}, icon: Icon(Icons.edit)),
+                                  icon: Icon(Icons.edit),
+                                  onPressed: () {
+                                    Navigator.of(context).push(MaterialPageRoute(builder:(context)=>UpdateTransactionPage(initialTransaction: transaction!)));
+                                  }),
                               IconButton(
                                   icon: Icon(Icons.delete),
                                   onPressed: () async {

@@ -8,22 +8,22 @@ class CustomFormField extends StatelessWidget {
       this.hintText,
       this.labelText,
       this.obscureText = false,
-      required this.controller,
-      this.initialValue})
+      required this.controller})
+      //this.initialValue})
       : super(key: key);
 
   final String? hintText;
   final String? labelText;
   final bool obscureText;
   final TextEditingController controller;
-  final String? initialValue;
+  //final String? initialValue;
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
       obscureText: obscureText,
       controller: controller,
-      initialValue: initialValue,
+      //initialValue: initialValue,
       decoration: InputDecoration(
         border: const UnderlineInputBorder(),
         filled: true,
