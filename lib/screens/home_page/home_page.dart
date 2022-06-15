@@ -14,8 +14,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends AuthRequiredState<HomePage> {
-  final _profileClient = ProfileService();
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -49,7 +47,7 @@ class _HomePageState extends AuthRequiredState<HomePage> {
             child: Padding(
               padding: const EdgeInsets.all(24.0),
               child: FutureBuilder<Profile>(
-                future: _profileClient.getCurrentUserProfile(context),
+                future: ProfileService.getCurrentUserProfile(context),
                 builder: (context, AsyncSnapshot<Profile> snapshot) {
                   if (snapshot.connectionState == ConnectionState.done) {
                     return Row(

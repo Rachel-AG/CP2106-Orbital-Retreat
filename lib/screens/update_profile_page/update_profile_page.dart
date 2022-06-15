@@ -16,7 +16,6 @@ class UpdateProfilePage extends StatefulWidget {
 }
 
 class _UpdateProfilePage extends AuthRequiredState<UpdateProfilePage> {
-  final _supabaseClient = ProfileService();
   final TextEditingController _usernameController = TextEditingController();
 
   String get username => _usernameController.text.trim();
@@ -40,7 +39,7 @@ class _UpdateProfilePage extends AuthRequiredState<UpdateProfilePage> {
               ),
               // email form
               FutureBuilder<Profile>(
-                  future: _supabaseClient.getCurrentUserProfile(context),
+                  future: ProfileService.getCurrentUserProfile(context),
                   builder: (context, AsyncSnapshot<Profile> snapshot) {
                     if (snapshot.connectionState == ConnectionState.done) {
                       if (snapshot.data?.avatarUrl != null) {
@@ -83,8 +82,8 @@ class _UpdateProfilePage extends AuthRequiredState<UpdateProfilePage> {
     return CustomButton(
       text: "Confirm",
       onTap: () async {
-        await _supabaseClient
-            .updateCurrentUserUsername(context, username: username)
+        await ProfileService.updateCurrentUserUsername(context,
+                username: username)
             .then((value) {
           if (value) {
             ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
@@ -111,7 +110,7 @@ class _UpdateProfilePage extends AuthRequiredState<UpdateProfilePage> {
           if (imageFile == null) {
             return;
           }
-          await _supabaseClient.uploadAvatar(context, imageFile: imageFile);
+          await ProfileService.uploadAvatar(context, imageFile: imageFile);
           setState(() {});
         },
         icon: const Icon(Icons.add_a_photo_rounded),

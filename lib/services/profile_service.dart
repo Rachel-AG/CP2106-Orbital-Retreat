@@ -8,13 +8,13 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ProfileService {
   /// The supabase client for Retreat.
-  final client = Supabase.instance.client;
+  static final client = Supabase.instance.client;
 
   /// Creates a user profile if a user in authenticated.
   ///
   /// Returns true if a user profile is successfully created,
   /// otherwise returns false.
-  Future<bool> insertProfile(context, {required String username}) async {
+  static Future<bool> insertProfile(context, {required String username}) async {
     final result = await client.from('profiles').insert([
       {'id': client.auth.currentUser?.id, 'username': username}
     ]).execute();
@@ -34,7 +34,7 @@ class ProfileService {
   ///
   /// Returns true if the username is successfully updated,
   /// otherwise returns false.
-  Future<bool> updateCurrentUserUsername(context,
+  static Future<bool> updateCurrentUserUsername(context,
       {required String username}) async {
     final result = await client
         .from('profiles')
@@ -57,7 +57,7 @@ class ProfileService {
   }
 
   /// Retrieves the profile of the currently authenticaed user.
-  Future<Profile> getCurrentUserProfile(context) async {
+  static Future<Profile> getCurrentUserProfile(context) async {
     final result = await client
         .from('profiles')
         .select()
@@ -76,7 +76,7 @@ class ProfileService {
     return dataList.map((e) => Profile.fromJson(e)).toList().elementAt(0);
   }
 
-  Future<bool> updateCurrentUserAvatar(context,
+  static Future<bool> updateCurrentUserAvatar(context,
       {required String imageUrl}) async {
     final result = await client
         .from('profiles')
@@ -98,7 +98,7 @@ class ProfileService {
     return true;
   }
 
-  Future<void> uploadAvatar(context, {required XFile imageFile}) async {
+  static Future<void> uploadAvatar(context, {required XFile imageFile}) async {
     final bytes = await imageFile.readAsBytes();
     final fileName = _nameFile(file: imageFile);
 
@@ -122,7 +122,7 @@ class ProfileService {
   /// Creates a name for [file] based on current date and time.
   ///
   /// Returns a name with a file extension as a String.
-  String _nameFile({required XFile file}) {
+  static String _nameFile({required XFile file}) {
     final fileExt = file.path.split('.').last;
     final fileName = '${DateTime.now().toIso8601String()}.$fileExt';
     return fileName;
@@ -132,7 +132,8 @@ class ProfileService {
   ///
   /// Returns the image url as a String if successfully retrieved.
   /// Throws a [NoDataRetrievedException] if the image could not be found.
-  Future<String> _getAvatarUrl(context, {required String fileName}) async {
+  static Future<String> _getAvatarUrl(context,
+      {required String fileName}) async {
     final result =
         Supabase.instance.client.storage.from('avatars').getPublicUrl(fileName);
 
