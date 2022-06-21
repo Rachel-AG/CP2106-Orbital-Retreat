@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:retreat/constants/auth_required_state.dart';
+import 'package:retreat/constants/text_styles.dart';
 import 'package:retreat/models/category.dart';
 import 'package:retreat/services/category_service.dart';
 import 'package:retreat/widgets/custom_formfield.dart';
@@ -97,8 +98,8 @@ class _RecordTransactionTabState
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
-                  const Text("Date of transaction: "),
-                  Text("${selectedDate.toLocal()}".split(' ')[0]),
+                  const Text("Date of transaction:", style: TextStyles.optionTextStyle),
+                  Text("${selectedDate.toLocal()}".split(' ')[0], style: TextStyles.optionTextStyle),
                   ElevatedButton(
                     child: const Text("Edit"),
                     onPressed: () async {

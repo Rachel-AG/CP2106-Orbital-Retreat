@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:retreat/constants/auth_required_state.dart';
 import 'package:retreat/constants/app_colors.dart';
+import 'package:retreat/constants/text_styles.dart';
 import 'package:retreat/screens/update_transaction_page/update_transaction_page.dart';
 import 'package:retreat/services/transactions_service.dart';
 import '../../models/transaction.dart';
@@ -66,9 +67,10 @@ class _DisplayTransactionsPageState
                                 color: AppColors.steelteal)),
                         margin: const EdgeInsets.all(12.0),
                         child: ListTile(
-                          title: Text("\$ $amountString"),
+                          title: Text("\$ $amountString", style: TextStyles.optionTextStyle),
                           subtitle: Text(
-                              "Notes: $notesString \nTime: $timeTransaction"),
+                              "Notes: $notesString \nTime: $timeTransaction", 
+                              style: TextStyles.subOptionTextStyle,),
                           isThreeLine: true,
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,

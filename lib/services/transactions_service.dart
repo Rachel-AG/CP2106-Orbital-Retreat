@@ -153,6 +153,30 @@ class TransactionService {
     return resultList;
   }
 
+  Future<double> sumMonthTransactions(context,
+      {required int month, required int year, required bool isExpense}) async {
+    final result = await client
+        .from('transactions')
+        .select()
+        .eq('created_by', client.auth.currentUser?.id)
+        .eq('is_expense', isExpense)
+        .gte('time_transaction', DateTime.utc(year, month).toIso8601String())
+        .lt('time_transaction', DateTime.utc(year, month + 1).toIso8601String())
+        .execute();
+
+    if (result.error?.message != null) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Error: ${result.error!.message.toString()}'),
+        duration: const Duration(seconds: 2),
+      ));
+    } 
+    final dataList = result.data as List;
+    List<Transaction> transactionList = dataList.map((e) => Transaction.fromJson(e)).toList();
+    List<double> amountList = transactionList.map((e) => e.amount).toList();
+    double sum = amountList.fold(0, (p, c) => p + c);
+    return sum;
+  }
+
   /// Retrieve transactions that occurs within the specified time frame.
   ///
   /// [month] and [year] specify the time of the transactions.

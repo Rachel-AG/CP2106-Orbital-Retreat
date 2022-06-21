@@ -33,6 +33,13 @@ class TextStyles {
     fontWeight: FontWeight.w500,
   );
 
+  static const subOptionTextStyle = TextStyle(
+    color: AppColors.darkblue,
+    fontSize: 14,
+    fontWeight: FontWeight.w300,
+    height: 1.4
+  );
+
   static const optionCategoryStyle = TextStyle(
     color: AppColors.darkblue,
     fontSize: 28,
