@@ -26,7 +26,7 @@ class _SettingPageState extends AuthRequiredState<SettingPage> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.pushReplacementNamed(context, '/home');
+            Navigator.pop(context);
           },
         ),
       ),

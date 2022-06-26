@@ -4,7 +4,8 @@ import 'package:retreat/screens/update_transaction_page/update_transaction_tab.d
 import 'package:retreat/models/transaction.dart';
 
 class UpdateTransactionPage extends StatefulWidget {
-  const UpdateTransactionPage({Key? key, required this.initialTransaction}) : super(key: key);
+  const UpdateTransactionPage({Key? key, required this.initialTransaction})
+      : super(key: key);
 
   final Transaction initialTransaction;
 
@@ -14,23 +15,18 @@ class UpdateTransactionPage extends StatefulWidget {
 
 class _UpdateTransactionPageState
     extends AuthRequiredState<UpdateTransactionPage> {
-
   @override
   Widget build(BuildContext context) {
-      List<Widget> nTabs = <Widget>[
-    UpdateTransactionTab(
-      isExpense: true,
-      initialTransaction: widget.initialTransaction
-    ),
-    UpdateTransactionTab(
-      isExpense: false,
-      initialTransaction: widget.initialTransaction
-      ),
-  ];
+    List<Widget> nTabs = <Widget>[
+      UpdateTransactionTab(
+          isExpense: true, initialTransaction: widget.initialTransaction),
+      UpdateTransactionTab(
+          isExpense: false, initialTransaction: widget.initialTransaction),
+    ];
 
     return DefaultTabController(
       length: 2,
-      initialIndex: widget.initialTransaction.isExpense? 0 : 1,
+      initialIndex: widget.initialTransaction.isExpense ? 0 : 1,
       child: Scaffold(
         appBar: AppBar(
           bottom: const TabBar(
@@ -40,6 +36,13 @@ class _UpdateTransactionPageState
             ],
           ),
           title: const Text('Update Transaction'),
+          centerTitle: true,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
         ),
         body: TabBarView(
           children: nTabs,

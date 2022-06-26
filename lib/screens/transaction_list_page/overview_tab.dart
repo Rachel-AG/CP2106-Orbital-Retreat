@@ -35,6 +35,12 @@ class _OverviewPageState extends AuthRequiredState<OverviewPage> {
       appBar: AppBar(
         title: const Text("Overview"),
         centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

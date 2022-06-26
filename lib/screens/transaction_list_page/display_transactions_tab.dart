@@ -26,15 +26,15 @@ class _DisplayTransactionsPageState
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          title: const Text('My Transactions'),
-          centerTitle: true,
-          leading: GestureDetector(
-              onTap: () {
-                Navigator.popUntil(context, ModalRoute.withName('/home'));
-              },
-              child: const Icon(
-                Icons.home,
-              ))),
+        title: const Text('My Transactions'),
+        centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ),
       body: FutureBuilder<List<Transaction>>(
           future: _supabaseClient.getAllTransactionsSorted(context),
           builder: (context, AsyncSnapshot<List<Transaction>> snapshot) {
@@ -76,12 +76,17 @@ class _DisplayTransactionsPageState
                               IconButton(
                                   icon: Icon(Icons.edit),
                                   onPressed: () {
-                                    Navigator.of(context).push(MaterialPageRoute(builder:(context)=>UpdateTransactionPage(initialTransaction: transaction!)));
+                                    Navigator.of(context).push(
+                                        MaterialPageRoute(
+                                            builder: (context) =>
+                                                UpdateTransactionPage(
+                                                    initialTransaction:
+                                                        transaction!)));
                                   }),
                               IconButton(
                                   icon: Icon(Icons.delete),
                                   onPressed: () async {
-                                    await delete(transaction?.id ?? "").then( 
+                                    await delete(transaction?.id ?? "").then(
                                         (_) => ScaffoldMessenger.of(context)
                                                 .showSnackBar(const SnackBar(
                                               content:

@@ -15,6 +15,12 @@ class _BudgetHistoryPageState extends AuthRequiredState<BudgetHistoryPage> {
       appBar: AppBar(
         title: const Text('My Budgets'),
         centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
       ),
       body: const Text('Insert budget history here'),
     );

@@ -29,6 +29,18 @@ class _UpdateProfilePage extends AuthRequiredState<UpdateProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          "Update Profile",
+        ),
+        centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
         child: Column(
@@ -80,7 +92,7 @@ class _UpdateProfilePage extends AuthRequiredState<UpdateProfilePage> {
 
   CustomButton updateUsernameButton() {
     return CustomButton(
-      text: "Confirm",
+      text: "Confirm New Username",
       onTap: () async {
         await ProfileService.updateCurrentUserUsername(context,
                 username: username)
@@ -91,6 +103,8 @@ class _UpdateProfilePage extends AuthRequiredState<UpdateProfilePage> {
               duration: Duration(seconds: 2),
             ));
             setState(() {});
+            // QUICK FIX FOR UNITY OVERLAY
+            Navigator.popUntil(context, ModalRoute.withName('/home'));
           }
         });
       },
@@ -111,6 +125,10 @@ class _UpdateProfilePage extends AuthRequiredState<UpdateProfilePage> {
             return;
           }
           await ProfileService.uploadAvatar(context, imageFile: imageFile);
+
+          // QUICK FIX FOR UNITY OVERLAY
+          Navigator.popUntil(context, ModalRoute.withName('/home'));
+
           setState(() {});
         },
         icon: const Icon(Icons.add_a_photo_rounded),
