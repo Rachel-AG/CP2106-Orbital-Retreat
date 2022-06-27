@@ -205,6 +205,9 @@ class _BudgetHistoryPageState extends AuthRequiredState<BudgetHistoryPage> {
   CircularPercentIndicator remainingBudgetChart(
       double sumExpense, double budgetThisMonth) {
     double remainingBudget = budgetThisMonth - sumExpense;
+    if(remainingBudget < 0) {
+      remainingBudget = 0;
+    }
     double percentBudgetRemaining = remainingBudget / budgetThisMonth;
     String percentBudgetRemainingString = "${(percentBudgetRemaining*100).toStringAsFixed(2)}%";
     return CircularPercentIndicator(
