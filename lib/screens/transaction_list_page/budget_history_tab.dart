@@ -134,7 +134,7 @@ class _BudgetHistoryPageState extends AuthRequiredState<BudgetHistoryPage> {
 
   Widget recordBudgetButton(bool budgetExist, Budget? existingBudget) {
     String buttonText;
-    if(budgetExist) {
+    if (budgetExist) {
       buttonText = "Update Budget";
     } else {
       buttonText = "Insert Budget";
@@ -174,8 +174,9 @@ class _BudgetHistoryPageState extends AuthRequiredState<BudgetHistoryPage> {
                                         content: Text('Budget recorded'),
                                         duration: Duration(seconds: 2),
                                       )))
-                                  .then((_) => Navigator.pushReplacementNamed(
-                                      context, '/home/transactionlist/budget'));
+                                  .then((_) => setState(() {}));
+                              // .then((_) => Navigator.pushReplacementNamed(
+                              // context, '/home/transactionlist/budget'));
                             } else {
                               String id = existingBudget?.id ?? "0";
                               //TO DO: POP UP WARNING MSG
@@ -185,8 +186,9 @@ class _BudgetHistoryPageState extends AuthRequiredState<BudgetHistoryPage> {
                                         content: Text('Budget updated'),
                                         duration: Duration(seconds: 2),
                                       )))
-                                  .then((_) => Navigator.pushReplacementNamed(
-                                      context, '/home/transactionlist/budget'));
+                                  .then((_) => setState(() {}));
+                              // .then((_) => Navigator.pushReplacementNamed(
+                              //     context, '/home/transactionlist/budget'));
                             }
                           }
                         },
@@ -209,7 +211,8 @@ class _BudgetHistoryPageState extends AuthRequiredState<BudgetHistoryPage> {
       remainingBudget = 0;
     }
     double percentBudgetRemaining = remainingBudget / budgetThisMonth;
-    String percentBudgetRemainingString = "${(percentBudgetRemaining*100).toStringAsFixed(2)}%";
+    String percentBudgetRemainingString =
+        "${(percentBudgetRemaining * 100).toStringAsFixed(2)}%";
     return CircularPercentIndicator(
       radius: 100.0,
       lineWidth: 20.0,
