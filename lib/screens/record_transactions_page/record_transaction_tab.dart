@@ -96,10 +96,15 @@ class _RecordTransactionTabState
               ),
               const SizedBox(height: 20.0),
               Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
-                  const Text("Date of transaction:", style: TextStyles.optionTextStyle),
-                  Text("${selectedDate.toLocal()}".split(' ')[0], style: TextStyles.optionTextStyle),
+                  Row(
+                    children: [
+                      const Text("Date: ", style: TextStyles.optionTextStyle),
+                      Text("${selectedDate.toLocal()}".split(' ')[0],
+                          style: TextStyles.optionTextStyle),
+                    ],
+                  ),
                   ElevatedButton(
                     child: const Text("Edit"),
                     onPressed: () async {
