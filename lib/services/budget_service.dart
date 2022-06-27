@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:retreat/models/category.dart';
-import 'package:retreat/services/category_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:retreat/models/budget.dart';
 
@@ -86,13 +84,13 @@ class BudgetService {
   }
 
   /// Retrieves a Budget based on month and year 
-  Future<Budget> getBudgetMonthYear(context, int month, int year) async {
+  Future<Budget?> getBudgetMonthYear(context, {required int month, required int year}) async {
     final result = await client
         .from('budgets')
         .select()
+        .eq('created_by', client.auth.currentUser?.id)
         .eq('month', month)
         .eq('year', year)
-        .eq('created_by', client.auth.currentUser?.id)
         .execute();
 
     if (result.error?.message != null) {
@@ -101,9 +99,14 @@ class BudgetService {
         duration: const Duration(seconds: 2),
       ));
     }
-    final data = result.data;
+    final dataList = result.data as List;
 
-    return data.map((e) => Budget.fromJson(e)).toList().first;
+    final convertedList = List.from(dataList.map((e) => Budget.fromJson(e)).toList());
+    if(convertedList.isEmpty) {
+      return null;
+    } else {
+      return convertedList.elementAt(0);
+    }
   }
 
   /// Retrieves all Budgets recorded by the user
