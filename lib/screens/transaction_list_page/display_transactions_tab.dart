@@ -76,12 +76,12 @@ class _DisplayTransactionsPageState
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               IconButton(
-                                  icon: Icon(Icons.edit),
+                                  icon: const Icon(Icons.edit),
                                   onPressed: () {
                                     Navigator.of(context).push(MaterialPageRoute(builder:(context)=>UpdateTransactionPage(initialTransaction: transaction!)));
                                   }),
                               IconButton(
-                                  icon: Icon(Icons.delete),
+                                  icon: const Icon(Icons.delete),
                                   onPressed: () async {
                                     await delete(transaction?.id ?? "").then( 
                                         (_) => ScaffoldMessenger.of(context)
