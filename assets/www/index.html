@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang=”en”></html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body{margin: 0;}
+    </style>
+</head>
+<body>
+<script type="module">
+    import * as THREE from 'https://unpkg.com/three/build/three.module.js';
+    import { OrbitControls } from 'https://cdn.skypack.dev/three-stdlib@2.8.5/controls/OrbitControls';
+    import { mergeBufferGeometries } from 'https://cdn.skypack.dev/three-stdlib@2.8.5/utils/BufferGeometryUtils';
+    import SimplexNoise from 'https://cdn.skypack.dev/simplex-noise';
+
+    // --------------------
+    // SCENE and CAMERA
+    // --------------------
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color("#E5EBED");
+    const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
+    camera.position.z = 50;
+
+    // --------------------
+    // RENDERER
+    // --------------------
+    const renderer = new THREE.WebGLRenderer({antialias: true});
+    renderer.setSize( window.innerWidth, window.innerHeight );
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.outputEncoding = THREE.sRGBEncoding;
+    renderer.physicallyCorrectLights = true;
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    document.body.appendChild(renderer.domElement);
+
+     // --------------------
+    // LIGHT
+    // --------------------
+    const light = new THREE.PointLight( new THREE.Color("#FFCB8E").convertSRGBToLinear(), 40, 200);
+    light.position.set(0, 20, 20);
+    light.castShadow = true; 
+    light.shadow.mapSize.width = 512; 
+    light.shadow.mapSize.height = 512; 
+    light.shadow.camera.near = 0.5; 
+    light.shadow.camera.far = 500; 
+    scene.add(light);
+
+    const light1 = new THREE.PointLight( new THREE.Color("#FFCB8E").convertSRGBToLinear(), 40, 200);
+    light1.position.set(-20, 20, -20);
+    light1.castShadow = true; 
+    light1.shadow.mapSize.width = 512; 
+    light1.shadow.mapSize.height = 512; 
+    light1.shadow.camera.near = 0.5; 
+    light1.shadow.camera.far = 500; 
+    scene.add(light1);
+
+    const light2 = new THREE.PointLight( new THREE.Color("#FFCB8E").convertSRGBToLinear(), 40, 200);
+    light2.position.set(20, 20, -20);
+    light2.castShadow = true; 
+    light2.shadow.mapSize.width = 512; 
+    light2.shadow.mapSize.height = 512; 
+    light2.shadow.camera.near = 0.5; 
+    light2.shadow.camera.far = 500; 
+    scene.add(light2);
+
+    // --------------------
+    // CONTROLS
+    // --------------------
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.target.set(0, 0, 0);
+    controls.dampingFactor = 0.05;
+    controls.enableDamping = true;
+
+    // --------------------
+    // ISLAND GRID and GEOMETRIES
+    // --------------------
+    const GRID_RADIUS = 10;
+    const STEEPNESS = 1;
+    const SIMPLEX = new SimplexNoise();
+
+    const MAX_HEIGHT = 10;
+    const DIRT2_HEIGHT = MAX_HEIGHT * 0.0;
+    const SAND_HEIGHT = MAX_HEIGHT * 0.2;
+    const GRASS_HEIGHT = MAX_HEIGHT * 0.5;
+    const DIRT_HEIGHT = MAX_HEIGHT * 0.7;
+    const STONE_HEIGHT = MAX_HEIGHT * 0.9;
+
+    let DIRT2_GRID  = new THREE.BoxGeometry(0, 0, 0);
+    let SAND_GRID  = new THREE.BoxGeometry(0, 0, 0);
+    let GRASS_GRID  = new THREE.BoxGeometry(0, 0, 0);
+    let DIRT_GRID  = new THREE.BoxGeometry(0, 0, 0);
+    let STONE_GRID  = new THREE.BoxGeometry(0, 0, 0);
+
+    let DIRT2_MESH;
+    let SAND_MESH;
+    let GRASS_MESH;
+    let DIRT_MESH;
+    let STONE_MESH;
+
+    let map = {
+    dirt: await new THREE.TextureLoader().loadAsync("textures/Ground048_1K-JPG/Ground048_1K_Color.jpg"),
+    dirt2: await new THREE.TextureLoader().loadAsync("textures/Gravel024_1K-JPG/Gravel024_1K_Color.jpg"),
+    grass: await new THREE.TextureLoader().loadAsync("textures/Grass001_1K-JPG/Grass001_1K_Color.jpg"),
+    sand: await new THREE.TextureLoader().loadAsync("textures/Ground054_1K-JPG/Ground054_1K_Color.jpg"),
+    water: await new THREE.TextureLoader().loadAsync("textures/water.jpg"),
+    stone: await new THREE.TextureLoader().loadAsync("textures/Rock030_1K-JPG/Rock030_1K_Color.jpg"),
+    };
+    
+
+    let bumpMap = {
+    dirt: await new THREE.TextureLoader().loadAsync("textures/Ground048_1K-JPG/Ground048_1K_Displacement.jpg"),
+    dirt2: await new THREE.TextureLoader().loadAsync("textures/Gravel024_1K-JPG/Gravel024_1K_Displacement.jpg"),
+    grass: await new THREE.TextureLoader().loadAsync("textures/Grass001_1K-JPG/Grass001_1K_Displacement.jpg"),
+    sand: await new THREE.TextureLoader().loadAsync("textures/Ground054_1K-JPG/Ground054_1K_Displacement.jpg"),
+    stone: await new THREE.TextureLoader().loadAsync("textures/Rock030_1K-JPG/Rock030_1K_Displacement.jpg"),
+    };
+
+    let aoMap = {
+    dirt: await new THREE.TextureLoader().loadAsync("textures/Ground048_1K-JPG/Ground048_1K_AmbientOcclusion.jpg"),
+    dirt2: await new THREE.TextureLoader().loadAsync("textures/Gravel024_1K-JPG/Gravel024_1K_AmbientOcclusion.jpg"),
+    grass: await new THREE.TextureLoader().loadAsync("textures/Grass001_1K-JPG/Grass001_1K_AmbientOcclusion.jpg"),
+    sand: await new THREE.TextureLoader().loadAsync("textures/Ground054_1K-JPG/Ground054_1K_AmbientOcclusion.jpg"),
+    stone: await new THREE.TextureLoader().loadAsync("textures/Rock030_1K-JPG/Rock030_1K_AmbientOcclusion.jpg"),
+    };
+
+    let DIRT2_MATERIAL = makeHexMaterial(map.dirt2, bumpMap.dirt2, aoMap.dirt2);
+    let SAND_MATERIAL = makeHexMaterial(map.sand, bumpMap.sand, aoMap. sand);
+    let GRASS_MATERIAL = makeHexMaterial(map.grass, bumpMap.grass, aoMap.grass);
+    let DIRT_MATERIAL = makeHexMaterial(map.dirt, bumpMap.dirt, aoMap.dirt);
+    let STONE_MATERIAL = makeHexMaterial(map.stone, bumpMap.stone, aoMap.stone);
+
+    // Emulator webview does not load object with MeshStandardMaterial
+    function makeHexGeometry(height, posX, poxY) {
+        const hex = new THREE.CylinderGeometry(1, 1, height, 6, 1, false);
+        hex.translate(posX, height * 0.5, poxY);
+        return hex;
+    }
+
+    function makeHexMaterial(map, bumpMap, aoMap) {
+        let material = new THREE.MeshStandardMaterial( {
+            flatShading: true, 
+            map: map, 
+        });
+        material.bumpMap = bumpMap;
+        material.bumpScale = 0.05;
+        material.aoMap = aoMap;
+        return material;
+    }
+
+    function addHexToGrid(height, hex) {
+        if (height >= STONE_HEIGHT) {
+            STONE_GRID = mergeBufferGeometries([ STONE_GRID, hex]);
+        } else if (height >= DIRT_HEIGHT) {
+            DIRT_GRID = mergeBufferGeometries([ DIRT_GRID, hex]);
+        } else if (height >= GRASS_HEIGHT) {
+            GRASS_GRID = mergeBufferGeometries([ GRASS_GRID, hex]);
+        } else if (height >= SAND_HEIGHT) {
+            SAND_GRID = mergeBufferGeometries([ SAND_GRID, hex]);
+        } else {
+            DIRT2_GRID = mergeBufferGeometries([ DIRT2_GRID, hex]);
+        }
+    }
+
+    function tilePositionToCoordinate(posX, posY) {
+        // offset coordinate system
+        const result = new THREE.Vector2((posX + (posY % 2) * 0.5) * 1.77, posY * 1.535);
+        return result;
+    }
+
+    function getMesh(geometry, material) {
+        let mesh = new THREE.Mesh(geometry, material);
+        mesh.castShadow = true;
+        mesh.receiveShadow = true; 
+        return mesh;
+    }
+
+    function setMesh() {
+        DIRT2_MESH = getMesh(DIRT2_GRID, DIRT2_MATERIAL)
+        SAND_MESH = getMesh(SAND_GRID, SAND_MATERIAL);
+        GRASS_MESH = getMesh(GRASS_GRID, GRASS_MATERIAL);
+        DIRT_MESH = getMesh(DIRT_GRID, DIRT_MATERIAL);
+        STONE_MESH = getMesh(STONE_GRID, STONE_MATERIAL);
+    }
+
+    function addMeshToScene() {
+        scene.add(DIRT2_MESH, SAND_MESH, GRASS_MESH, DIRT_MESH, STONE_MESH);
+    }
+    
+    // --------------------
+    // SEA GRID and GEOMETRIES
+    // --------------------
+    let seaTexture = map.water;
+    seaTexture.repeat = new THREE.Vector2(1, 1);
+    seaTexture.wrapS = THREE.RepeatWrapping;
+    seaTexture.wrapT = THREE.RepeatWrapping;
+
+    let SEA_MESH = new THREE.Mesh(
+        new THREE.CylinderGeometry(GRID_RADIUS * 2.2, GRID_RADIUS * 2.2, MAX_HEIGHT * 0.2, 50),
+        new THREE.MeshPhysicalMaterial({
+        color: new THREE.Color("#55aaff").convertSRGBToLinear().multiplyScalar(3),
+        ior: 1.4,
+        transmission: 1,
+        transparent: true,
+        thickness: 1.5,
+        envMapIntensity: 0.2, 
+        roughness: 1,
+        metalness: 0.025,
+        roughnessMap: seaTexture,
+        metalnessMap: seaTexture,
+        })
+    );
+    SEA_MESH.receiveShadow = true;
+    SEA_MESH.rotation.y = -Math.PI * 0.333 * 0.5;
+    SEA_MESH.position.set(0, MAX_HEIGHT * 0.1, 0);
+    scene.add(SEA_MESH);
+
+    // --------------------
+    // SEA FLOOR and GEOMETRIES
+    // --------------------
+    let FLOOR_MESH = new THREE.Mesh(
+        new THREE.CylinderGeometry(GRID_RADIUS * 2.2, GRID_RADIUS * 2.2, MAX_HEIGHT * 0.3, 50),
+        new THREE.MeshPhysicalMaterial({
+        map: map.dirt2,
+        side: THREE.doubleSide,
+        })
+    );
+    FLOOR_MESH.receiveShadow = true;
+    FLOOR_MESH.position.set(0, -MAX_HEIGHT * 0.05, 0);
+    scene.add(FLOOR_MESH);
+
+    // --------------------
+    // OBJECTS and FUNCTIONS
+    // --------------------
+    let CLOUD_MESH;
+    function chopBottom(geometry, bottom) {
+        let position = geometry.attributes.position.array;
+        for (let i = 0; i < position.length; i++) {
+            if (i%3 == 0) {
+                position[i] += Math.max(position[i], bottom);
+            }  
+        }
+    }
+
+    function cloud(height, posX, posY) {
+        let geo = new THREE.SphereGeometry(0, 0, 0);
+        let count = Math.floor(Math.pow(Math.random(), 0.5) * GRID_RADIUS / 2);
+
+        for (let i = 0; i < count; i++) {
+            const puff1 = new THREE.SphereGeometry(1.2, 5, 5);
+            const puff2 = new THREE.SphereGeometry(1.2, 5, 5);
+            const puff3 = new THREE.SphereGeometry(1.5, 5, 5);
+
+            puff1.translate(-1.5, Math.random() * 0.3, 0);
+            puff2.translate(1, Math.random() * 0.3, 0);
+            puff3.translate(0, Math.random() * 0.3, 0);
+
+            const cloudGeo = mergeBufferGeometries([puff1, puff2, puff3]);
+
+            chopBottom(cloudGeo,  Math.random() * -0.5);
+
+            const position = new THREE.Vector2(
+                (Math.random() * 2 - 1) * GRID_RADIUS * 1.5, 
+                (Math.random() * 2 - 1) * GRID_RADIUS * 1.5);
+            while (position.length() >  GRID_RADIUS * 1.8) {
+                position = new THREE.Vector2(
+                (Math.random() * 2 - 1) * GRID_RADIUS * 1.5, 
+                (Math.random() * 2 - 1) * GRID_RADIUS * 1.5);
+            }
+            cloudGeo.translate(position.x, Math.random() * 3 + MAX_HEIGHT, position.y);
+            cloudGeo.rotateY(Math.random() * Math.PI / 3);
+            geo = mergeBufferGeometries([geo, cloudGeo]);
+        }   
+        CLOUD_MESH = new THREE.Mesh(
+                geo,
+                new THREE.MeshLambertMaterial({
+                    color:new THREE.Color("#636364").convertSRGBToLinear(),
+                    flatShading:true,
+                    })
+            );
+        scene.add(CLOUD_MESH); 
+    }
+    cloud();
+
+    // --------------------
+    // ANIMATOR
+    // --------------------
+    const ROTATION_SPEED = 0.001;
+
+    for (let i = -1 * GRID_RADIUS; i <= GRID_RADIUS; i++) {
+        for (let j = -1 * GRID_RADIUS; j <= GRID_RADIUS; j++) {
+            const coordinate = tilePositionToCoordinate(i, j);
+            // conditional to make hexagon shaped grid
+            if (coordinate.length() <= GRID_RADIUS * 1.8) {
+                let multiplyer = (SIMPLEX.noise2D(i * 0.1, j * 0.1) + 1) * 0.5;  
+                // make mountain steeper
+                multiplyer = Math.pow(multiplyer, STEEPNESS);
+
+                const hex = makeHexGeometry(multiplyer * MAX_HEIGHT, coordinate.x, coordinate.y);
+                addHexToGrid(multiplyer * MAX_HEIGHT, hex);
+                
+            }
+        }
+    }
+
+    setMesh();
+    addMeshToScene();
+
+    const animate = function () {
+        requestAnimationFrame(animate);
+        CLOUD_MESH.rotation.y += ROTATION_SPEED;
+        controls.update();
+        renderer.render(scene,camera);
+    };
+
+    animate();
+</script>
+</body>
+</html>
