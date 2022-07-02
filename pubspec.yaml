@@ -70,6 +70,7 @@ flutter:
   - assets/www/textures/Ground054_1K-JPG/
   - assets/www/textures/Rock030_1K-JPG/
   - assets/www/textures/
+  - assets/www/models/
   - assets/www/index.html
   - assets/www/styles/style.css
 

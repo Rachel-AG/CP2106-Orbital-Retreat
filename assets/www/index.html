@@ -12,10 +12,12 @@
 </head>
 <body>
 <script type="module">
-    import * as THREE from 'https://unpkg.com/three/build/three.module.js';
-    import { OrbitControls } from 'https://cdn.skypack.dev/three-stdlib@2.8.5/controls/OrbitControls';
+    import * as THREE from 'https://cdn.skypack.dev/three@0.130.0/build/three.module.js'
+    import { OrbitControls } from 'https://cdn.skypack.dev/three@0.130.0/examples/jsm/controls/OrbitControls.js'
     import { mergeBufferGeometries } from 'https://cdn.skypack.dev/three-stdlib@2.8.5/utils/BufferGeometryUtils';
     import SimplexNoise from 'https://cdn.skypack.dev/simplex-noise';
+    import { GLTFLoader } from 'https://cdn.skypack.dev/three@0.130.0/examples/jsm/loaders/GLTFLoader.js';
+
 
     // --------------------
     // SCENE and CAMERA
@@ -78,7 +80,7 @@
     // --------------------
     // ISLAND GRID and GEOMETRIES
     // --------------------
-    const GRID_RADIUS = 10;
+    const GRID_RADIUS = 5;
     const STEEPNESS = 1;
     const SIMPLEX = new SimplexNoise();
 
@@ -110,15 +112,6 @@
     stone: await new THREE.TextureLoader().loadAsync("textures/Rock030_1K-JPG/Rock030_1K_Color.jpg"),
     };
     
-
-    let bumpMap = {
-    dirt: await new THREE.TextureLoader().loadAsync("textures/Ground048_1K-JPG/Ground048_1K_Displacement.jpg"),
-    dirt2: await new THREE.TextureLoader().loadAsync("textures/Gravel024_1K-JPG/Gravel024_1K_Displacement.jpg"),
-    grass: await new THREE.TextureLoader().loadAsync("textures/Grass001_1K-JPG/Grass001_1K_Displacement.jpg"),
-    sand: await new THREE.TextureLoader().loadAsync("textures/Ground054_1K-JPG/Ground054_1K_Displacement.jpg"),
-    stone: await new THREE.TextureLoader().loadAsync("textures/Rock030_1K-JPG/Rock030_1K_Displacement.jpg"),
-    };
-
     let aoMap = {
     dirt: await new THREE.TextureLoader().loadAsync("textures/Ground048_1K-JPG/Ground048_1K_AmbientOcclusion.jpg"),
     dirt2: await new THREE.TextureLoader().loadAsync("textures/Gravel024_1K-JPG/Gravel024_1K_AmbientOcclusion.jpg"),
@@ -127,11 +120,11 @@
     stone: await new THREE.TextureLoader().loadAsync("textures/Rock030_1K-JPG/Rock030_1K_AmbientOcclusion.jpg"),
     };
 
-    let DIRT2_MATERIAL = makeHexMaterial(map.dirt2, bumpMap.dirt2, aoMap.dirt2);
-    let SAND_MATERIAL = makeHexMaterial(map.sand, bumpMap.sand, aoMap. sand);
-    let GRASS_MATERIAL = makeHexMaterial(map.grass, bumpMap.grass, aoMap.grass);
-    let DIRT_MATERIAL = makeHexMaterial(map.dirt, bumpMap.dirt, aoMap.dirt);
-    let STONE_MATERIAL = makeHexMaterial(map.stone, bumpMap.stone, aoMap.stone);
+    let DIRT2_MATERIAL = makeHexMaterial(map.dirt2, aoMap.dirt2);
+    let SAND_MATERIAL = makeHexMaterial(map.sand, aoMap. sand);
+    let GRASS_MATERIAL = makeHexMaterial(map.grass, aoMap.grass);
+    let DIRT_MATERIAL = makeHexMaterial(map.dirt, aoMap.dirt);
+    let STONE_MATERIAL = makeHexMaterial(map.stone, aoMap.stone);
 
     // Emulator webview does not load object with MeshStandardMaterial
     function makeHexGeometry(height, posX, poxY) {
@@ -140,24 +133,26 @@
         return hex;
     }
 
-    function makeHexMaterial(map, bumpMap, aoMap) {
+    function makeHexMaterial(map, aoMap) {
         let material = new THREE.MeshStandardMaterial( {
             flatShading: true, 
             map: map, 
         });
-        material.bumpMap = bumpMap;
-        material.bumpScale = 0.05;
         material.aoMap = aoMap;
         return material;
     }
 
-    function addHexToGrid(height, hex) {
+    function addHexToGrid(height, posX, posY) {
+        const hex = makeHexGeometry(height, posX, posY);
         if (height >= STONE_HEIGHT) {
             STONE_GRID = mergeBufferGeometries([ STONE_GRID, hex]);
         } else if (height >= DIRT_HEIGHT) {
             DIRT_GRID = mergeBufferGeometries([ DIRT_GRID, hex]);
         } else if (height >= GRASS_HEIGHT) {
             GRASS_GRID = mergeBufferGeometries([ GRASS_GRID, hex]);
+            if (Math.random() >= 0.9) {
+                modelLoader(MODEL_LIST.deer, posX, height, posY);
+            }
         } else if (height >= SAND_HEIGHT) {
             SAND_GRID = mergeBufferGeometries([ SAND_GRID, hex]);
         } else {
@@ -233,9 +228,62 @@
     scene.add(FLOOR_MESH);
 
     // --------------------
-    // OBJECTS and FUNCTIONS
+    // ANIMALS 3D MODELS AND ANIMATION
+    // --------------------
+    const loader = new GLTFLoader();
+    const clock = new THREE.Clock();
+    const MODEL_LIST = {
+        alpaca: 'models/Alpaca.gltf', 
+        bull: 'models/Bull.gltf',
+        cow: 'models/Cow.gltf',
+        deer: 'models/Deer.gltf',
+        donkey: 'models/Donkey.gltf',
+        fox: 'models/Fox.gltf',
+        horse_white: 'models/Horse_White.gltf',
+        horse: 'models/Horse.gltf',
+        husky: 'models/Husky.gltf',
+        shibainu: 'models/ShibaInu.gltf',
+        stag: 'models/Stag.gltf',
+        wolf: 'models/Wolf.gltf'
+    };
+    let SCALE_FACTOR = 0.2;
+    let INTERVAL_MS = 5000;
+    let mixer;
+
+    function modelLoader(url, posX, height, posY) {
+        loader.load(url, function ( gltf ) {
+        let model = gltf.scene;
+
+        model.position.set(posX, height, posY);
+        model.scale.set(SCALE_FACTOR, SCALE_FACTOR, SCALE_FACTOR);
+        model.rotateY(Math.random() * Math.PI * 2.0);
+
+        model.traverse(function(node) {
+            if (node.isMesh) {node.castShadow = true;}
+        });
+
+        mixer = new THREE.AnimationMixer(model);
+        let action = mixer.clipAction(gltf.animations[3]);
+        action.loop = THREE.LoopOnce;
+        setInterval(() => {
+        action
+            .reset()
+            .play();
+        }, Math.random() * INTERVAL_MS + 8000);
+        scene.add(model);
+    }, function (xhr) {
+        console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
+    }, function (error) {
+        console.error(error);
+    } );
+    }
+
+
+    // --------------------
+    // CLOUDS
     // --------------------
     let CLOUD_MESH;
+
     function chopBottom(geometry, bottom) {
         let position = geometry.attributes.position.array;
         for (let i = 0; i < position.length; i++) {
@@ -262,7 +310,7 @@
 
             chopBottom(cloudGeo,  Math.random() * -0.5);
 
-            const position = new THREE.Vector2(
+            let position = new THREE.Vector2(
                 (Math.random() * 2 - 1) * GRID_RADIUS * 1.5, 
                 (Math.random() * 2 - 1) * GRID_RADIUS * 1.5);
             while (position.length() >  GRID_RADIUS * 1.8) {
@@ -278,7 +326,7 @@
                 geo,
                 new THREE.MeshLambertMaterial({
                     color:new THREE.Color("#636364").convertSRGBToLinear(),
-                    flatShading:true,
+                    // flatShading:true,
                     })
             );
         scene.add(CLOUD_MESH); 
@@ -298,9 +346,7 @@
                 let multiplyer = (SIMPLEX.noise2D(i * 0.1, j * 0.1) + 1) * 0.5;  
                 // make mountain steeper
                 multiplyer = Math.pow(multiplyer, STEEPNESS);
-
-                const hex = makeHexGeometry(multiplyer * MAX_HEIGHT, coordinate.x, coordinate.y);
-                addHexToGrid(multiplyer * MAX_HEIGHT, hex);
+                addHexToGrid(multiplyer * MAX_HEIGHT, coordinate.x, coordinate.y);
                 
             }
         }
@@ -312,6 +358,7 @@
     const animate = function () {
         requestAnimationFrame(animate);
         CLOUD_MESH.rotation.y += ROTATION_SPEED;
+        if (mixer) mixer.update(clock.getDelta());
         controls.update();
         renderer.render(scene,camera);
     };
