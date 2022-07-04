@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:retreat/models/no_data_retrieved_exception.dart';
 import 'package:retreat/models/profile.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -142,7 +141,6 @@ class ProfileService {
         content: Text('Error: ${result.error!.message.toString()}'),
         duration: const Duration(seconds: 2),
       ));
-      throw const NoDataRetrievedException();
     }
 
     if (result.data == null) {
@@ -150,7 +148,6 @@ class ProfileService {
         content: Text('No such file is found'),
         duration: Duration(seconds: 2),
       ));
-      throw const NoDataRetrievedException();
     }
 
     return result.data!;

@@ -1,9 +1,12 @@
-import 'package:flutter/material.dart';
+import 'dart:async';
 
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:retreat/constants/app_colors.dart';
 import 'package:retreat/constants/auth_required_state.dart';
 import 'package:retreat/constants/text_styles.dart';
 import 'package:retreat/models/profile.dart';
+import 'package:retreat/notifiers/island_change_notifier.dart';
 import 'package:retreat/services/profile_service.dart';
 import 'package:retreat/widgets/avatar.dart';
 import 'package:webview_flutter_plus/webview_flutter_plus.dart';
@@ -16,7 +19,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends AuthRequiredState<HomePage> {
-  late WebViewPlusController _controller;
+  final Completer<WebViewPlusController> _controller =
+      Completer<WebViewPlusController>();
 
   @override
   Widget build(BuildContext context) {
@@ -27,15 +31,19 @@ class _HomePageState extends AuthRequiredState<HomePage> {
         ),
         floatingActionButton: recordButton(),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-        body: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            const SizedBox(
-              height: 8.0,
-            ),
-            profileCard(),
-            islandWebView(),
-          ],
+        body: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              profileCard(),
+              refreshButton(_controller),
+              Consumer<IslandChangeNotifier>(
+                builder: (context, value, child) =>
+                    islandWebView(value, _controller),
+              ),
+            ],
+          ),
         ),
         bottomNavigationBar: bottomNavBar());
   }
@@ -84,19 +92,43 @@ class _HomePageState extends AuthRequiredState<HomePage> {
     );
   }
 
-  Widget islandWebView() {
+  Widget islandWebView(IslandChangeNotifier islandChangeNotifier,
+      Completer<WebViewPlusController> _controller) {
     return SizedBox(
       width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height * 0.65,
+      height: MediaQuery.of(context).size.height * 0.6,
       child: WebViewPlus(
-        //initialUrl: 'https://demos.littleworkshop.fr/infinitown',
+        zoomEnabled: false,
         initialUrl: 'assets/www/index.html',
         javascriptMode: JavascriptMode.unrestricted,
-        onWebViewCreated: (WebViewPlusController controller) {
-          _controller = controller;
+        javascriptChannels: <JavascriptChannel>{
+          JavascriptChannel(
+              name: 'messageHandler',
+              onMessageReceived: (JavascriptMessage message) async {
+                print("message from webview: ${message.message}");
+                await _controller.future.then((controller) async {
+                  await controller.webViewController
+                      .runJavascriptReturningResult(
+                          islandChangeNotifier.javaScriptString);
+                });
+              })
         },
+        onWebViewCreated: (WebViewPlusController controller) async {
+          await islandChangeNotifier.getJSScript();
+          _controller.complete(controller);
+        },
+        onPageFinished: (_) async {},
       ),
     );
+  }
+
+  IconButton refreshButton(Completer<WebViewPlusController> _controller) {
+    return IconButton(
+        onPressed: () async {
+          await _controller.future
+              .then((controller) => controller.webViewController.reload());
+        },
+        icon: const Icon(Icons.refresh_rounded));
   }
 
   Card profileCard() {
@@ -124,7 +156,7 @@ class _HomePageState extends AuthRequiredState<HomePage> {
                   ),
                   Text(
                     'Hello, ${snapshot.data?.username}!',
-                    style: TextStyles.headerTextStyle,
+                    style: TextStyles.profileTextStyle,
                   ),
                 ],
               );

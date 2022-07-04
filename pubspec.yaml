@@ -40,6 +40,7 @@ dependencies:
   fl_chart: ^0.51.0
   image_picker: ^0.8.5+3
   webview_flutter_plus: ^0.3.0+2
+  provider: ^6.0.3
 
 dev_dependencies:
   flutter_test:
@@ -70,8 +71,10 @@ flutter:
   - assets/www/textures/Ground054_1K-JPG/
   - assets/www/textures/Rock030_1K-JPG/
   - assets/www/textures/
-  - assets/www/models/
+  - assets/www/models/animals/
+  - assets/www/models/environment/
   - assets/www/index.html
+  - assets/www/index.js
   - assets/www/styles/style.css
 
   # To add assets to your application, add an assets section, like this:

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:retreat/constants/app_colors.dart';
+import 'package:retreat/notifiers/island_change_notifier.dart';
 import 'package:retreat/screens/changepassword_page/changepasword_page.dart';
 import 'package:retreat/screens/forgetpassword_page/forgetpassword_page.dart';
 import 'package:retreat/screens/home_page/home_page.dart';
@@ -21,7 +23,9 @@ void main() async {
       anonKey:
           'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp0anRyb3Zndnp1anZ3YmVpcHF2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE2NTI2MjY0NjYsImV4cCI6MTk2ODIwMjQ2Nn0.6pgk8Fm47Sf_7mFb-UouZFqro49gUBLbesw7bQg6Ae4');
 
-  runApp(const MyApp());
+  runApp(MultiProvider(providers: [
+    ChangeNotifierProvider(create: (_) => IslandChangeNotifier()),
+  ], child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {

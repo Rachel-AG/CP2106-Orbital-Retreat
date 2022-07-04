@@ -34,10 +34,15 @@ class TextStyles {
   );
 
   static const subOptionTextStyle = TextStyle(
-    color: AppColors.darkblue,
-    fontSize: 14,
-    fontWeight: FontWeight.w300,
-    height: 1.4
+      color: AppColors.darkblue,
+      fontSize: 14,
+      fontWeight: FontWeight.w300,
+      height: 1.4);
+
+  static const profileTextStyle = TextStyle(
+    color: AppColors.whiteshade,
+    fontSize: 16,
+    fontWeight: FontWeight.w600,
   );
 
   static const optionCategoryStyle = TextStyle(
