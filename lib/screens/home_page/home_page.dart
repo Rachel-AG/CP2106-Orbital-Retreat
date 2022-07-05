@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:retreat/constants/app_colors.dart';
@@ -38,10 +37,9 @@ class _HomePageState extends AuthRequiredState<HomePage> {
             children: [
               profileCard(),
               refreshButton(_controller),
-              Consumer<IslandChangeNotifier>(
-                builder: (context, value, child) =>
-                    islandWebView(value, _controller),
-              ),
+              Consumer<IslandChangeNotifier>(builder: (context, value, child) {
+                return islandWebView(value, _controller);
+              }),
             ],
           ),
         ),
@@ -106,6 +104,7 @@ class _HomePageState extends AuthRequiredState<HomePage> {
               name: 'messageHandler',
               onMessageReceived: (JavascriptMessage message) async {
                 print("message from webview: ${message.message}");
+                print(islandChangeNotifier.javaScriptString);
                 await _controller.future.then((controller) async {
                   await controller.webViewController
                       .runJavascriptReturningResult(

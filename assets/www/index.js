@@ -487,7 +487,7 @@ async function init(
 
     const animate = function () {
         requestAnimationFrame(animate);
-        CLOUD_MESH.rotation.y += ROTATION_SPEED;
+        cloudBool ? CLOUD_MESH.rotation.y += ROTATION_SPEED : null;
         let delta = clock.getDelta();
         for (let i = 0; i < MIXERS.length; i++) {
             MIXERS[i].update(delta);
