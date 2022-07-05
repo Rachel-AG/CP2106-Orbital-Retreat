@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'package:retreat/models/island.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+// TODO: error handling
+
 /// A class to retrieve and modify data in Island database.
 ///
 /// DO NOT USE DIRECTLY. Use IslandChangeNotifier instead.

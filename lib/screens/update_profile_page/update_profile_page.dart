@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 import 'package:retreat/constants/auth_required_state.dart';
 import 'package:retreat/constants/text_styles.dart';
-import 'package:retreat/models/profile.dart';
-import 'package:retreat/services/profile_service.dart';
+import 'package:retreat/notifiers/current_profile_change_notifier.dart';
 import 'package:retreat/widgets/avatar.dart';
 import 'package:retreat/widgets/custom_button.dart';
 import 'package:retreat/widgets/custom_formfield.dart';
@@ -17,7 +17,6 @@ class UpdateProfilePage extends StatefulWidget {
 
 class _UpdateProfilePage extends AuthRequiredState<UpdateProfilePage> {
   final TextEditingController _usernameController = TextEditingController();
-
   String get username => _usernameController.text.trim();
 
   @override
@@ -37,33 +36,9 @@ class _UpdateProfilePage extends AuthRequiredState<UpdateProfilePage> {
               const SizedBox(
                 height: 24,
               ),
-              // email form
-              FutureBuilder<Profile>(
-                  future: ProfileService.getCurrentUserProfile(context),
-                  builder: (context, AsyncSnapshot<Profile> snapshot) {
-                    if (snapshot.connectionState == ConnectionState.done) {
-                      if (snapshot.data?.avatarUrl != null) {
-                        return Column(
-                          children: [
-                            Avatar(
-                              imageUrl: snapshot.data!.avatarUrl!,
-                              size: 160.0,
-                            ),
-                            const SizedBox(
-                              height: 16.0,
-                            ),
-                            Text(
-                              snapshot.data!.username,
-                              style: TextStyles.optionTextStyle,
-                            ),
-                          ],
-                        );
-                      }
-                      return const Avatar();
-                    } else {
-                      return const CircularProgressIndicator();
-                    }
-                  }),
+              Consumer<CurrentProfileChangeNotifier>(
+                builder: (context, value, child) => profileDisplay(value),
+              ),
               updateAvatarButton(),
               const SizedBox(
                 height: 24,
@@ -78,23 +53,36 @@ class _UpdateProfilePage extends AuthRequiredState<UpdateProfilePage> {
     );
   }
 
+  Widget profileDisplay(
+      CurrentProfileChangeNotifier currentProfileChangeNotifier) {
+    final url = currentProfileChangeNotifier.profile.avatarUrl;
+    final username = currentProfileChangeNotifier.profile.username;
+    return Column(
+      children: [
+        url != null
+            ? Avatar(
+                imageUrl: url,
+                size: 160.0,
+              )
+            : const Avatar(size: 160.0),
+        const SizedBox(
+          height: 16.0,
+        ),
+        Text(
+          username,
+          style: TextStyles.optionTextStyle,
+        ),
+      ],
+    );
+  }
+
   CustomButton updateUsernameButton() {
     return CustomButton(
-      text: "Confirm",
-      onTap: () async {
-        await ProfileService.updateCurrentUserUsername(context,
-                username: username)
-            .then((value) {
-          if (value) {
-            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-              content: Text('Successfully update profile'),
-              duration: Duration(seconds: 2),
-            ));
-            setState(() {});
-          }
+        text: "Confirm",
+        onTap: () {
+          Provider.of<CurrentProfileChangeNotifier>(context, listen: false)
+              .updateProfile(username: username);
         });
-      },
-    );
   }
 
   ElevatedButton updateAvatarButton() {
@@ -110,8 +98,9 @@ class _UpdateProfilePage extends AuthRequiredState<UpdateProfilePage> {
           if (imageFile == null) {
             return;
           }
-          await ProfileService.uploadAvatar(context, imageFile: imageFile);
-          setState(() {});
+          // ignore: use_build_context_synchronously
+          Provider.of<CurrentProfileChangeNotifier>(context, listen: false)
+              .uploadAvatar(imageFile);
         },
         icon: const Icon(Icons.add_a_photo_rounded),
         label: const Text('New Avatar'));
