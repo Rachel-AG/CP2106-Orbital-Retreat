@@ -1,21 +1,21 @@
 import 'dart:convert';
-import 'dart:math';
-import 'package:flutter/material.dart';
 import 'package:retreat/models/island.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+/// A class to retrieve and modify data in Island database.
+///
+/// DO NOT USE DIRECTLY. Use IslandChangeNotifier instead.
 class IslandService {
-  // TODO: connect to Database
   static final client = Supabase.instance.client;
 
-  static Future<bool> createIsland(context) async {
+  static Future<bool> createIsland() async {
     final result = await client.from('islands').insert([
       {
         'created_by': client.auth.currentUser?.id,
         'grid_radius': 3,
         'max_height': 10,
         'steepness': 1,
-        'seed': _generateRandomStr(10),
+        'seed': "seed",
         'ratio': jsonEncode([0.0, 0.2, 2.0, 0.6, 2.0]),
         'max_animal': 0,
         'animal_list': jsonEncode([]),
@@ -25,13 +25,7 @@ class IslandService {
       }
     ]).execute();
 
-    if (result.error != null) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Error: ${result.error!.message.toString()}'),
-        duration: const Duration(seconds: 2),
-      ));
-      return false;
-    }
+    if (result.error != null) return false;
     return true;
   }
 
@@ -42,16 +36,36 @@ class IslandService {
         .eq('created_by', client.auth.currentUser?.id)
         .execute();
 
+    if (result.error != null) print('Error retrieving island');
+
     final dataList = result.data as List;
-    print("Data from Supabase: $dataList");
-    return dataList.map((e) => Island.fromJson(e)).toList().elementAt(0);
+    if (dataList.isEmpty) {
+      await createIsland();
+      return getIsland();
+    } else {
+      return dataList.map((e) => Island.fromJson(e)).toList().elementAt(0);
+    }
   }
 
-  static String _generateRandomStr(int length) {
-    const chars =
-        'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
-    Random rnd = Random();
-    return String.fromCharCodes(Iterable.generate(
-        length, (_) => chars.codeUnitAt(rnd.nextInt(chars.length))));
+  static Future<bool> updateIsland(Island newIsland) async {
+    final result = await client
+        .from('islands')
+        .update({
+          'grid_radius': newIsland.gridRadius,
+          'max_height': newIsland.maxHeight,
+          'steepness': newIsland.steepness,
+          'seed': newIsland.seed,
+          'ratio': jsonEncode(newIsland.ratio),
+          'max_animal': newIsland.maxAnimal,
+          'animal_list': jsonEncode(newIsland.animalList),
+          'env_list': jsonEncode(newIsland.envList),
+          'day_bool': newIsland.dayBool,
+          'cloud_bool': newIsland.cloudBool,
+        })
+        .eq('created_by', client.auth.currentUser?.id)
+        .execute();
+
+    if (result.error != null) return false;
+    return true;
   }
 }

@@ -104,6 +104,7 @@ class _HomePageState extends AuthRequiredState<HomePage> {
               name: 'messageHandler',
               onMessageReceived: (JavascriptMessage message) async {
                 print("message from webview: ${message.message}");
+                await islandChangeNotifier.getIsland();
                 print(islandChangeNotifier.javaScriptString);
                 await _controller.future.then((controller) async {
                   await controller.webViewController
@@ -113,7 +114,6 @@ class _HomePageState extends AuthRequiredState<HomePage> {
               })
         },
         onWebViewCreated: (WebViewPlusController controller) async {
-          await islandChangeNotifier.getJSScript();
           _controller.complete(controller);
         },
         onPageFinished: (_) async {},
@@ -121,10 +121,10 @@ class _HomePageState extends AuthRequiredState<HomePage> {
     );
   }
 
-  IconButton refreshButton(Completer<WebViewPlusController> _controller) {
+  IconButton refreshButton(Completer<WebViewPlusController> controller) {
     return IconButton(
         onPressed: () async {
-          await _controller.future
+          await controller.future
               .then((controller) => controller.webViewController.reload());
         },
         icon: const Icon(Icons.refresh_rounded));
