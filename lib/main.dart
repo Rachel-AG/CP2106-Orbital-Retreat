@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:retreat/constants/app_colors.dart';
+import 'package:retreat/notifiers/budget_list_change_notifier.dart';
+import 'package:retreat/notifiers/category_list_change_notifier.dart';
 import 'package:retreat/notifiers/current_profile_change_notifier.dart';
 import 'package:retreat/notifiers/island_change_notifier.dart';
+import 'package:retreat/notifiers/transaction_list_change_notifier.dart';
 import 'package:retreat/screens/changepassword_page/changepasword_page.dart';
 import 'package:retreat/screens/forgetpassword_page/forgetpassword_page.dart';
 import 'package:retreat/screens/home_page/home_page.dart';
@@ -27,6 +30,10 @@ void main() async {
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(create: (context) => IslandChangeNotifier()),
     ChangeNotifierProvider(create: (context) => CurrentProfileChangeNotifier()),
+    ChangeNotifierProvider(
+        create: (context) => TransactionListChangeNotifier()),
+    ChangeNotifierProvider(create: (context) => CategoryListChangeNotifier()),
+    ChangeNotifierProvider(create: (context) => BudgetListChangeNotifier())
   ], child: const MyApp()));
 }
 

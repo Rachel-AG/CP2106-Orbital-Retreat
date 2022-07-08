@@ -1,9 +1,13 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:retreat/constants/auth_required_state.dart';
 import 'package:retreat/constants/text_styles.dart';
 import 'package:retreat/models/category.dart';
 import 'package:retreat/models/month.dart';
+import 'package:retreat/models/transaction.dart';
+import 'package:retreat/notifiers/category_list_change_notifier.dart';
+import 'package:retreat/notifiers/transaction_list_change_notifier.dart';
 import 'package:retreat/services/transactions_service.dart';
 import 'package:retreat/widgets/custom_card.dart';
 import 'package:retreat/widgets/custom_dropdown.dart';
@@ -54,25 +58,54 @@ class _OverviewPageState extends AuthRequiredState<OverviewPage> {
               ),
               CustomCard(
                   title: 'Monthly Cash Flow',
-                  padding: const EdgeInsets.symmetric(horizontal: 0.0),
-                  child: barChartBuilder(_totalTransactionListByMonth())),
+                  child: Consumer<TransactionListChangeNotifier>(
+                    builder: (context, value, child) {
+                      List<double> expenseList = _calcTransactionSumPerMonth(
+                          value.allTransactionList, true);
+                      List<double> incomeList = _calcTransactionSumPerMonth(
+                          value.allTransactionList, false);
+                      return customBarChart(expenseList, incomeList);
+                    },
+                  )),
               const SizedBox(
                 height: 16.0,
               ),
               CustomCard(
                 title: 'Outflow',
-                child: pieChartBuilder(
-                    _supabaseClient.getBreakdownByCategoryFromTime(context,
-                        month: month, year: year, isExpense: true)),
+                child: Consumer2<TransactionListChangeNotifier,
+                    CategoryListChangeNotifier>(
+                  builder: (context, value, value2, child) {
+                    List<Transaction> expenseList =
+                        _validTransactions(value.allTransactionList, true);
+                    List<Category> expenseCatList = value2.expenseCatList;
+                    if (expenseCatList.isEmpty) {
+                      return const CircularProgressIndicator();
+                    }
+                    Map<Category, double> expenseBreakdownByCat =
+                        _breakDownByCategory(expenseCatList, expenseList);
+                    return customPieChart(expenseBreakdownByCat);
+                  },
+                ),
               ),
               const SizedBox(
                 height: 16.0,
               ),
               CustomCard(
                 title: 'Inflow',
-                child: pieChartBuilder(
-                    _supabaseClient.getBreakdownByCategoryFromTime(context,
-                        month: month, year: year, isExpense: false)),
+                child: Consumer2<TransactionListChangeNotifier,
+                    CategoryListChangeNotifier>(
+                  builder: (context, value, value2, child) {
+                    List<Transaction> incomeList =
+                        _validTransactions(value.allTransactionList, false);
+                    List<Category> incomeCatList = value2.incomeCatList;
+                    if (incomeCatList.isEmpty) {
+                      return const CircularProgressIndicator();
+                    }
+                    Map<Category, double> expenseBreakdownByCat =
+                        _breakDownByCategory(incomeCatList, incomeList);
+                    return customPieChart(expenseBreakdownByCat);
+                  },
+                ),
               )
             ]),
       ),
@@ -122,6 +155,10 @@ class _OverviewPageState extends AuthRequiredState<OverviewPage> {
           );
         });
   }
+
+  //------------------
+  // PIE CHART METHODS
+  //------------------
 
   List<Widget> pieChartLegend(Map<Category, double> breakdownByCategoryData) {
     final categories = breakdownByCategoryData.keys.toList();
@@ -180,48 +217,53 @@ class _OverviewPageState extends AuthRequiredState<OverviewPage> {
     );
   }
 
-  FutureBuilder<Map<Category, double>> pieChartBuilder(
-      Future<Map<Category, double>> breakdownByCategoryFromTimeGetter) {
-    return FutureBuilder<Map<Category, double>>(
-        future: breakdownByCategoryFromTimeGetter,
-        builder: (context, AsyncSnapshot<Map<Category, double>> snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            if (snapshot.hasData &&
-                !snapshot.data!.values.fold(
-                    true,
-                    (previousValue, element) =>
-                        previousValue && element == 0.0)) {
-              return Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 48.0),
-                    child: AspectRatio(
-                        aspectRatio: 1,
-                        child: PieChart(pieChartMainData(snapshot.data!))),
-                  ),
-                  ...pieChartLegend(snapshot.data!),
-                ],
-              );
-            } else {
-              return const Text(
-                'No Transactions Recorded',
-              );
-            }
-          } else {
-            return const CircularProgressIndicator();
-          }
-        });
+  Widget customPieChart(Map<Category, double> breakdownByCategory) {
+    if (breakdownByCategory.values.fold(
+        true, (previousValue, element) => previousValue && element == 0.0)) {
+      return const Text(
+        'No Transactions Recorded',
+      );
+    }
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 48.0),
+          child: AspectRatio(
+              aspectRatio: 1,
+              child: PieChart(pieChartMainData(breakdownByCategory))),
+        ),
+        ...pieChartLegend(breakdownByCategory),
+      ],
+    );
   }
 
-  Future<List<List<double>>> _totalTransactionListByMonth() async {
-    return Future.wait([
-      _supabaseClient.getTotalTransactionListByMonth(context,
-          year: year, isExpense: true),
-      _supabaseClient.getTotalTransactionListByMonth(context,
-          year: year, isExpense: false),
-    ]);
+  Map<Category, double> _breakDownByCategory(
+      List<Category> catList, List<Transaction> transactionList) {
+    final amountList = List<double>.filled(catList.length, 0.0);
+    for (var element in transactionList) {
+      int index =
+          catList.indexWhere((category) => category.id == element.categoryId);
+      amountList[index] += element.amount;
+    }
+    var result = Map.fromIterables(
+        catList, amountList.map((e) => double.parse((e).toStringAsFixed(2))));
+    result.removeWhere((key, value) => value == 0.0);
+    return result;
   }
 
+  List<Transaction> _validTransactions(
+      List<Transaction> allTransactionList, bool isExpense) {
+    return allTransactionList.where((transaction) {
+      final time = DateTime.parse(transaction.timeTransaction);
+      return transaction.isExpense == isExpense &&
+          time.year == year &&
+          time.month == month;
+    }).toList();
+  }
+
+  //------------------
+  // BAR CHART METHODS
+  //------------------
   List<BarChartGroupData> barChartGroupMainData(
       List<double> totalExpenseList, List<double> totalIncomeList) {
     return List.generate(
@@ -271,24 +313,32 @@ class _OverviewPageState extends AuthRequiredState<OverviewPage> {
     );
   }
 
-  FutureBuilder<List<List<double>>> barChartBuilder(
-      Future<List<List<double>>> totalTransactionList) {
-    return FutureBuilder<List<List<double>>>(
-        future: totalTransactionList,
-        builder: (context, AsyncSnapshot<List<List<double>>> snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            return SizedBox(
-              height: 240.0,
-              width: 500.0,
-              child: BarChart(barChartMainData(
-                  barChartGroupMainData(snapshot.data![0], snapshot.data![1]))),
-            );
-          } else {
-            return const Padding(
-              padding: EdgeInsets.all(24.0),
-              child: CircularProgressIndicator(),
-            );
-          }
-        });
+  Widget customBarChart(List<double> expenseList, List<double> incomeList) {
+    if (expenseList.where((element) => element != 0.0).isEmpty &&
+        incomeList.where((element) => element != 0.0).isEmpty) {
+      return const Text(
+        'No Transactions Recorded',
+      );
+    }
+    return SizedBox(
+      height: 240.0,
+      width: 500.0,
+      child: BarChart(
+          barChartMainData(barChartGroupMainData(expenseList, incomeList))),
+    );
+  }
+
+  List<double> _calcTransactionSumPerMonth(
+      List<Transaction> allTransactionList, bool isExpense) {
+    final result = List<double>.filled(12, 0.0);
+    final validList = allTransactionList
+        .where((transaction) => transaction.isExpense == isExpense);
+    for (Transaction transaction in validList) {
+      final time = DateTime.parse(transaction.timeTransaction);
+      if (time.year == year) {
+        result[time.month - 1] += transaction.amount;
+      }
+    }
+    return result;
   }
 }

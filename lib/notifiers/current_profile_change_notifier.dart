@@ -36,4 +36,9 @@ class CurrentProfileChangeNotifier extends ChangeNotifier {
     final url = await ProfileService.uploadAvatar(imageFile);
     updateProfile(avatarUrl: url);
   }
+
+  void reset() {
+    _profile = Profile('null', 'null', 'null', null);
+    isUpToDate = false;
+  }
 }

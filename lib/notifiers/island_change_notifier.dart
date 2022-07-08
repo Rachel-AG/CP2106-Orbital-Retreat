@@ -72,4 +72,11 @@ class IslandChangeNotifier extends ChangeNotifier {
     return String.fromCharCodes(Iterable.generate(
         length, (_) => chars.codeUnitAt(rnd.nextInt(chars.length))));
   }
+
+  void reset() {
+    _island =
+        Island('test', 0, 0, 0, 'null', [], 0, [], [], true, true, 'tester_id');
+    _javaScriptString = '';
+    isUpToDate = false;
+  }
 }
