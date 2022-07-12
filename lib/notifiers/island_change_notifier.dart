@@ -34,18 +34,49 @@ class IslandChangeNotifier extends ChangeNotifier {
     getIsland();
   }
 
-  Future<void> updateIsland(Island newIsland) async {
+  Future<void> updateIsland({
+    int? gridRadius,
+    int? maxHeight,
+    int? steepness,
+    String? seed,
+    List? ratio,
+    int? maxAnimal,
+    List? animalList,
+    List? envList,
+    bool? dayBool,
+    bool? cloudBool,
+  }) async {
+    final newIsland = Island(
+        island.id,
+        gridRadius ?? island.gridRadius,
+        maxHeight ?? island.gridRadius,
+        steepness ?? island.steepness,
+        seed ?? island.seed,
+        ratio ?? island.ratio,
+        maxAnimal ?? island.maxAnimal,
+        animalList ?? island.animalList,
+        envList ?? island.envList,
+        dayBool ?? island.dayBool,
+        cloudBool ?? island.cloudBool,
+        island.createdBy);
     await IslandService.updateIsland(newIsland);
     isUpToDate = false;
     getIsland();
   }
 
   // USE THIS FUNCTION TO GENERATE RANDOM SEED
-  String _generateRandomStr(int length) {
+  String generateRandomStr(int length) {
     const chars =
         'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
     Random rnd = Random();
     return String.fromCharCodes(Iterable.generate(
         length, (_) => chars.codeUnitAt(rnd.nextInt(chars.length))));
+  }
+
+  void reset() {
+    _island =
+        Island('test', 0, 0, 0, 'null', [], 0, [], [], true, true, 'tester_id');
+    _javaScriptString = '';
+    isUpToDate = false;
   }
 }

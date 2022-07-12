@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:retreat/constants/app_colors.dart';
 import 'package:retreat/constants/auth_required_state.dart';
 import 'package:retreat/constants/text_styles.dart';
+import 'package:retreat/notifiers/budget_list_change_notifier.dart';
+import 'package:retreat/notifiers/category_list_change_notifier.dart';
+import 'package:retreat/notifiers/current_profile_change_notifier.dart';
+import 'package:retreat/notifiers/island_change_notifier.dart';
+import 'package:retreat/notifiers/transaction_list_change_notifier.dart';
 import 'package:retreat/services/authentication_service.dart';
 import 'package:retreat/widgets/custom_button.dart';
 
@@ -60,6 +66,18 @@ class _SettingPageState extends AuthRequiredState<SettingPage> {
           CustomButton(
               text: 'Sign out',
               onTap: () async {
+                Provider.of<BudgetListChangeNotifier>(context, listen: false)
+                    .reset();
+                Provider.of<CategoryListChangeNotifier>(context, listen: false)
+                    .reset();
+                Provider.of<CurrentProfileChangeNotifier>(context,
+                        listen: false)
+                    .reset();
+                Provider.of<IslandChangeNotifier>(context, listen: false)
+                    .reset();
+                Provider.of<TransactionListChangeNotifier>(context,
+                        listen: false)
+                    .reset();
                 await _supabaseClient.signOutUser(context);
               }),
         ]),

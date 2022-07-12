@@ -16,10 +16,10 @@ class _TransactionListPageState extends AuthRequiredState<TransactionListPage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
-  static const _nTabPages = <Widget>[
-    OverviewPage(),
-    DisplayTransactionsPage(),
-    BudgetHistoryPage(),
+  static final _nTabPages = <Widget>[
+    const OverviewPage(),
+    const DisplayTransactionsPage(),
+    const BudgetHistoryPage(),
   ];
 
   static const _nTabs = <Tab>[
