@@ -10,18 +10,21 @@ class NumericFormField extends StatelessWidget {
       this.labelText,
       this.obscureText = false,
       required this.controller})
+      // this.initialValue})
       : super(key: key);
 
   final String? hintText;
   final String? labelText;
   final bool obscureText;
   final TextEditingController controller;
+  //final String? initialValue;
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
       obscureText: obscureText,
       controller: controller,
+      //initialValue: initialValue,
       keyboardType: const TextInputType.numberWithOptions(decimal: true),
       inputFormatters: [
         FilteringTextInputFormatter.allow(RegExp('[0-9.,]+')),
