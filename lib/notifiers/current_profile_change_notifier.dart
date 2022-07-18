@@ -4,7 +4,10 @@ import 'package:retreat/models/profile.dart';
 import 'package:retreat/services/profile_service.dart';
 
 class CurrentProfileChangeNotifier extends ChangeNotifier {
-  Profile _profile = Profile('null', 'null', 'null', null);
+  final ProfileService _profileService;
+  CurrentProfileChangeNotifier(this._profileService);
+
+  Profile _profile = const Profile('null', 'null', 'null', null);
   Profile get profile {
     isUpToDate ? true : getProfile();
     return _profile;
@@ -13,13 +16,13 @@ class CurrentProfileChangeNotifier extends ChangeNotifier {
   bool isUpToDate = false;
 
   Future<void> getProfile() async {
-    _profile = await ProfileService.getCurrentProfile();
+    _profile = await _profileService.getCurrentProfile();
     isUpToDate = true;
     notifyListeners();
   }
 
   Future<void> createProfile(String username) async {
-    await ProfileService.createProfile(username);
+    await _profileService.createProfile(username);
     isUpToDate = false;
     getProfile();
   }
@@ -27,18 +30,18 @@ class CurrentProfileChangeNotifier extends ChangeNotifier {
   Future<void> updateProfile({String? username, String? avatarUrl}) async {
     final newProfile = Profile(profile.id, username ?? profile.username,
         profile.updatedAt, avatarUrl ?? profile.avatarUrl);
-    await ProfileService.updateProfile(newProfile);
+    await _profileService.updateProfile(newProfile);
     isUpToDate = false;
     getProfile();
   }
 
   Future<void> uploadAvatar(XFile imageFile) async {
-    final url = await ProfileService.uploadAvatar(imageFile);
+    final url = await _profileService.uploadAvatar(imageFile);
     updateProfile(avatarUrl: url);
   }
 
   void reset() {
-    _profile = Profile('null', 'null', 'null', null);
+    _profile = const Profile('null', 'null', 'null', null);
     isUpToDate = false;
   }
 }

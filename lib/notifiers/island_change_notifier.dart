@@ -4,6 +4,9 @@ import 'package:retreat/models/island.dart';
 import 'package:retreat/services/island_service.dart';
 
 class IslandChangeNotifier extends ChangeNotifier {
+  final IslandService _islandService;
+  IslandChangeNotifier(this._islandService);
+
   Island _island =
       Island('test', 0, 0, 0, 'null', [], 0, [], [], true, true, 'tester_id');
   Island get island {
@@ -20,7 +23,7 @@ class IslandChangeNotifier extends ChangeNotifier {
   bool isUpToDate = false;
 
   Future<void> getIsland() async {
-    _island = await IslandService.getIsland();
+    _island = await _islandService.getIsland();
     _javaScriptString =
         "init(${_island.gridRadius}, ${_island.maxHeight}, ${_island.steepness}, '${_island.seed}', ${_island.ratio}, ${_island.maxAnimal}, ${_island.animalList}, ${_island.envList}, ${_island.dayBool}, ${_island.cloudBool})";
     isUpToDate = true;
@@ -29,7 +32,7 @@ class IslandChangeNotifier extends ChangeNotifier {
   }
 
   Future<void> createIsland() async {
-    await IslandService.createIsland();
+    await _islandService.createIsland();
     isUpToDate = false;
     getIsland();
   }
@@ -59,7 +62,7 @@ class IslandChangeNotifier extends ChangeNotifier {
         dayBool ?? island.dayBool,
         cloudBool ?? island.cloudBool,
         island.createdBy);
-    await IslandService.updateIsland(newIsland);
+    await _islandService.updateIsland(newIsland);
     isUpToDate = false;
     getIsland();
   }

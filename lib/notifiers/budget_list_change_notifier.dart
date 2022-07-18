@@ -3,6 +3,9 @@ import 'package:retreat/models/budget.dart';
 import 'package:retreat/services/budget_service.dart';
 
 class BudgetListChangeNotifier extends ChangeNotifier {
+  final BudgetService _budgetService;
+  BudgetListChangeNotifier(this._budgetService);
+
   List<Budget> _budgetList = List.empty();
   List<Budget> get budgetList {
     isUpToDate ? true : getAllBudget();
@@ -12,7 +15,7 @@ class BudgetListChangeNotifier extends ChangeNotifier {
   bool isUpToDate = false;
 
   Future<void> getAllBudget() async {
-    _budgetList = await BudgetService.getAllBudget();
+    _budgetList = await _budgetService.getAllBudget();
     _sortFromLatestToEarliest();
     isUpToDate = true;
     notifyListeners();
@@ -20,9 +23,10 @@ class BudgetListChangeNotifier extends ChangeNotifier {
 
   Future<void> insertBudget(
       {required double amount, required int month, required int year}) async {
-    await BudgetService.insertBudget(amount: amount, month: month, year: year);
     isUpToDate = false;
-    getAllBudget();
+    await _budgetService.insertBudget(amount: amount, month: month, year: year);
+
+    await getAllBudget();
   }
 
   Future<void> updateBudget(
@@ -30,16 +34,18 @@ class BudgetListChangeNotifier extends ChangeNotifier {
       required double amount,
       required int month,
       required int year}) async {
-    await BudgetService.updateBudget(
-        id: id, amount: amount, month: month, year: year);
     isUpToDate = false;
-    getAllBudget();
+    await _budgetService.updateBudget(
+        id: id, amount: amount, month: month, year: year);
+
+    await getAllBudget();
   }
 
   Future<void> deleteBudget({required String id}) async {
-    await BudgetService.deleteBudget(id: id);
     isUpToDate = false;
-    getAllBudget();
+    await _budgetService.deleteBudget(id: id);
+
+    await getAllBudget();
   }
 
   void _sortFromLatestToEarliest() {

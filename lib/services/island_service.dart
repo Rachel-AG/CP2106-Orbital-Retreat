@@ -10,7 +10,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 class IslandService {
   static final client = Supabase.instance.client;
 
-  static Future<bool> createIsland() async {
+  Future<bool> createIsland() async {
     final result = await client.from('islands').insert([
       {
         'created_by': client.auth.currentUser?.id,
@@ -31,7 +31,7 @@ class IslandService {
     return true;
   }
 
-  static Future<Island> getIsland() async {
+  Future<Island> getIsland() async {
     final result = await client
         .from('islands')
         .select()
@@ -49,7 +49,7 @@ class IslandService {
     }
   }
 
-  static Future<bool> updateIsland(Island newIsland) async {
+  Future<bool> updateIsland(Island newIsland) async {
     final result = await client
         .from('islands')
         .update({

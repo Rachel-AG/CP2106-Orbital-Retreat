@@ -17,6 +17,11 @@ import 'package:retreat/screens/splash_page/splash_page.dart';
 import 'package:retreat/screens/transaction_list_page/budget_history_tab.dart';
 import 'package:retreat/screens/transaction_list_page/transaction_list_page.dart';
 import 'package:retreat/screens/update_profile_page/update_profile_page.dart';
+import 'package:retreat/services/budget_service.dart';
+import 'package:retreat/services/category_service.dart';
+import 'package:retreat/services/island_service.dart';
+import 'package:retreat/services/profile_service.dart';
+import 'package:retreat/services/transactions_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 void main() async {
@@ -28,12 +33,17 @@ void main() async {
           'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp0anRyb3Zndnp1anZ3YmVpcHF2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE2NTI2MjY0NjYsImV4cCI6MTk2ODIwMjQ2Nn0.6pgk8Fm47Sf_7mFb-UouZFqro49gUBLbesw7bQg6Ae4');
 
   runApp(MultiProvider(providers: [
-    ChangeNotifierProvider(create: (context) => IslandChangeNotifier()),
-    ChangeNotifierProvider(create: (context) => CurrentProfileChangeNotifier()),
     ChangeNotifierProvider(
-        create: (context) => TransactionListChangeNotifier()),
-    ChangeNotifierProvider(create: (context) => CategoryListChangeNotifier()),
-    ChangeNotifierProvider(create: (context) => BudgetListChangeNotifier())
+        create: (context) => IslandChangeNotifier(IslandService())),
+    ChangeNotifierProvider(
+        create: (context) => CurrentProfileChangeNotifier(ProfileService())),
+    ChangeNotifierProvider(
+        create: (context) =>
+            TransactionListChangeNotifier(TransactionService())),
+    ChangeNotifierProvider(
+        create: (context) => CategoryListChangeNotifier(CategoryService())),
+    ChangeNotifierProvider(
+        create: (context) => BudgetListChangeNotifier(BudgetService()))
   ], child: const MyApp()));
 }
 

@@ -4,6 +4,9 @@ import 'package:retreat/models/transaction.dart';
 import 'package:retreat/services/transactions_service.dart';
 
 class TransactionListChangeNotifier extends ChangeNotifier {
+  final TransactionService _transactionService;
+  TransactionListChangeNotifier(this._transactionService);
+
   List<Transaction> _allTransactionList = List<Transaction>.empty();
   List<Transaction> get allTransactionList {
     isUpToDate ? true : getAllTransactions();
@@ -13,7 +16,7 @@ class TransactionListChangeNotifier extends ChangeNotifier {
   bool isUpToDate = false;
 
   Future<void> getAllTransactions() async {
-    _allTransactionList = await TransactionService.getAllTransactions();
+    _allTransactionList = await _transactionService.getAllTransactions();
     _sortLatestToEarliest();
     isUpToDate = true;
     notifyListeners();
@@ -25,7 +28,7 @@ class TransactionListChangeNotifier extends ChangeNotifier {
       required int categoryId,
       required DateTime timeTransaction,
       required bool isExpense}) async {
-    await TransactionService.insertTransaction(
+    await _transactionService.insertTransaction(
         amount: amount,
         notes: notes,
         categoryId: categoryId,
@@ -36,7 +39,7 @@ class TransactionListChangeNotifier extends ChangeNotifier {
   }
 
   Future<void> deleteTransaction(String id) async {
-    await TransactionService.deleteTransaction(id);
+    await _transactionService.deleteTransaction(id);
     isUpToDate = false;
     getAllTransactions();
   }
@@ -48,7 +51,7 @@ class TransactionListChangeNotifier extends ChangeNotifier {
       required int categoryId,
       required DateTime timeTransaction,
       required bool isExpense}) async {
-    await TransactionService.updateTransaction(
+    await _transactionService.updateTransaction(
         id: id,
         amount: amount,
         notes: notes,
