@@ -28,20 +28,22 @@ class TransactionListChangeNotifier extends ChangeNotifier {
       required int categoryId,
       required DateTime timeTransaction,
       required bool isExpense}) async {
+    isUpToDate = false;
     await _transactionService.insertTransaction(
         amount: amount,
         notes: notes,
         categoryId: categoryId,
         timeTransaction: timeTransaction,
         isExpense: isExpense);
-    isUpToDate = false;
-    getAllTransactions();
+
+    await getAllTransactions();
   }
 
   Future<void> deleteTransaction(String id) async {
-    await _transactionService.deleteTransaction(id);
     isUpToDate = false;
-    getAllTransactions();
+    await _transactionService.deleteTransaction(id);
+
+    await getAllTransactions();
   }
 
   Future<void> updateTransaction(
@@ -51,6 +53,7 @@ class TransactionListChangeNotifier extends ChangeNotifier {
       required int categoryId,
       required DateTime timeTransaction,
       required bool isExpense}) async {
+    isUpToDate = false;
     await _transactionService.updateTransaction(
         id: id,
         amount: amount,
@@ -58,8 +61,8 @@ class TransactionListChangeNotifier extends ChangeNotifier {
         categoryId: categoryId,
         timeTransaction: timeTransaction,
         isExpense: isExpense);
-    isUpToDate = false;
-    getAllTransactions();
+
+    await getAllTransactions();
   }
 
   /// Sorted as following:

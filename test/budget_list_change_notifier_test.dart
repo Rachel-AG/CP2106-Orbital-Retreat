@@ -16,9 +16,9 @@ void main() {
     sut = BudgetListChangeNotifier(mockBudgetService);
 
     budgetsFromService = [
-      Budget('1', DateTime.now().toIso8601String(), 'user2', 100.0, 1, 2020),
-      Budget('2', DateTime.now().toIso8601String(), 'user2', 200.0, 2, 2021),
-      Budget('3', DateTime.now().toIso8601String(), 'user2', 300.0, 3, 2022),
+      const Budget('1', '2022-03-17 19:43:40.40', 'user2', 100.0, 1, 2020),
+      const Budget('2', '2022-04-17 19:43:40.40', 'user2', 200.0, 2, 2021),
+      const Budget('3', '2022-06-17 19:43:40.40', 'user2', 300.0, 3, 2022),
     ];
   });
 
