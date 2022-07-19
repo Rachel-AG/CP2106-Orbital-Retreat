@@ -22,17 +22,17 @@ class CurrentProfileChangeNotifier extends ChangeNotifier {
   }
 
   Future<void> createProfile(String username) async {
-    await _profileService.createProfile(username);
     isUpToDate = false;
-    getProfile();
+    await _profileService.createProfile(username);
+    await getProfile();
   }
 
   Future<void> updateProfile({String? username, String? avatarUrl}) async {
+    isUpToDate = false;
     final newProfile = Profile(profile.id, username ?? profile.username,
         profile.updatedAt, avatarUrl ?? profile.avatarUrl);
     await _profileService.updateProfile(newProfile);
-    isUpToDate = false;
-    getProfile();
+    await getProfile();
   }
 
   Future<void> uploadAvatar(XFile imageFile) async {

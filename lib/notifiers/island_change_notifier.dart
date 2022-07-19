@@ -32,9 +32,9 @@ class IslandChangeNotifier extends ChangeNotifier {
   }
 
   Future<void> createIsland() async {
-    await _islandService.createIsland();
     isUpToDate = false;
-    getIsland();
+    await _islandService.createIsland();
+    await getIsland();
   }
 
   Future<void> updateIsland({
@@ -49,6 +49,7 @@ class IslandChangeNotifier extends ChangeNotifier {
     bool? dayBool,
     bool? cloudBool,
   }) async {
+    isUpToDate = false;
     final newIsland = Island(
         island.id,
         gridRadius ?? island.gridRadius,
@@ -63,8 +64,7 @@ class IslandChangeNotifier extends ChangeNotifier {
         cloudBool ?? island.cloudBool,
         island.createdBy);
     await _islandService.updateIsland(newIsland);
-    isUpToDate = false;
-    getIsland();
+    await getIsland();
   }
 
   // USE THIS FUNCTION TO GENERATE RANDOM SEED

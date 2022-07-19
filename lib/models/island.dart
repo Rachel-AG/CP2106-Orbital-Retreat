@@ -1,6 +1,8 @@
 import 'dart:convert';
 
-class Island {
+import 'package:equatable/equatable.dart';
+
+class Island extends Equatable {
   final String id;
   final int gridRadius;
   final int maxHeight;
@@ -14,7 +16,7 @@ class Island {
   final bool cloudBool;
   final String createdBy;
 
-  Island(
+  const Island(
       this.id,
       this.gridRadius,
       this.maxHeight,
@@ -27,6 +29,22 @@ class Island {
       this.dayBool,
       this.cloudBool,
       this.createdBy);
+
+  @override
+  List<Object> get props => [
+        id,
+        gridRadius,
+        maxHeight,
+        steepness,
+        seed,
+        ratio,
+        maxAnimal,
+        animalList,
+        envList,
+        dayBool,
+        cloudBool,
+        createdBy
+      ];
 
   factory Island.fromJson(Map<String, dynamic> json) {
     List ratio = jsonDecode(json['ratio']);
