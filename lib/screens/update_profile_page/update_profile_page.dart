@@ -28,6 +28,18 @@ class _UpdateProfilePage extends AuthRequiredState<UpdateProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          "Update Profile",
+        ),
+        centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
         child: Column(

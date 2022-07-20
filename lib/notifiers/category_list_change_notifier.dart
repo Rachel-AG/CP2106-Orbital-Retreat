@@ -27,6 +27,14 @@ class CategoryListChangeNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
+  String getCategoryNameFromId(int id) {
+    final list = expenseCatList + incomeCatList;
+    if (list.isEmpty) {
+      return "Loading...";
+    }
+    return list.firstWhere((element) => element.id == id).name;
+  }
+
   void reset() {
     _expenseCatList = List.empty();
     _incomeCatList = List.empty();

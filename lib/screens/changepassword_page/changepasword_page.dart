@@ -34,6 +34,18 @@ class _ChangePasswordPageState extends AuthRequiredState<ChangePasswordPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          "Change Password",
+        ),
+        centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            Navigator.pop(context);
+          },
+        ),
+      ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
         child: Column(

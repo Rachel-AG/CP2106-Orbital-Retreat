@@ -56,23 +56,24 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Retreat',
       theme: ThemeData(
-        colorScheme: const ColorScheme(
-          brightness: Brightness.light,
-          primary: AppColors.darkblue,
-          onPrimary: AppColors.whiteshade,
-          // Colors that are not relevant to AppBar in LIGHT mode:
-          secondary: Colors.grey,
-          onSecondary: Colors.grey,
-          background: Colors.grey,
-          onBackground: Colors.grey,
-          surface: Colors.grey,
-          onSurface: Colors.grey,
-          error: Colors.grey,
-          onError: Colors.grey,
-        ),
-      ),
-      //home: const HomePage(),
-
+          colorScheme: ColorScheme.fromSwatch(
+            primarySwatch: AppColors.custom,
+            backgroundColor: AppColors.custom.shade50,
+            brightness: Brightness.light,
+          ),
+          scaffoldBackgroundColor: Colors.white,
+          iconTheme: IconThemeData(
+            color: AppColors.custom.shade50,
+          ),
+          cardTheme: CardTheme(
+            color: AppColors.custom.shade50,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+            elevation: 4.0,
+            margin: const EdgeInsets.all(0.0),
+          ),
+          bottomAppBarTheme:
+              BottomAppBarTheme(color: AppColors.custom.shade500)),
       initialRoute: '/',
       routes: {
         '/': (_) => const SplashPage(),

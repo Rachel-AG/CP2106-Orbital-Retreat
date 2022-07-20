@@ -32,7 +32,7 @@ class _SettingPageState extends AuthRequiredState<SettingPage> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.pushReplacementNamed(context, '/home');
+            Navigator.pop(context);
           },
         ),
       ),
@@ -63,6 +63,18 @@ class _SettingPageState extends AuthRequiredState<SettingPage> {
                 Icons.article_rounded,
                 color: AppColors.darkblue,
               )),
+          settingOption("Performance", () {
+            // TODO: MODIFY MAX ANIMALS
+            // TODO: MODIFY MAX CLOUDS
+          }),
+          settingOption("Appearance", () {
+            // TODO: DARK MODE
+            // TODO: LIGHT MODE
+            // TODO: TEXT SIZE MULTIPLIER
+          }),
+          settingOption("Credits", () {
+            // TODO: CREDITS AND CONTACTS
+          }),
           CustomButton(
               text: 'Sign out',
               onTap: () async {
