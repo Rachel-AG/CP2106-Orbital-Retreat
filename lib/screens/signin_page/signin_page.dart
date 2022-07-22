@@ -42,6 +42,7 @@ class _SignInPageState extends AuthState<SignInPage> {
               ),
               // email form
               CustomFormField(
+                  key: const ValueKey('email-field'),
                   hintText: 'Your email address',
                   labelText: 'Email',
                   controller: _emailController),
@@ -50,10 +51,12 @@ class _SignInPageState extends AuthState<SignInPage> {
                 height: 24,
               ),
               PasswordField(
+                  key: const ValueKey('password-field'),
                   helperText: 'No more than 25 characters',
                   labelText: 'Password',
                   controller: _passwordController),
               CustomButton(
+                key: const ValueKey('sign-in-button'),
                 text: "Sign In",
                 onTap: () async {
                   await _supabaseClient
@@ -63,33 +66,30 @@ class _SignInPageState extends AuthState<SignInPage> {
                           : null);
                 },
               ),
-              RichText(
-                  text: TextSpan(children: [
-                TextSpan(
-                  text: "Don't have an account? Sign Up",
-                  style: const TextStyle(color: AppColors.darkblue),
-                  recognizer: TapGestureRecognizer()
-                    ..onTap = () {
-                      stopAuthObserver();
-                      Navigator.pushNamed(context, '/signup')
-                          .then((_) => startAuthObserver());
-                    },
-                )
-              ])),
-              const SizedBox(
-                height: 16,
+              TextButton(
+                key: const ValueKey('sign-up-link'),
+                onPressed: () {
+                  stopAuthObserver();
+                  Navigator.pushNamed(context, '/signup')
+                      .then((_) => startAuthObserver());
+                },
+                style: TextButton.styleFrom(
+                  padding: EdgeInsets.zero,
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
+                child: const Text("Don't have an account? Sign Up"),
               ),
-              RichText(
-                  text: TextSpan(children: [
-                TextSpan(
-                  text: "Forget password?",
-                  style: const TextStyle(color: AppColors.darkblue),
-                  recognizer: TapGestureRecognizer()
-                    ..onTap = () {
-                      Navigator.pushNamed(context, '/forgetpassword');
-                    },
-                )
-              ]))
+              TextButton(
+                key: const ValueKey('forget-password-link'),
+                onPressed: () {
+                  Navigator.pushNamed(context, '/forgetpassword');
+                },
+                style: TextButton.styleFrom(
+                  padding: EdgeInsets.zero,
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
+                child: const Text("Forget password?"),
+              ),
             ]),
       ),
     );

@@ -24,7 +24,7 @@ class _HomePageState extends AuthRequiredState<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Welcome'),
+          title: const Text('Home'),
           centerTitle: true,
         ),
         floatingActionButton: recordButton(),
@@ -73,6 +73,7 @@ class _HomePageState extends AuthRequiredState<HomePage> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           IconButton(
+              key: const ValueKey('transactionlist'),
               onPressed: () {
                 Navigator.pushNamed(context, '/home/transactionlist');
               },
@@ -80,6 +81,7 @@ class _HomePageState extends AuthRequiredState<HomePage> {
                 Icons.analytics_rounded,
               )),
           IconButton(
+            key: const ValueKey('settings'),
             onPressed: () {
               Navigator.pushNamed(context, '/home/settings');
             },

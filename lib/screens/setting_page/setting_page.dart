@@ -76,6 +76,7 @@ class _SettingPageState extends AuthRequiredState<SettingPage> {
             // TODO: CREDITS AND CONTACTS
           }),
           CustomButton(
+              key: const ValueKey('sign-out-button'),
               text: 'Sign out',
               onTap: () async {
                 Provider.of<BudgetListChangeNotifier>(context, listen: false)

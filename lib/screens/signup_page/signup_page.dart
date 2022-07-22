@@ -46,6 +46,7 @@ class _SignUpPageState extends AuthState<SignUpPage> {
                 ),
                 // username form
                 CustomFormField(
+                    key: const ValueKey('username-field'),
                     hintText: 'Your username',
                     labelText: 'Username',
                     controller: _usernameController),
@@ -55,6 +56,7 @@ class _SignUpPageState extends AuthState<SignUpPage> {
                 ),
                 // email form
                 CustomFormField(
+                    key: const ValueKey('email-field'),
                     hintText: 'Your email address',
                     labelText: 'Email',
                     controller: _emailController),
@@ -63,6 +65,7 @@ class _SignUpPageState extends AuthState<SignUpPage> {
                   height: 24,
                 ),
                 PasswordField(
+                    key: const ValueKey('password-field'),
                     helperText: 'No more than 25 characters',
                     labelText: 'Password',
                     controller: _passwordController),
@@ -70,6 +73,7 @@ class _SignUpPageState extends AuthState<SignUpPage> {
                   height: 24,
                 ),
                 CustomButton(
+                  key: const ValueKey('sign-up-button'),
                   text: "Sign Up",
                   onTap: () async {
                     await _supabaseClient

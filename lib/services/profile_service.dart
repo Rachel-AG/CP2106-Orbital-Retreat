@@ -25,6 +25,11 @@ class ProfileService {
         .execute();
 
     final dataList = result.data as List;
+
+    if (dataList.isEmpty) {
+      return const Profile('null', 'UserNotFound', '', null);
+    }
+
     return dataList.map((e) => Profile.fromJson(e)).toList().elementAt(0);
   }
 
