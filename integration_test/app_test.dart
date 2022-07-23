@@ -173,7 +173,7 @@ void main() {
 
       onCurrentPage(tester, 'Sign Up');
     });
-  }, skip: true);
+  });
 
   group('CRUD Transaction Test', () {
     const email = 'retreat.test123@gmail.com';
@@ -181,7 +181,6 @@ void main() {
     final notes = '${DateTime.now().microsecondsSinceEpoch}-test';
 
     testWidgets('Record transaction', (WidgetTester tester) async {
-      await initSupabase();
       initProvider();
       await tester.pumpAndSettle();
 
