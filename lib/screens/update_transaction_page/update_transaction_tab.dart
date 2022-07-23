@@ -47,6 +47,7 @@ class _UpdateTransactionTabState
     if (categoryList.isEmpty) return const LinearProgressIndicator();
 
     dropdownButton = CustomDropdownButton(
+      key: const ValueKey('category-dropdown'),
       menuItems: categoryList.map((e) => e.name).toList(),
       title: "Category: ",
       hint: "Select a category",
@@ -65,66 +66,69 @@ class _UpdateTransactionTabState
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
-        child: Form(
-          child: Column(
-            children: <Widget>[
-              const SizedBox(height: 20.0),
-              NumericFormField(
-                labelText: 'Amount',
-                controller: _amountController,
-                //initialValue: widget.initialTransaction.amount.toString(),
-              ),
-              const SizedBox(height: 20.0),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Row(
-                    children: [
-                      const Text("Date: ", style: TextStyles.optionTextStyle),
-                      Text("${selectedDate.toLocal()}".split(' ')[0],
-                          style: TextStyles.optionTextStyle),
-                    ],
-                  ),
-                  ElevatedButton(
-                    child: const Text("Edit"),
-                    onPressed: () async {
-                      final DateTime? picked = await showDatePicker(
-                        context: context,
-                        initialDate: selectedDate,
-                        firstDate: DateTime(2000),
-                        lastDate: DateTime(2050),
-                      );
-                      if (picked != null && picked != selectedDate) {
-                        setState(() {
-                          selectedDate = picked;
-                        });
-                      }
-                    },
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20.0),
-              Consumer<CategoryListChangeNotifier>(
-                  builder: ((context, value, child) {
-                if (widget.isExpense) {
-                  final expenseDropDown =
-                      dropDownCategory(value.expenseCatList);
-                  return expenseDropDown;
-                }
-                final incomeDropDown = dropDownCategory(value.incomeCatList);
-                return incomeDropDown;
-              })),
-              const SizedBox(height: 20.0),
-              CustomFormField(
-                labelText: 'Notes',
-                controller: _notesController,
-                //initialValue: widget.initialTransaction.notes,
-              ),
-              const SizedBox(height: 20.0),
-              updateButton(),
-            ],
+      body: SingleChildScrollView(
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
+          child: Form(
+            child: Column(
+              children: <Widget>[
+                const SizedBox(height: 20.0),
+                NumericFormField(
+                  labelText: 'Amount',
+                  controller: _amountController,
+                  //initialValue: widget.initialTransaction.amount.toString(),
+                ),
+                const SizedBox(height: 20.0),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Row(
+                      children: [
+                        const Text("Date: ", style: TextStyles.optionTextStyle),
+                        Text("${selectedDate.toLocal()}".split(' ')[0],
+                            style: TextStyles.optionTextStyle),
+                      ],
+                    ),
+                    ElevatedButton(
+                      child: const Text("Edit"),
+                      onPressed: () async {
+                        final DateTime? picked = await showDatePicker(
+                          context: context,
+                          initialDate: selectedDate,
+                          firstDate: DateTime(2000),
+                          lastDate: DateTime(2050),
+                        );
+                        if (picked != null && picked != selectedDate) {
+                          setState(() {
+                            selectedDate = picked;
+                          });
+                        }
+                      },
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20.0),
+                Consumer<CategoryListChangeNotifier>(
+                    builder: ((context, value, child) {
+                  if (widget.isExpense) {
+                    final expenseDropDown =
+                        dropDownCategory(value.expenseCatList);
+                    return expenseDropDown;
+                  }
+                  final incomeDropDown = dropDownCategory(value.incomeCatList);
+                  return incomeDropDown;
+                })),
+                const SizedBox(height: 20.0),
+                CustomFormField(
+                  key: const ValueKey('notes-field'),
+                  labelText: 'Notes',
+                  controller: _notesController,
+                  //initialValue: widget.initialTransaction.notes,
+                ),
+                const SizedBox(height: 20.0),
+                updateButton(),
+              ],
+            ),
           ),
         ),
       ),
@@ -133,6 +137,7 @@ class _UpdateTransactionTabState
 
   CustomButton updateButton() {
     return CustomButton(
+      key: const ValueKey('update-button'),
       text: "Update",
       onTap: () async {
         if (_amountController.text.isEmpty) {

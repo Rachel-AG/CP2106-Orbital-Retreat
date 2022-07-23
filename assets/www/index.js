@@ -1,7 +1,7 @@
 import * as THREE from 'https://cdn.skypack.dev/three@0.136.0/build/three.module.js'
 import { OrbitControls } from 'https://cdn.skypack.dev/three@0.136.0/examples/jsm/controls/OrbitControls.js'
 import { mergeBufferGeometries } from 'https://cdn.skypack.dev/three-stdlib@2.12.1/utils/BufferGeometryUtils';
-import SimplexNoise from 'https://cdn.skypack.dev/simplex-noise';
+import SimplexNoise  from 'https://cdn.skypack.dev/simplex-noise@3.0.1';
 import { GLTFLoader } from 'https://cdn.skypack.dev/three@0.136.0/examples/jsm/loaders/GLTFLoader.js';
 
 /**
@@ -34,7 +34,7 @@ async function init(
     // SCENE and CAMERA
     // --------------------
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color("##FFFFFF");
+    scene.background = new THREE.Color("#FFFFFF");
     const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
     camera.position.z = 50;
 

@@ -48,7 +48,9 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({Key? key, this.genIsland = true}) : super(key: key);
+
+  final bool genIsland;
 
   // This widget is the root of your application.
   @override
@@ -80,7 +82,9 @@ class MyApp extends StatelessWidget {
         '/signin': (_) => const SignInPage(),
         '/forgetpassword': (_) => const ForgetPasswordPage(),
         '/signup': (_) => const SignUpPage(),
-        '/home': (_) => const HomePage(),
+        '/home': (_) => HomePage(
+              genIsland: genIsland,
+            ),
         '/home/settings': (_) => const SettingPage(),
         '/home/settings/changepassword': (_) => const ChangePasswordPage(),
         '/home/settings/updateprofile': (_) => const UpdateProfilePage(),

@@ -47,8 +47,15 @@ class _BudgetHistoryPageState extends AuthRequiredState<BudgetHistoryPage> {
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
-            children: const [
-              CircularProgressIndicator(),
+            children: [
+              Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: const [
+                  CircularProgressIndicator(),
+                ],
+              ),
             ],
           );
         }
@@ -58,8 +65,15 @@ class _BudgetHistoryPageState extends AuthRequiredState<BudgetHistoryPage> {
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
-            children: const [
-              CircularProgressIndicator(),
+            children: [
+              Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: const [
+                  CircularProgressIndicator(),
+                ],
+              ),
             ],
           );
         }
@@ -84,44 +98,52 @@ class _BudgetHistoryPageState extends AuthRequiredState<BudgetHistoryPage> {
   }
 
   Widget noBudget() {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: ListView(
-        shrinkWrap: true,
-        scrollDirection: Axis.vertical,
-        children: [
-          const Padding(
-            padding: EdgeInsets.all(8.0),
-            child: Text("You have not recorded budget for this month",
-                style: TextStyles.optionTextStyle),
+    return ListView(
+      shrinkWrap: true,
+      scrollDirection: Axis.vertical,
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              const Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Text("You have not recorded budget for this month",
+                    style: TextStyles.optionTextStyle),
+              ),
+              insertBudgetButton(),
+            ],
           ),
-          insertBudgetButton(),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
   Widget updateBudget(Budget currentBudget, double totalExpense) {
     //user alr set budget
     double budgetAmount = currentBudget.amount;
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: ListView(
-        shrinkWrap: true,
-        scrollDirection: Axis.vertical,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text("Budget this month: \$ $budgetAmount",
-                style: TextStyles.optionTextStyle),
+    return ListView(
+      shrinkWrap: true,
+      scrollDirection: Axis.vertical,
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text("Budget this month: \$ $budgetAmount",
+                    style: TextStyles.optionTextStyle),
+              ),
+              updateBudgetButton(currentBudget),
+              CustomCard(
+                title: 'Budget Overview',
+                child: remainingBudgetChart(totalExpense, budgetAmount),
+              ),
+            ],
           ),
-          updateBudgetButton(currentBudget),
-          CustomCard(
-            title: 'Budget Overview',
-            child: remainingBudgetChart(totalExpense, budgetAmount),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 

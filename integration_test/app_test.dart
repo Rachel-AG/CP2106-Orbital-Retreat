@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:retreat/main.dart';
@@ -26,19 +27,25 @@ void main() {
   }
 
   void initProvider() {
-    runApp(MultiProvider(providers: [
-      ChangeNotifierProvider(
-          create: (context) => IslandChangeNotifier(IslandService())),
-      ChangeNotifierProvider(
-          create: (context) => CurrentProfileChangeNotifier(ProfileService())),
-      ChangeNotifierProvider(
-          create: (context) =>
-              TransactionListChangeNotifier(TransactionService())),
-      ChangeNotifierProvider(
-          create: (context) => CategoryListChangeNotifier(CategoryService())),
-      ChangeNotifierProvider(
-          create: (context) => BudgetListChangeNotifier(BudgetService()))
-    ], child: const MyApp()));
+    runApp(MultiProvider(
+        providers: [
+          ChangeNotifierProvider(
+              create: (context) => IslandChangeNotifier(IslandService())),
+          ChangeNotifierProvider(
+              create: (context) =>
+                  CurrentProfileChangeNotifier(ProfileService())),
+          ChangeNotifierProvider(
+              create: (context) =>
+                  TransactionListChangeNotifier(TransactionService())),
+          ChangeNotifierProvider(
+              create: (context) =>
+                  CategoryListChangeNotifier(CategoryService())),
+          ChangeNotifierProvider(
+              create: (context) => BudgetListChangeNotifier(BudgetService()))
+        ],
+        child: const MyApp(
+          genIsland: false,
+        )));
   }
 
   Future<void> addDelay(int ms) async {
@@ -58,7 +65,6 @@ void main() {
         (WidgetTester tester) async {
       await initSupabase();
       initProvider();
-      await tester.pumpWidget(const MyApp());
       await tester.pumpAndSettle();
 
       onCurrentPage(tester, 'Sign In');
@@ -68,8 +74,8 @@ void main() {
 
       onCurrentPage(tester, 'Sign Up');
 
-      await tester.enterText(
-          find.byKey(const ValueKey('username-field')), 'Tester');
+      await tester.enterText(find.byKey(const ValueKey('username-field')),
+          'Tester-$timeBasedPassword');
       await tester.enterText(
           find.byKey(const ValueKey('email-field')), timeBasedEmail);
       await tester.enterText(
@@ -96,7 +102,6 @@ void main() {
     testWidgets('Sign-in using a registered email and sign-out',
         (WidgetTester tester) async {
       initProvider();
-      await tester.pumpWidget(const MyApp());
       await tester.pumpAndSettle();
 
       onCurrentPage(tester, 'Sign In');
@@ -127,7 +132,6 @@ void main() {
     testWidgets('Sign-in using a randomly generated email and password',
         (WidgetTester tester) async {
       initProvider();
-      await tester.pumpWidget(const MyApp());
       await tester.pumpAndSettle();
 
       onCurrentPage(tester, 'Sign In');
@@ -147,7 +151,6 @@ void main() {
     testWidgets('Sign-up using an already registered email',
         (WidgetTester tester) async {
       initProvider();
-      await tester.pumpWidget(const MyApp());
       await tester.pumpAndSettle();
 
       onCurrentPage(tester, 'Sign In');
@@ -169,6 +172,238 @@ void main() {
       await tester.pumpAndSettle();
 
       onCurrentPage(tester, 'Sign Up');
+    });
+  }, skip: true);
+
+  group('CRUD Transaction Test', () {
+    const email = 'retreat.test123@gmail.com';
+    const password = 'test123';
+    final notes = '${DateTime.now().microsecondsSinceEpoch}-test';
+
+    testWidgets('Record transaction', (WidgetTester tester) async {
+      await initSupabase();
+      initProvider();
+      await tester.pumpAndSettle();
+
+      onCurrentPage(tester, 'Sign In');
+
+      await tester.enterText(find.byKey(const ValueKey('email-field')), email);
+      await tester.enterText(
+          find.byKey(const ValueKey('password-field')), password);
+
+      await tester.tap(find.byKey(const ValueKey('sign-in-button')));
+      await addDelay(3000);
+      await tester.pumpAndSettle();
+
+      onCurrentPage(tester, 'Home');
+
+      await tester.tap(find.byKey(const ValueKey('add-transaction')));
+      await tester.pumpAndSettle();
+
+      onCurrentPage(tester, 'Record Transaction');
+
+      await tester.enterText(
+          find.byKey(const ValueKey('amount-field')), '123.45');
+      //TODO: selecting date
+      await tester.tap(find.byKey(const ValueKey('category-dropdown')));
+      addDelay(5000);
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Education').last);
+      await tester.enterText(find.byKey(const ValueKey('notes-field')), notes);
+
+      await tester.tap(find.byKey(const ValueKey('record-button')));
+      await addDelay(3000);
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byIcon(Icons.arrow_back));
+      await tester.pumpAndSettle();
+
+      onCurrentPage(tester, 'Home');
+
+      await tester.tap(find.byKey(const ValueKey('settings')));
+      await tester.pumpAndSettle();
+
+      onCurrentPage(tester, 'Settings');
+
+      await tester.tap(find.byKey(const ValueKey('sign-out-button')));
+      await addDelay(3000);
+      await tester.pumpAndSettle();
+
+      onCurrentPage(tester, 'Sign In');
+    });
+
+    testWidgets('View transaction', (WidgetTester tester) async {
+      initProvider();
+      await tester.pumpAndSettle();
+
+      onCurrentPage(tester, 'Sign In');
+
+      await tester.enterText(find.byKey(const ValueKey('email-field')), email);
+      await tester.enterText(
+          find.byKey(const ValueKey('password-field')), password);
+
+      await tester.tap(find.byKey(const ValueKey('sign-in-button')));
+      await addDelay(3000);
+      await tester.pumpAndSettle();
+
+      onCurrentPage(tester, 'Home');
+
+      await tester.tap(find.byKey(const ValueKey('transaction-list')));
+      await tester.pumpAndSettle();
+
+      onCurrentPage(tester, 'Overview');
+
+      await tester.tap(find.byIcon(Icons.list_alt_rounded));
+      await tester.pumpAndSettle();
+
+      onCurrentPage(tester, 'My Transactions');
+
+      await addDelay(5000);
+      expect(find.text('Notes: $notes'), findsOneWidget);
+
+      await tester.tap(find.byIcon(Icons.arrow_back));
+      await tester.pumpAndSettle();
+
+      onCurrentPage(tester, 'Home');
+
+      await tester.tap(find.byKey(const ValueKey('settings')));
+      await tester.pumpAndSettle();
+
+      onCurrentPage(tester, 'Settings');
+
+      await tester.tap(find.byKey(const ValueKey('sign-out-button')));
+      await addDelay(3000);
+      await tester.pumpAndSettle();
+
+      onCurrentPage(tester, 'Sign In');
+    });
+
+    testWidgets('Update transaction', (WidgetTester tester) async {
+      initProvider();
+      await tester.pumpAndSettle();
+
+      onCurrentPage(tester, 'Sign In');
+
+      await tester.enterText(find.byKey(const ValueKey('email-field')), email);
+      await tester.enterText(
+          find.byKey(const ValueKey('password-field')), password);
+
+      await tester.tap(find.byKey(const ValueKey('sign-in-button')));
+      await addDelay(3000);
+      await tester.pumpAndSettle();
+
+      onCurrentPage(tester, 'Home');
+
+      await tester.tap(find.byKey(const ValueKey('transaction-list')));
+      await tester.pumpAndSettle();
+
+      onCurrentPage(tester, 'Overview');
+
+      await tester.tap(find.byIcon(Icons.list_alt_rounded));
+      await tester.pumpAndSettle();
+
+      onCurrentPage(tester, 'My Transactions');
+
+      await addDelay(5000);
+      expect(find.text('Notes: $notes'), findsOneWidget);
+
+      await tester.drag(find.widgetWithText(Slidable, 'Notes: $notes'),
+          const Offset(-500.0, 0.0));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.widgetWithIcon(SlidableAction, Icons.edit));
+      await tester.pumpAndSettle();
+
+      onCurrentPage(tester, 'Update Transaction');
+
+      await tester.tap(find.byKey(const ValueKey('category-dropdown')));
+      addDelay(5000);
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Tax').last);
+      await tester.enterText(
+          find.byKey(const ValueKey('notes-field')), '$notes-updated');
+
+      await tester.tap(find.byKey(const ValueKey('update-button')));
+      await addDelay(5000);
+      await tester.pumpAndSettle();
+
+      onCurrentPage(tester, 'My Transactions');
+
+      await addDelay(5000);
+      expect(find.text('Notes: $notes-updated'), findsOneWidget);
+
+      await tester.tap(find.byIcon(Icons.arrow_back));
+      await tester.pumpAndSettle();
+
+      onCurrentPage(tester, 'Home');
+
+      await tester.tap(find.byKey(const ValueKey('settings')));
+      await tester.pumpAndSettle();
+
+      onCurrentPage(tester, 'Settings');
+
+      await tester.tap(find.byKey(const ValueKey('sign-out-button')));
+      await addDelay(3000);
+      await tester.pumpAndSettle();
+
+      onCurrentPage(tester, 'Sign In');
+    });
+
+    testWidgets('Delete transaction', (WidgetTester tester) async {
+      initProvider();
+      await tester.pumpAndSettle();
+
+      onCurrentPage(tester, 'Sign In');
+
+      await tester.enterText(find.byKey(const ValueKey('email-field')), email);
+      await tester.enterText(
+          find.byKey(const ValueKey('password-field')), password);
+
+      await tester.tap(find.byKey(const ValueKey('sign-in-button')));
+      await addDelay(3000);
+      await tester.pumpAndSettle();
+
+      onCurrentPage(tester, 'Home');
+
+      await tester.tap(find.byKey(const ValueKey('transaction-list')));
+      await tester.pumpAndSettle();
+
+      onCurrentPage(tester, 'Overview');
+
+      await tester.tap(find.byIcon(Icons.list_alt_rounded));
+      await tester.pumpAndSettle();
+
+      onCurrentPage(tester, 'My Transactions');
+
+      await addDelay(5000);
+      expect(find.text('Notes: $notes-updated'), findsOneWidget);
+
+      await tester.drag(find.widgetWithText(Slidable, 'Notes: $notes-updated'),
+          const Offset(-500.0, 0.0));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.widgetWithIcon(SlidableAction, Icons.delete));
+      await addDelay(3000);
+      await tester.pumpAndSettle();
+
+      await addDelay(5000);
+      expect(find.text('Notes: $notes'), findsNothing);
+
+      await tester.tap(find.byIcon(Icons.arrow_back));
+      await tester.pumpAndSettle();
+
+      onCurrentPage(tester, 'Home');
+
+      await tester.tap(find.byKey(const ValueKey('settings')));
+      await tester.pumpAndSettle();
+
+      onCurrentPage(tester, 'Settings');
+
+      await tester.tap(find.byKey(const ValueKey('sign-out-button')));
+      await addDelay(3000);
+      await tester.pumpAndSettle();
+
+      onCurrentPage(tester, 'Sign In');
     });
   });
 }

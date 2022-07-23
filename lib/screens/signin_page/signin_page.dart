@@ -32,65 +32,67 @@ class _SignInPageState extends AuthState<SignInPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-        child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              const SizedBox(
-                height: 24,
-              ),
-              // email form
-              CustomFormField(
-                  key: const ValueKey('email-field'),
-                  hintText: 'Your email address',
-                  labelText: 'Email',
-                  controller: _emailController),
-              // password form
-              const SizedBox(
-                height: 24,
-              ),
-              PasswordField(
-                  key: const ValueKey('password-field'),
-                  helperText: 'No more than 25 characters',
-                  labelText: 'Password',
-                  controller: _passwordController),
-              CustomButton(
-                key: const ValueKey('sign-in-button'),
-                text: "Sign In",
-                onTap: () async {
-                  await _supabaseClient
-                      .signInUser(context, email: email, password: password)
-                      .then((value) => value
-                          ? Navigator.pushReplacementNamed(context, '/')
-                          : null);
-                },
-              ),
-              TextButton(
-                key: const ValueKey('sign-up-link'),
-                onPressed: () {
-                  stopAuthObserver();
-                  Navigator.pushNamed(context, '/signup')
-                      .then((_) => startAuthObserver());
-                },
-                style: TextButton.styleFrom(
-                  padding: EdgeInsets.zero,
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+          child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                const SizedBox(
+                  height: 24,
                 ),
-                child: const Text("Don't have an account? Sign Up"),
-              ),
-              TextButton(
-                key: const ValueKey('forget-password-link'),
-                onPressed: () {
-                  Navigator.pushNamed(context, '/forgetpassword');
-                },
-                style: TextButton.styleFrom(
-                  padding: EdgeInsets.zero,
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                // email form
+                CustomFormField(
+                    key: const ValueKey('email-field'),
+                    hintText: 'Your email address',
+                    labelText: 'Email',
+                    controller: _emailController),
+                // password form
+                const SizedBox(
+                  height: 24,
                 ),
-                child: const Text("Forget password?"),
-              ),
-            ]),
+                PasswordField(
+                    key: const ValueKey('password-field'),
+                    helperText: 'No more than 25 characters',
+                    labelText: 'Password',
+                    controller: _passwordController),
+                CustomButton(
+                  key: const ValueKey('sign-in-button'),
+                  text: "Sign In",
+                  onTap: () async {
+                    await _supabaseClient
+                        .signInUser(context, email: email, password: password)
+                        .then((value) => value
+                            ? Navigator.pushReplacementNamed(context, '/')
+                            : null);
+                  },
+                ),
+                TextButton(
+                  key: const ValueKey('sign-up-link'),
+                  onPressed: () {
+                    stopAuthObserver();
+                    Navigator.pushNamed(context, '/signup')
+                        .then((_) => startAuthObserver());
+                  },
+                  style: TextButton.styleFrom(
+                    padding: EdgeInsets.zero,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
+                  child: const Text("Don't have an account? Sign Up"),
+                ),
+                TextButton(
+                  key: const ValueKey('forget-password-link'),
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/forgetpassword');
+                  },
+                  style: TextButton.styleFrom(
+                    padding: EdgeInsets.zero,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
+                  child: const Text("Forget password?"),
+                ),
+              ]),
+        ),
       ),
     );
   }

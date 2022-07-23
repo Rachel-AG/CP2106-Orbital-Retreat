@@ -32,7 +32,9 @@ class CategoryListChangeNotifier extends ChangeNotifier {
     if (list.isEmpty) {
       return "Loading...";
     }
-    return list.firstWhere((element) => element.id == id).name;
+    return list.firstWhere((element) => element.id == id, orElse: () {
+      return Category(-1, 'id: $id not found', true);
+    }).name;
   }
 
   void reset() {

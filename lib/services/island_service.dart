@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 import 'package:retreat/models/island.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -27,7 +28,9 @@ class IslandService {
       }
     ]).execute();
 
-    if (result.error != null) return false;
+    if (result.error != null) {
+      return false;
+    }
     return true;
   }
 
@@ -38,7 +41,11 @@ class IslandService {
         .eq('created_by', client.auth.currentUser?.id)
         .execute();
 
-    if (result.error != null) print('Error retrieving island');
+    if (result.hasError) {
+      print('Error retrieving island');
+      print(result.error?.message);
+      print(result.error?.details);
+    }
 
     final dataList = result.data as List;
     if (dataList.isEmpty) {

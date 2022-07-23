@@ -10,7 +10,9 @@ import 'package:retreat/widgets/avatar.dart';
 import 'package:webview_flutter_plus/webview_flutter_plus.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  const HomePage({Key? key, required this.genIsland}) : super(key: key);
+
+  final bool genIsland;
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -43,7 +45,10 @@ class _HomePageState extends AuthRequiredState<HomePage> {
                   children: [refreshButton(_controller)]),
               Consumer<IslandChangeNotifier>(
                   builder: (context, value, child) => Expanded(
-                      flex: 8, child: islandWebView(value, _controller))),
+                      flex: 8,
+                      child: widget.genIsland
+                          ? islandWebView(value, _controller)
+                          : const SizedBox())),
             ],
           ),
         ),
@@ -52,6 +57,7 @@ class _HomePageState extends AuthRequiredState<HomePage> {
 
   FloatingActionButton recordButton() {
     return FloatingActionButton.extended(
+        key: const ValueKey('add-transaction'),
         backgroundColor: AppColors.custom.shade400,
         elevation: 4.0,
         icon: const Icon(
@@ -73,7 +79,7 @@ class _HomePageState extends AuthRequiredState<HomePage> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           IconButton(
-              key: const ValueKey('transactionlist'),
+              key: const ValueKey('transaction-list'),
               onPressed: () {
                 Navigator.pushNamed(context, '/home/transactionlist');
               },
