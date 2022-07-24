@@ -50,9 +50,9 @@ void main() async {
     ChangeNotifierProvider(
         create: (context) => BudgetListChangeNotifier(BudgetService())),
     ChangeNotifierProvider(
-      create: (context) => GamestatChangeNotifier(GamestatService())),
+        create: (context) => GamestatChangeNotifier(GamestatService())),
     ChangeNotifierProvider(
-      create: (context) => ShopItemsChangeNotifier(ShopService())),
+        create: (context) => ShopItemsChangeNotifier(ShopService())),
   ], child: const MyApp(genIsland: false)));
 }
 
@@ -101,7 +101,6 @@ class MyApp extends StatelessWidget {
         '/home/transactionlist': (_) => const TransactionListPage(),
         '/home/transactionlist/budget': (_) => const BudgetHistoryPage(),
         '/shop': (_) => const BuilderShopPage(),
-        //'/home/transactionlist/displaytransactions': (_) => const DisplayTransactionsPage(),
       },
     );
   }

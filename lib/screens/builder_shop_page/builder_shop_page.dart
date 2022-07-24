@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:retreat/constants/auth_required_state.dart';
-import 'package:retreat/constants/text_styles.dart';
 import 'package:retreat/models/island.dart';
 import 'package:retreat/models/item.dart';
 import 'package:retreat/models/gamestat.dart';
@@ -90,7 +89,7 @@ class _BuilderShopPageState extends AuthRequiredState<BuilderShopPage> {
                         .updateGamestat(
                             whichStat: "gold",
                             updatedValue: (gamestat.gold - e.price));
-                    Provider.of<GamestatChangeNotifier>
+                    // Provider.of<GamestatChangeNotifier>;
                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                       content: Text('Item bought successfully!'),
                       duration: Duration(seconds: 3),

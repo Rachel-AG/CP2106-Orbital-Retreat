@@ -7,12 +7,16 @@ import 'package:integration_test/integration_test.dart';
 import 'package:retreat/notifiers/budget_list_change_notifier.dart';
 import 'package:retreat/notifiers/category_list_change_notifier.dart';
 import 'package:retreat/notifiers/current_profile_change_notifier.dart';
+import 'package:retreat/notifiers/gamestat_change_notifier.dart';
 import 'package:retreat/notifiers/island_change_notifier.dart';
+import 'package:retreat/notifiers/shop_items_change_notifier.dart';
 import 'package:retreat/notifiers/transaction_list_change_notifier.dart';
 import 'package:retreat/services/budget_service.dart';
 import 'package:retreat/services/category_service.dart';
+import 'package:retreat/services/gamestat_service.dart';
 import 'package:retreat/services/island_service.dart';
 import 'package:retreat/services/profile_service.dart';
+import 'package:retreat/services/shop_service.dart';
 import 'package:retreat/services/transactions_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -31,25 +35,23 @@ void main() {
   }
 
   void initProvider() {
-    runApp(MultiProvider(
-        providers: [
-          ChangeNotifierProvider(
-              create: (context) => IslandChangeNotifier(IslandService())),
-          ChangeNotifierProvider(
-              create: (context) =>
-                  CurrentProfileChangeNotifier(ProfileService())),
-          ChangeNotifierProvider(
-              create: (context) =>
-                  TransactionListChangeNotifier(TransactionService())),
-          ChangeNotifierProvider(
-              create: (context) =>
-                  CategoryListChangeNotifier(CategoryService())),
-          ChangeNotifierProvider(
-              create: (context) => BudgetListChangeNotifier(BudgetService()))
-        ],
-        child: const MyApp(
-          genIsland: false,
-        )));
+    runApp(MultiProvider(providers: [
+      ChangeNotifierProvider(
+          create: (context) => IslandChangeNotifier(IslandService())),
+      ChangeNotifierProvider(
+          create: (context) => CurrentProfileChangeNotifier(ProfileService())),
+      ChangeNotifierProvider(
+          create: (context) =>
+              TransactionListChangeNotifier(TransactionService())),
+      ChangeNotifierProvider(
+          create: (context) => CategoryListChangeNotifier(CategoryService())),
+      ChangeNotifierProvider(
+          create: (context) => BudgetListChangeNotifier(BudgetService())),
+      ChangeNotifierProvider(
+          create: (context) => GamestatChangeNotifier(GamestatService())),
+      ChangeNotifierProvider(
+          create: (context) => ShopItemsChangeNotifier(ShopService())),
+    ], child: const MyApp(genIsland: false)));
   }
 
   void onCurrentPage(WidgetTester tester, String page) {

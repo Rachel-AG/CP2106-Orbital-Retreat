@@ -69,5 +69,11 @@ class TextStyles {
     fontWeight: FontWeight.w600,
   );
 
+  static const coinsDisplay = TextStyle(
+    color: Colors.amber,
+    fontWeight: FontWeight.w800,
+    fontSize: 20,
+  );
+
   static var percentage = TextStyle(color: AppColors.custom.shade100);
 }
