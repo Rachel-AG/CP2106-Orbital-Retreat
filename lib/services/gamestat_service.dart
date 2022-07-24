@@ -8,7 +8,7 @@ class GamestatService {
   static final client = Supabase.instance.client;
 
   ///Initialise gamestat to the database
-  static Future<bool> insertGamestat() async {
+  Future<bool> insertGamestat() async {
     final result = await client.from('gamestats').insert([
       {
         'created_by': client.auth.currentUser?.id,
@@ -25,7 +25,7 @@ class GamestatService {
   
 
   // whichStat can be either gold, island_level, or streak
-  static Future<bool> updateGamestat({required String whichStat, 
+  Future<bool> updateGamestat({required String whichStat, 
   required int updatedValue}) async {
     bool updateMultiplier;
 
@@ -64,7 +64,7 @@ class GamestatService {
   }
 
   /// Retrieves user's gamestat
-  static Future<Gamestat> getCurrentGamestat() async {
+  Future<Gamestat> getCurrentGamestat() async {
     final result = await client
         .from('gamestats')
         .select()
@@ -72,8 +72,13 @@ class GamestatService {
         .execute();
 
     final data = result.data;
-
-    return data.map((e) => Gamestat.fromJson(e));
+    if(! data.isEmpty ) {
+    return data.map((e) => Gamestat.fromJson(e)).toList().elementAt(0);
+    } else {
+      insertGamestat();
+      Future<Gamestat> newGamestat = getCurrentGamestat();
+      return newGamestat;
+    }
   }
 
   static double calculateMultiplier(int newStreak) {

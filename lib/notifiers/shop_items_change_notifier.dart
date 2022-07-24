@@ -3,6 +3,9 @@ import 'package:retreat/models/item.dart';
 import 'package:retreat/services/shop_service.dart';
 
 class ShopItemsChangeNotifier extends ChangeNotifier {
+  final ShopService _shopService;
+  ShopItemsChangeNotifier(this._shopService);
+
   List<Item> _shopItemsList = List.empty();
   List<Item> get shopItemsList {
     isUpToDate ? true : getShopItems();

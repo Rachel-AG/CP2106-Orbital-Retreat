@@ -9,7 +9,7 @@ class Item {
 
   factory Item.fromJson(Map<String, dynamic> json) {
     return Item(
-        json['id'] as String,
+        json['id'].toString() as String,
         json['name'] as String,
         json['price'] as int,
         json['image_url'] as String,

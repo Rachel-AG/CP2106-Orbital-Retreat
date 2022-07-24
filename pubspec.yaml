@@ -69,18 +69,19 @@ flutter:
   uses-material-design: true
 
   assets:
-  - assets/www/textures/Ground048_1K-JPG/
-  - assets/www/textures/Gravel024_1K-JPG/
-  - assets/www/textures/Grass001_1K-JPG/
-  - assets/www/textures/Ground054_1K-JPG/
-  - assets/www/textures/Rock030_1K-JPG/
-  - assets/www/textures/
-  - assets/www/models/animals/
-  - assets/www/models/environment/
-  - assets/www/index.html
-  - assets/www/index.js
-  - assets/www/styles/style.css
-  - assets/images/builder_shop/
+    - assets/images/builder_shop/animals/
+    - assets/images/builder_shop/environment/
+    - assets/www/textures/Ground048_1K-JPG/
+    - assets/www/textures/Gravel024_1K-JPG/
+    - assets/www/textures/Grass001_1K-JPG/
+    - assets/www/textures/Ground054_1K-JPG/
+    - assets/www/textures/Rock030_1K-JPG/
+    - assets/www/textures/
+    - assets/www/models/animals/
+    - assets/www/models/environment/
+    - assets/www/index.html
+    - assets/www/index.js
+    - assets/www/styles/style.css
 
   # To add assets to your application, add an assets section, like this:
   # assets:

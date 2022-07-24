@@ -12,9 +12,9 @@ class Gamestat {
     return Gamestat(
         json['id'] as String,
         json['created_by'] as String,
-        json['level'] as int,
+        json['island_level'] as int,
         json['gold'] as int,
-        json['multiplier'] as double,
+        json['multiplier'].toDouble() as double,
         json['streak'] as int);    
   }
 

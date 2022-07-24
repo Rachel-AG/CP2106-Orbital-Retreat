@@ -7,6 +7,7 @@ class ItemTile extends StatelessWidget {
     required this.imageUrl,
     required this.title,
     required this.price,
+    required this.onPressed,
     this.padding = const EdgeInsets.fromLTRB(32.0, 0, 32.0, 24.0),
   }) : super(key: key);
 
@@ -14,6 +15,7 @@ class ItemTile extends StatelessWidget {
   final String title;
   final int price;
   final EdgeInsetsGeometry padding;
+  final Function() onPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -32,18 +34,27 @@ class ItemTile extends StatelessWidget {
                   child: Image(
                     image: AssetImage(
                       imageUrl,
+                      
                     ),
                   ),
                 ),
-                Text(
-                  title,
-                  style: TextStyles.headerTextStyle,
-                ),
-                Row(
+                Column(
                   children: [
-                    Text('\$$price', style: TextStyles.optionTextStyle),
+                    Row(
+                      children: [
+                        Text(
+                          title,
+                          style: TextStyles.optionTextStyle,
+                        ),
+                        Text('\$$price', style: TextStyles.subOptionTextStyle),
+                      ],
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.add), 
+                      onPressed: onPressed,
+                    ),
                   ],
-                )
+                ),
               ],
             ),
           ],

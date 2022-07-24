@@ -5,8 +5,10 @@ import 'package:retreat/constants/app_colors.dart';
 import 'package:retreat/constants/auth_required_state.dart';
 import 'package:retreat/constants/text_styles.dart';
 import 'package:retreat/notifiers/current_profile_change_notifier.dart';
+import 'package:retreat/notifiers/gamestat_change_notifier.dart';
 import 'package:retreat/notifiers/island_change_notifier.dart';
 import 'package:retreat/widgets/avatar.dart';
+import 'package:retreat/widgets/custom_button.dart';
 import 'package:webview_flutter_plus/webview_flutter_plus.dart';
 
 class HomePage extends StatefulWidget {
@@ -40,9 +42,21 @@ class _HomePageState extends AuthRequiredState<HomePage> {
                 builder: (context, value, child) =>
                     Expanded(flex: 2, child: profileCard(value)),
               ),
-              Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [refreshButton(_controller)]),
+              Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+                Consumer<GamestatChangeNotifier>(
+                  builder: (context, value, child) =>
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Text("\$${value.gamestat.gold}"),
+                  )),
+                ElevatedButton(
+                      child: const Text("Shop"),
+                      onPressed: () async {
+                        Navigator.pushNamed(context, '/shop');
+                      }
+                ),
+                refreshButton(_controller)
+              ]),
               Consumer<IslandChangeNotifier>(
                   builder: (context, value, child) => Expanded(
                       flex: 8,
