@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:retreat/services/profile_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:supabase/supabase.dart' as supabase;
 
@@ -8,9 +7,8 @@ class AuthenticationService {
   final client = Supabase.instance.client;
 
   Future<bool> signUpUser(context,
-      {required String email,
-      required String password,
-      required String username}) async {
+      {required String email, required String password}) async {
+
     final result1 = await client.auth.signUp(email, password);
 
     // check if email is registered successfully
@@ -21,20 +19,7 @@ class AuthenticationService {
       ));
       return false;
     }
-
-    final result2 =
-        await ProfileService.insertProfile(context, username: username);
-
-    // check if user profile is created successfully
-    if (result2) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('Registration successful'),
-        duration: Duration(seconds: 2),
-      ));
-      return true;
-    }
-
-    return false;
+    return true;
   }
 
   Future<bool> signInUser(context,

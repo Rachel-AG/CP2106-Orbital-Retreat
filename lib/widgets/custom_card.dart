@@ -16,8 +16,6 @@ class CustomCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(32)),
-      color: Colors.white70,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -28,7 +26,7 @@ class CustomCard extends StatelessWidget {
               children: [
                 Text(
                   title,
-                  style: TextStyles.optionCategoryStyle,
+                  style: TextStyles.chartTitle,
                 ),
               ],
             ),

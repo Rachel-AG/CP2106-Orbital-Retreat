@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:retreat/constants/auth_required_state.dart';
 import 'package:retreat/constants/text_styles.dart';
 import 'package:retreat/models/category.dart';
-import 'package:retreat/services/category_service.dart';
+import 'package:retreat/notifiers/category_list_change_notifier.dart';
+import 'package:retreat/notifiers/transaction_list_change_notifier.dart';
 import 'package:retreat/widgets/custom_formfield.dart';
-import 'package:retreat/services/transactions_service.dart';
 import 'package:retreat/widgets/custom_dropdown.dart';
 import 'package:retreat/widgets/numeric_formfield.dart';
 import 'package:retreat/widgets/custom_button.dart';
@@ -21,7 +22,6 @@ class RecordTransactionTab extends StatefulWidget {
 
 class _RecordTransactionTabState
     extends AuthRequiredState<RecordTransactionTab> {
-  final _supabaseClient = TransactionService();
   final TextEditingController _notesController = TextEditingController();
   final TextEditingController _amountController = TextEditingController();
 
@@ -38,129 +38,130 @@ class _RecordTransactionTabState
   int categoryId = -1;
   DateTime selectedDate = DateTime.now();
 
-  late List<Category> categoryList;
-  late CustomDropdownButton dropDownCategory;
+  late CustomDropdownButton dropdownButton;
 
-  Future record() async {
-    Category selectedCategory = categoryList[
-        categoryList.indexWhere((element) => element.name == category)];
-    categoryId = selectedCategory.id;
-    await _supabaseClient.insertTransaction(context,
-        amount: amount,
-        notes: notes,
-        categoryId: categoryId,
-        timeTransaction: selectedDate,
-        isExpense: widget.isExpense);
-  }
+  Widget dropDownCategory(List<Category> categoryList) {
+    if (categoryList.isEmpty) return const LinearProgressIndicator();
 
-  FutureBuilder<List<Category>> _dropDownCategoryBuilder() {
-    return FutureBuilder<List<Category>>(
-        future: widget.isExpense
-            ? CategoryService.getExpenseCategories(context)
-            : CategoryService.getIncomeCategories(context),
-        builder: (context, AsyncSnapshot<List<Category>> snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            // initialize category list
-            categoryList = snapshot.data!;
-            // initialize dropDownCategory
-            dropDownCategory = CustomDropdownButton(
-              menuItems: categoryList.map((e) => e.name).toList(),
-              title: "Category: ",
-              hint: "Select a category",
-            );
-            return dropDownCategory;
-          } else {
-            return const LinearProgressIndicator();
-          }
-        });
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _dropDownCategoryBuilder();
+    dropdownButton = CustomDropdownButton(
+      key: const ValueKey('category-dropdown'),
+      menuItems: categoryList.map((e) => e.name).toList(),
+      title: "Category: ",
+      hint: "Select a category",
+    );
+    return dropdownButton;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
-        child: Form(
-          child: Column(
-            children: <Widget>[
-              const SizedBox(height: 20.0),
-              NumericFormField(
-                labelText: 'Amount',
-                controller: _amountController,
-              ),
-              const SizedBox(height: 20.0),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Row(
-                    children: [
-                      const Text("Date: ", style: TextStyles.optionTextStyle),
-                      Text("${selectedDate.toLocal()}".split(' ')[0],
-                          style: TextStyles.optionTextStyle),
-                    ],
-                  ),
-                  ElevatedButton(
-                    child: const Text("Edit"),
-                    onPressed: () async {
-                      final DateTime? picked = await showDatePicker(
-                        context: context,
-                        initialDate: selectedDate,
-                        firstDate: DateTime(2000),
-                        lastDate: DateTime(2050),
-                      );
-                      if (picked != null && picked != selectedDate) {
-                        setState(() {
-                          selectedDate = picked;
-                        });
-                      }
-                    },
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20.0),
-              _dropDownCategoryBuilder(),
-              const SizedBox(height: 20.0),
-              CustomFormField(
-                labelText: 'Notes',
-                controller: _notesController,
-              ),
-              const SizedBox(height: 20.0),
-              CustomButton(
-                text: "Record",
-                onTap: () async {
-                  if (_amountController.text.isEmpty) {
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                      content: Text('Insert amount'),
-                      duration: Duration(seconds: 2),
-                    ));
-                  } else if (dropDownCategory.btnSelectedVal == null) {
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                      content: Text('Select Category'),
-                      duration: Duration(seconds: 2),
-                    ));
-                  } else {
-                    category = dropDownCategory.btnSelectedVal!;
-                    await record()
-                        .then((_) => ScaffoldMessenger.of(context)
-                                .showSnackBar(const SnackBar(
-                              content: Text('Transaction recorded'),
-                              duration: Duration(seconds: 2),
-                            )))
-                        .then((_) => Navigator.pushReplacementNamed(
-                            context, '/home/transactionlist'));
+      body: SingleChildScrollView(
+        child: Container(
+          padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 50.0),
+          child: Form(
+            child: Column(
+              children: <Widget>[
+                const SizedBox(height: 20.0),
+                NumericFormField(
+                  key: const ValueKey('amount-field'),
+                  labelText: 'Amount',
+                  controller: _amountController,
+                ),
+                const SizedBox(height: 20.0),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Row(
+                      children: [
+                        const Text("Date: ", style: TextStyles.optionTextStyle),
+                        Text("${selectedDate.toLocal()}".split(' ')[0],
+                            style: TextStyles.optionTextStyle),
+                      ],
+                    ),
+                    ElevatedButton(
+                      child: const Text("Edit"),
+                      onPressed: () async {
+                        final DateTime? picked = await showDatePicker(
+                          context: context,
+                          initialDate: selectedDate,
+                          firstDate: DateTime(2000),
+                          lastDate: DateTime(2050),
+                        );
+                        if (picked != null && picked != selectedDate) {
+                          setState(() {
+                            selectedDate = picked;
+                          });
+                        }
+                      },
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20.0),
+                Consumer<CategoryListChangeNotifier>(
+                    builder: ((context, value, child) {
+                  if (widget.isExpense) {
+                    final expenseDropDown =
+                        dropDownCategory(value.expenseCatList);
+                    return expenseDropDown;
                   }
-                },
-              ),
-            ],
+                  final incomeDropDown = dropDownCategory(value.incomeCatList);
+                  return incomeDropDown;
+                })),
+                const SizedBox(height: 20.0),
+                CustomFormField(
+                  key: const ValueKey('notes-field'),
+                  labelText: 'Notes',
+                  controller: _notesController,
+                ),
+                const SizedBox(height: 20.0),
+                recordButton(),
+              ],
+            ),
           ),
         ),
       ),
+    );
+  }
+
+  CustomButton recordButton() {
+    return CustomButton(
+      key: const ValueKey('record-button'),
+      text: "Record",
+      onTap: () {
+        if (_amountController.text.isEmpty) {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text('Insert amount'),
+            duration: Duration(seconds: 2),
+          ));
+        } else if (dropdownButton.btnSelectedVal == null) {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text('Select Category'),
+            duration: Duration(seconds: 2),
+          ));
+        } else {
+          category = dropdownButton.btnSelectedVal!;
+          List<Category> categoryList = widget.isExpense
+              ? Provider.of<CategoryListChangeNotifier>(context, listen: false)
+                  .expenseCatList
+              : Provider.of<CategoryListChangeNotifier>(context, listen: false)
+                  .incomeCatList;
+          Category selectedCategory = categoryList[
+              categoryList.indexWhere((element) => element.name == category)];
+          categoryId = selectedCategory.id;
+          Provider.of<TransactionListChangeNotifier>(context, listen: false)
+              .insertTransaction(
+                  amount: amount,
+                  notes: notes,
+                  categoryId: categoryId,
+                  timeTransaction: selectedDate,
+                  isExpense: widget.isExpense);
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text('Transaction recorded'),
+            duration: Duration(seconds: 2),
+          ));
+          Navigator.pushReplacementNamed(context, '/home/transactionlist');
+        }
+      },
     );
   }
 }

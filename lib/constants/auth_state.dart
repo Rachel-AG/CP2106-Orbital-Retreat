@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -29,5 +30,13 @@ class AuthState<T extends StatefulWidget> extends SupabaseAuthState<T> {
       content: Text('Error: $message'),
       duration: const Duration(seconds: 2),
     ));
+  }
+
+  @override
+  void startDeeplinkObserver() {
+    if (Platform.isAndroid || Platform.isIOS) {
+      return super.startDeeplinkObserver();
+    }
+    print('***** Overridden startDeeplinkObserver for Desktop support');
   }
 }

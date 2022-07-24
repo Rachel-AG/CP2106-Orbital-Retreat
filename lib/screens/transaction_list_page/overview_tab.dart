@@ -1,10 +1,14 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:retreat/constants/app_colors.dart';
 import 'package:retreat/constants/auth_required_state.dart';
 import 'package:retreat/constants/text_styles.dart';
 import 'package:retreat/models/category.dart';
 import 'package:retreat/models/month.dart';
-import 'package:retreat/services/transactions_service.dart';
+import 'package:retreat/models/transaction.dart';
+import 'package:retreat/notifiers/category_list_change_notifier.dart';
+import 'package:retreat/notifiers/transaction_list_change_notifier.dart';
 import 'package:retreat/widgets/custom_card.dart';
 import 'package:retreat/widgets/custom_dropdown.dart';
 
@@ -16,8 +20,6 @@ class OverviewPage extends StatefulWidget {
 }
 
 class _OverviewPageState extends AuthRequiredState<OverviewPage> {
-  final _supabaseClient = TransactionService();
-
   int month = DateTime.now().month;
   int year = DateTime.now().year;
 
@@ -27,8 +29,6 @@ class _OverviewPageState extends AuthRequiredState<OverviewPage> {
           .map((e) => e.toString())
           .toList();
 
-  int touchedIndex = -1;
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,46 +36,83 @@ class _OverviewPageState extends AuthRequiredState<OverviewPage> {
         title: const Text("Overview"),
         centerTitle: true,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: ListView(
-            shrinkWrap: true,
-            scrollDirection: Axis.vertical,
+      body:
+          ListView(shrinkWrap: true, scrollDirection: Axis.vertical, children: [
+        Padding(
+          padding: const EdgeInsets.only(left: 24.0, right: 24.0, top: 12.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  monthYearPopUpButton(),
-                  Text(
-                    '${Month.fromIntToString(month)}, $year',
-                    style: TextStyles.optionTextStyle,
-                  ),
-                ],
+              monthYearPopUpButton(),
+              Text(
+                '${Month.fromIntToString(month)}, $year',
+                style: TextStyles.optionTextStyle,
               ),
-              CustomCard(
-                  title: 'Monthly Cash Flow',
-                  padding: const EdgeInsets.symmetric(horizontal: 0.0),
-                  child: barChartBuilder(_totalTransactionListByMonth())),
-              const SizedBox(
-                height: 16.0,
-              ),
-              CustomCard(
-                title: 'Outflow',
-                child: pieChartBuilder(
-                    _supabaseClient.getBreakdownByCategoryFromTime(context,
-                        month: month, year: year, isExpense: true)),
-              ),
-              const SizedBox(
-                height: 16.0,
-              ),
-              CustomCard(
-                title: 'Inflow',
-                child: pieChartBuilder(
-                    _supabaseClient.getBreakdownByCategoryFromTime(context,
-                        month: month, year: year, isExpense: false)),
-              )
-            ]),
-      ),
+            ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.only(left: 24.0, right: 24.0, top: 12.0),
+          child: CustomCard(
+              title: 'Monthly Cash Flow',
+              child: Consumer<TransactionListChangeNotifier>(
+                builder: (context, value, child) {
+                  List<double> expenseList = _calcTransactionSumPerMonth(
+                      value.allTransactionList, true);
+                  List<double> incomeList = _calcTransactionSumPerMonth(
+                      value.allTransactionList, false);
+                  return customBarChart(expenseList, incomeList);
+                },
+              )),
+        ),
+        const SizedBox(
+          height: 16.0,
+        ),
+        Padding(
+          padding: const EdgeInsets.only(left: 24.0, right: 24.0, top: 12.0),
+          child: CustomCard(
+            title: 'Outflow',
+            child: Consumer2<TransactionListChangeNotifier,
+                CategoryListChangeNotifier>(
+              builder: (context, value, value2, child) {
+                List<Transaction> expenseList =
+                    _validTransactions(value.allTransactionList, true);
+                List<Category> expenseCatList = value2.expenseCatList;
+                if (expenseCatList.isEmpty) {
+                  return const CircularProgressIndicator();
+                }
+                Map<Category, double> expenseBreakdownByCat =
+                    _breakDownByCategory(expenseCatList, expenseList);
+                return customPieChart(expenseBreakdownByCat);
+              },
+            ),
+          ),
+        ),
+        const SizedBox(
+          height: 16.0,
+        ),
+        Padding(
+          padding: const EdgeInsets.only(
+              left: 24.0, right: 24.0, top: 12.0, bottom: 24.0),
+          child: CustomCard(
+            title: 'Inflow',
+            child: Consumer2<TransactionListChangeNotifier,
+                CategoryListChangeNotifier>(
+              builder: (context, value, value2, child) {
+                List<Transaction> incomeList =
+                    _validTransactions(value.allTransactionList, false);
+                List<Category> incomeCatList = value2.incomeCatList;
+                if (incomeCatList.isEmpty) {
+                  return const CircularProgressIndicator();
+                }
+                Map<Category, double> expenseBreakdownByCat =
+                    _breakDownByCategory(incomeCatList, incomeList);
+                return customPieChart(expenseBreakdownByCat);
+              },
+            ),
+          ),
+        )
+      ]),
     );
   }
 
@@ -89,7 +126,10 @@ class _OverviewPageState extends AuthRequiredState<OverviewPage> {
       title: "Year",
     );
     return IconButton(
-        icon: const Icon(Icons.calendar_month),
+        icon: const Icon(
+          Icons.calendar_month,
+          color: AppColors.custom,
+        ),
         onPressed: () {
           showDialog(
             context: context,
@@ -123,9 +163,14 @@ class _OverviewPageState extends AuthRequiredState<OverviewPage> {
         });
   }
 
+  //------------------
+  // PIE CHART METHODS
+  //------------------
+
   List<Widget> pieChartLegend(Map<Category, double> breakdownByCategoryData) {
     final categories = breakdownByCategoryData.keys.toList();
     final amount = breakdownByCategoryData.values.toList();
+    final totalAmount = amount.reduce((value, element) => value + element);
 
     return List.generate(
         categories.length,
@@ -142,8 +187,26 @@ class _OverviewPageState extends AuthRequiredState<OverviewPage> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(categories[index].name),
-                    Text('\$${amount[index].toString()}'),
+                    Row(
+                      children: [
+                        Container(
+                          width: 16.0,
+                          height: 16.0,
+                          color: Colors.primaries[index],
+                        ),
+                        const SizedBox(width: 8.0),
+                        Text(categories[index].name),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Text('\$${amount[index]}'),
+                        Text(
+                          ' (${(amount[index] / totalAmount * 100).round()}%)',
+                          style: TextStyles.percentage,
+                        ),
+                      ],
+                    ),
                   ],
                 ),
               ],
@@ -151,76 +214,70 @@ class _OverviewPageState extends AuthRequiredState<OverviewPage> {
   }
 
   PieChartData pieChartMainData(Map<Category, double> breakdownByCategoryData) {
-    final double totalTransactions = breakdownByCategoryData.values.reduce(
-      (value, element) => value + element,
-    );
-    final List<Category> categoryList = breakdownByCategoryData.keys.toList();
     final List<double> amountList = breakdownByCategoryData.values.toList();
 
     return PieChartData(
       sections: List.generate(breakdownByCategoryData.length, (index) {
-        final isTouched = index == touchedIndex;
-        final radius = isTouched ? 60.0 : 50.0;
-        final String category = categoryList[index].name;
-        final double amount = amountList[index];
-        final int percentage = (amount / totalTransactions * 100).round();
-
         return PieChartSectionData(
           color: Colors.primaries[index],
-          title: '$category ($percentage%)',
-          titleStyle: TextStyles.chartLabelStyle(),
-          titlePositionPercentageOffset: 1,
-          value: amount,
-          radius: radius,
+          value: amountList[index],
+          showTitle: false,
+          radius: 60.0,
         );
       }),
       centerSpaceRadius: double.infinity,
-      sectionsSpace: 8,
+      sectionsSpace: 2.0,
       borderData: FlBorderData(show: false),
     );
   }
 
-  FutureBuilder<Map<Category, double>> pieChartBuilder(
-      Future<Map<Category, double>> breakdownByCategoryFromTimeGetter) {
-    return FutureBuilder<Map<Category, double>>(
-        future: breakdownByCategoryFromTimeGetter,
-        builder: (context, AsyncSnapshot<Map<Category, double>> snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            if (snapshot.hasData &&
-                !snapshot.data!.values.fold(
-                    true,
-                    (previousValue, element) =>
-                        previousValue && element == 0.0)) {
-              return Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 48.0),
-                    child: AspectRatio(
-                        aspectRatio: 1,
-                        child: PieChart(pieChartMainData(snapshot.data!))),
-                  ),
-                  ...pieChartLegend(snapshot.data!),
-                ],
-              );
-            } else {
-              return const Text(
-                'No Transactions Recorded',
-              );
-            }
-          } else {
-            return const CircularProgressIndicator();
-          }
-        });
+  Widget customPieChart(Map<Category, double> breakdownByCategory) {
+    if (breakdownByCategory.values.fold(
+        true, (previousValue, element) => previousValue && element == 0.0)) {
+      return const Text(
+        'No Transactions Recorded',
+      );
+    }
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 48.0),
+          child: AspectRatio(
+              aspectRatio: 1,
+              child: PieChart(pieChartMainData(breakdownByCategory))),
+        ),
+        ...pieChartLegend(breakdownByCategory),
+      ],
+    );
   }
 
-  Future<List<List<double>>> _totalTransactionListByMonth() async {
-    return Future.wait([
-      _supabaseClient.getTotalTransactionListByMonth(context,
-          year: year, isExpense: true),
-      _supabaseClient.getTotalTransactionListByMonth(context,
-          year: year, isExpense: false),
-    ]);
+  Map<Category, double> _breakDownByCategory(
+      List<Category> catList, List<Transaction> transactionList) {
+    final amountList = List<double>.filled(catList.length, 0.0);
+    for (var element in transactionList) {
+      int index =
+          catList.indexWhere((category) => category.id == element.categoryId);
+      amountList[index] += element.amount;
+    }
+    var result = Map.fromIterables(
+        catList, amountList.map((e) => double.parse((e).toStringAsFixed(2))));
+    result.removeWhere((key, value) => value == 0.0);
+    return result;
   }
+
+  List<Transaction> _validTransactions(
+      List<Transaction> allTransactionList, bool isExpense) {
+    return allTransactionList.where((transaction) {
+      final time = DateTime.parse(transaction.timeTransaction);
+      return transaction.isExpense == isExpense &&
+          time.year == year &&
+          time.month == month;
+    }).toList();
+  }
+
+  //------------------
+  // BAR CHART METHODS
+  //------------------
 
   List<BarChartGroupData> barChartGroupMainData(
       List<double> totalExpenseList, List<double> totalIncomeList) {
@@ -228,9 +285,14 @@ class _OverviewPageState extends AuthRequiredState<OverviewPage> {
         totalExpenseList.length,
         (index) => BarChartGroupData(x: index, barsSpace: 4.0, barRods: [
               BarChartRodData(
-                  toY: totalExpenseList[index], color: Colors.red, width: 6.0),
+                  toY: totalExpenseList[index],
+                  color: AppColors.red,
+                  width: 6.0),
               BarChartRodData(
-                  toY: totalIncomeList[index], color: Colors.green, width: 6.0)
+                  toY: totalIncomeList[index],
+                  color: AppColors.green,
+                  width: 6.0)
+
             ]));
   }
 
@@ -271,24 +333,32 @@ class _OverviewPageState extends AuthRequiredState<OverviewPage> {
     );
   }
 
-  FutureBuilder<List<List<double>>> barChartBuilder(
-      Future<List<List<double>>> totalTransactionList) {
-    return FutureBuilder<List<List<double>>>(
-        future: totalTransactionList,
-        builder: (context, AsyncSnapshot<List<List<double>>> snapshot) {
-          if (snapshot.connectionState == ConnectionState.done) {
-            return SizedBox(
-              height: 240.0,
-              width: 500.0,
-              child: BarChart(barChartMainData(
-                  barChartGroupMainData(snapshot.data![0], snapshot.data![1]))),
-            );
-          } else {
-            return const Padding(
-              padding: EdgeInsets.all(24.0),
-              child: CircularProgressIndicator(),
-            );
-          }
-        });
+  Widget customBarChart(List<double> expenseList, List<double> incomeList) {
+    if (expenseList.where((element) => element != 0.0).isEmpty &&
+        incomeList.where((element) => element != 0.0).isEmpty) {
+      return const Text(
+        'No Transactions Recorded',
+      );
+    }
+    return SizedBox(
+      height: 240.0,
+      width: 500.0,
+      child: BarChart(
+          barChartMainData(barChartGroupMainData(expenseList, incomeList))),
+    );
+  }
+
+  List<double> _calcTransactionSumPerMonth(
+      List<Transaction> allTransactionList, bool isExpense) {
+    final result = List<double>.filled(12, 0.0);
+    final validList = allTransactionList
+        .where((transaction) => transaction.isExpense == isExpense);
+    for (Transaction transaction in validList) {
+      final time = DateTime.parse(transaction.timeTransaction);
+      if (time.year == year) {
+        result[time.month - 1] += transaction.amount;
+      }
+    }
+    return result;
   }
 }

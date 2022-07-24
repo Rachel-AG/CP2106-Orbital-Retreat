@@ -1,99 +1,36 @@
-import 'package:flutter/material.dart';
+
 import 'package:image_picker/image_picker.dart';
-import 'package:retreat/models/no_data_retrieved_exception.dart';
 import 'package:retreat/models/profile.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-//TODO: throws exception if no user is authenticated.
-
+// TODO: error handling
 class ProfileService {
   /// The supabase client for Retreat.
   static final client = Supabase.instance.client;
 
-  /// Creates a user profile if a user in authenticated.
-  ///
-  /// Returns true if a user profile is successfully created,
-  /// otherwise returns false.
-  static Future<bool> insertProfile(context, {required String username}) async {
+  Future<bool> createProfile(String username) async {
     final result = await client.from('profiles').insert([
       {'id': client.auth.currentUser?.id, 'username': username}
     ]).execute();
 
     // check if profile is created successfully
-    if (result.error != null) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Error: ${result.error!.message.toString()}'),
-        duration: const Duration(seconds: 2),
-      ));
-      return false;
-    }
+    if (result.error != null) return false;
     return true;
   }
 
-  /// Updates the username of the currently authenticated user.
-  ///
-  /// Returns true if the username is successfully updated,
-  /// otherwise returns false.
-  static Future<bool> updateCurrentUserUsername(context,
-      {required String username}) async {
-    final result = await client
-        .from('profiles')
-        .update({
-          'username': username,
-          'updated_at': DateTime.now().toIso8601String(),
-        })
-        .eq('id', client.auth.currentUser?.id)
-        .execute();
-
-    // check if profile is updated successfully
-    if (result.error != null) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Error: ${result.error!.message.toString()}'),
-        duration: const Duration(seconds: 2),
-      ));
-      return false;
-    }
-    return true;
-  }
-
-  /// Retrieves the profile of the currently authenticaed user.
-  static Future<Profile> getCurrentUserProfile(context) async {
+  Future<Profile> getCurrentProfile() async {
     final result = await client
         .from('profiles')
         .select()
         .eq('id', client.auth.currentUser?.id)
         .execute();
 
-    // check if profile is retrieved successfully
-    if (result.error != null) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Error: ${result.error!.message.toString()}'),
-        duration: const Duration(seconds: 2),
-      ));
-    }
-
     final dataList = result.data as List;
     return dataList.map((e) => Profile.fromJson(e)).toList().elementAt(0);
   }
 
-  static Future<bool> updateCurrentUserAvatar(context,
-      {required String imageUrl}) async {
-    final result = await client
-        .from('profiles')
-        .update({
-          'avatar_url': imageUrl,
-          'updated_at': DateTime.now().toIso8601String(),
-        })
-        .eq('id', client.auth.currentUser?.id)
-        .execute();
-
-    // check if avatar is updated successfully
-    if (result.error != null) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Error: ${result.error!.message.toString()}'),
-        duration: const Duration(seconds: 2),
-      ));
-      return false;
+    if (dataList.isEmpty) {
+      return const Profile('null', 'UserNotFound', '', null);
     }
     return true;
   }
@@ -154,5 +91,47 @@ class ProfileService {
     }
 
     return result.data!;
+  }
+
+  Future<bool> updateProfile(Profile profile) async {
+    final result = await client
+        .from('profiles')
+        .update({
+          'username': profile.username,
+          'avatar_url': profile.avatarUrl,
+          'updated_at': DateTime.now().toIso8601String(),
+        })
+        .eq('id', client.auth.currentUser?.id)
+        .execute();
+
+    // check if avatar is updated successfully
+    if (result.error != null) return false;
+    return true;
+  }
+
+  Future<String> uploadAvatar(XFile imageFile) async {
+    final bytes = await imageFile.readAsBytes();
+    final fileName = _nameFile(file: imageFile);
+
+    // uploading selected image to supabase storage
+    final result = await Supabase.instance.client.storage
+        .from('avatars')
+        .uploadBinary(fileName, bytes);
+
+    if (result.error != null) false;
+
+    return await _getAvatarUrl(fileName);
+  }
+
+  Future<String> _getAvatarUrl(String fileName) async {
+    final result =
+        Supabase.instance.client.storage.from('avatars').getPublicUrl(fileName);
+    return result.data!;
+  }
+
+  String _nameFile({required XFile file}) {
+    final fileExt = file.path.split('.').last;
+    final fileName = '${DateTime.now().toIso8601String()}.$fileExt';
+    return fileName;
   }
 }

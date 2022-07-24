@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:retreat/constants/auth_state.dart';
+import 'package:retreat/notifiers/current_profile_change_notifier.dart';
 import 'package:retreat/services/authentication_service.dart';
 import 'package:retreat/widgets/custom_button.dart';
 import 'package:retreat/widgets/custom_formfield.dart';
@@ -44,6 +46,7 @@ class _SignUpPageState extends AuthState<SignUpPage> {
                 ),
                 // username form
                 CustomFormField(
+                    key: const ValueKey('username-field'),
                     hintText: 'Your username',
                     labelText: 'Username',
                     controller: _usernameController),
@@ -53,6 +56,7 @@ class _SignUpPageState extends AuthState<SignUpPage> {
                 ),
                 // email form
                 CustomFormField(
+                    key: const ValueKey('email-field'),
                     hintText: 'Your email address',
                     labelText: 'Email',
                     controller: _emailController),
@@ -61,6 +65,7 @@ class _SignUpPageState extends AuthState<SignUpPage> {
                   height: 24,
                 ),
                 PasswordField(
+                    key: const ValueKey('password-field'),
                     helperText: 'No more than 25 characters',
                     labelText: 'Password',
                     controller: _passwordController),
@@ -68,15 +73,19 @@ class _SignUpPageState extends AuthState<SignUpPage> {
                   height: 24,
                 ),
                 CustomButton(
+                  key: const ValueKey('sign-up-button'),
                   text: "Sign Up",
                   onTap: () async {
                     await _supabaseClient
-                        .signUpUser(context,
-                            email: email,
-                            password: password,
-                            username: username)
-                        .then((value) =>
-                            value ? Navigator.pushNamed(context, '/') : false);
+                        .signUpUser(context, email: email, password: password)
+                        .then((value) {
+                      if (value) {
+                        Provider.of<CurrentProfileChangeNotifier>(context,
+                                listen: false)
+                            .createProfile(username);
+                        Navigator.pushNamed(context, '/');
+                      }
+                    });
                   },
                 ),
               ]),

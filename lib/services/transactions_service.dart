@@ -1,14 +1,21 @@
-import 'package:flutter/material.dart';
-import 'package:retreat/models/category.dart';
-import 'package:retreat/services/category_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:retreat/models/transaction.dart';
 
 class TransactionService {
-  final client = Supabase.instance.client;
+  static final client = Supabase.instance.client;
 
-  ///Inserts transaction to the database
-  Future<void> insertTransaction(context,
+  Future<List<Transaction>> getAllTransactions() async {
+    final result = await client
+        .from('transactions')
+        .select()
+        .eq('created_by', client.auth.currentUser?.id)
+        .execute();
+
+    final dataList = result.data as List;
+    return List.from(dataList.map((e) => Transaction.fromJson(e)).toList());
+  }
+
+  Future<bool> insertTransaction(
       {required double amount,
       String? notes,
       required int categoryId,
@@ -20,16 +27,46 @@ class TransactionService {
         'notes': notes,
         'category_id': categoryId,
         'time_transaction': timeTransaction.toIso8601String(),
-        'is_expense': isExpense
+        'is_expense': isExpense,
       }
     ]).execute();
 
-    if (result.error?.message != null) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Error: ${result.error!.message.toString()}'),
-        duration: const Duration(seconds: 2),
-      ));
+    if (result.error != null) return false;
+    return true;
+  }
+
+  Future<bool> deleteTransaction(String id) async {
+    final result =
+        await client.from('transactions').delete().eq('id', id).execute();
+
+    if (result.error != null) return false;
+    return true;
+  }
+
+  Future<bool> updateTransaction(
+      {required String id,
+      required double amount,
+      String? notes,
+      required int categoryId,
+      required DateTime timeTransaction,
+      required bool isExpense}) async {
+    final result = await client
+        .from('transactions')
+        .update({
+          'amount': amount,
+          'notes': notes,
+          'category_id': categoryId,
+          'time_transaction': timeTransaction.toIso8601String(),
+          'is_expense': isExpense,
+        })
+        .eq('id', id)
+        .execute();
+
+    if (result.error != null) {
+      print(result.error?.message);
+      return false;
     }
+    return true;
   }
 
   /// Deletes transaction

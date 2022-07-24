@@ -1,26 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
+import 'package:provider/provider.dart';
 import 'package:retreat/constants/auth_required_state.dart';
 import 'package:retreat/constants/text_styles.dart';
 import 'package:retreat/models/budget.dart';
-import 'package:retreat/services/transactions_service.dart';
+import 'package:retreat/models/transaction.dart';
+import 'package:retreat/notifiers/budget_list_change_notifier.dart';
+import 'package:retreat/notifiers/transaction_list_change_notifier.dart';
 import 'package:retreat/widgets/numeric_formfield.dart';
-
 import '../../constants/app_colors.dart';
-import '../../services/budget_service.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/custom_card.dart';
 
 class BudgetHistoryPage extends StatefulWidget {
-  const BudgetHistoryPage({Key? key}) : super(key: key); //??
+  const BudgetHistoryPage({Key? key}) : super(key: key);
 
   @override
   State<BudgetHistoryPage> createState() => _BudgetHistoryPageState();
 }
 
 class _BudgetHistoryPageState extends AuthRequiredState<BudgetHistoryPage> {
-  final _supabaseClientBudget = BudgetService();
-  final _supabaseClientTransaction = TransactionService();
   final TextEditingController _amountController = TextEditingController();
 
   @override
@@ -29,187 +28,253 @@ class _BudgetHistoryPageState extends AuthRequiredState<BudgetHistoryPage> {
     super.dispose();
   }
 
-  @override
-  void initState() {
-    super.initState();
-  }
 
   double get amount => double.parse(_amountController.text);
 
-  Future record() async {
-    int selectedMonth = DateTime.now().month;
-    int selectedYear = DateTime.now().year;
-    await _supabaseClientBudget.insertBudget(context,
-        amount: amount, month: selectedMonth, year: selectedYear);
-  }
-
-  Future update(String id) async {
-    int selectedMonth = DateTime.now().month;
-    int selectedYear = DateTime.now().year;
-    await _supabaseClientBudget.updateBudget(context,
-        id: id, amount: amount, month: selectedMonth, year: selectedYear);
-  }
-
   @override
   Widget build(BuildContext context) {
+    int currentMonth = DateTime.now().month;
+    int currentYear = DateTime.now().year;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('My Budget'),
         centerTitle: true,
       ),
-      body: FutureBuilder<List<dynamic>>(
-          future: Future.wait([getSumExpense(), getBudget()]),
-          builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
-            if (snapshot.connectionState == ConnectionState.done &&
-                snapshot.hasData) {
-              if (snapshot.hasError) {
-                return Text('Error: ${snapshot.error}');
-              } else {
-                final budgetThisMonth = snapshot.data![1];
-                final sumExpense = snapshot.data![0];
-                if (budgetThisMonth != null) {
-                  //user alr set budget
-                  double budgetAmount = budgetThisMonth.amount;
-                  return Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: ListView(
-                      shrinkWrap: true,
-                      scrollDirection: Axis.vertical,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Text("Budget this month: \$ $budgetAmount",
-                              style: TextStyles.optionTextStyle),
-                        ),
-                        recordBudgetButton(true, budgetThisMonth),
-                        CustomCard(
-                          title: 'Budget Overview',
-                          child: remainingBudgetChart(sumExpense, budgetAmount),
-                        ),
-                      ],
-                    ),
-                  );
-                } else {
-                  return Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: ListView(
-                      shrinkWrap: true,
-                      scrollDirection: Axis.vertical,
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.all(8.0),
-                          child: Text(
-                              "You have not recorded budget for this month",
-                              style: TextStyles.optionTextStyle),
-                        ),
-                        recordBudgetButton(false, null),
-                      ],
-                    ),
-                  );
-                }
-              }
-            } else {
-              return const Text("Loading...");
-            }
-          }),
+      body: Consumer2<BudgetListChangeNotifier, TransactionListChangeNotifier>(
+          builder: ((context, value, value2, child) {
+        if (!value.isUpToDate) {
+          value.budgetList;
+          return Column(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: const [
+                  CircularProgressIndicator(),
+                ],
+              ),
+            ],
+          );
+        }
+        if (!value2.isUpToDate) {
+          value2.allTransactionList;
+          return Column(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: const [
+                  CircularProgressIndicator(),
+                ],
+              ),
+            ],
+          );
+        }
+
+        if (value.budgetList.isEmpty) {
+          return noBudget();
+        }
+
+        Budget mostRecent = value.budgetList[0];
+        if (mostRecent.year != currentYear ||
+            mostRecent.month != currentMonth) {
+          return noBudget();
+        }
+
+        double totalExpense = _validTransactions(
+                value2.allTransactionList, currentYear, currentMonth)
+            .fold(0.0,
+                (previousValue, element) => previousValue + element.amount);
+        return updateBudget(mostRecent, totalExpense);
+      })),
     );
   }
 
-  Future<Budget?> getBudget() async {
-    final result = await _supabaseClientBudget.getBudgetMonthYear(context,
-        month: DateTime.now().month, year: DateTime.now().year);
-
-    return result;
+  Widget noBudget() {
+    return ListView(
+      shrinkWrap: true,
+      scrollDirection: Axis.vertical,
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              const Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Text("You have not recorded budget for this month",
+                    style: TextStyles.optionTextStyle),
+              ),
+              insertBudgetButton(),
+            ],
+          ),
+        ),
+      ],
+    );
   }
 
-  Future<double> getSumExpense() async {
-    final result = await _supabaseClientTransaction.sumMonthTransactions(
-        context,
-        month: DateTime.now().month,
-        year: DateTime.now().year,
-        isExpense: true);
-
-    return result;
-  }
-
-  Widget recordBudgetButton(bool budgetExist, Budget? existingBudget) {
-    String buttonText;
-    if (budgetExist) {
-      buttonText = "Update Budget";
-    } else {
-      buttonText = "Insert Budget";
-    }
-    return CustomButton(
-      text: buttonText,
-      onTap: () {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              scrollable: true,
-              title: const Text('Set Your Budget This Month'),
-              content: Padding(
+  Widget updateBudget(Budget currentBudget, double totalExpense) {
+    //user alr set budget
+    double budgetAmount = currentBudget.amount;
+    return ListView(
+      shrinkWrap: true,
+      scrollDirection: Axis.vertical,
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Form(
-                  child: Column(
-                    children: <Widget>[
-                      NumericFormField(
-                          labelText: "Budget",
-                          hintText: "Insert amount",
-                          controller: _amountController),
-                      CustomButton(
-                        text: "Record",
-                        onTap: () async {
-                          if (_amountController.text.isEmpty) {
-                            ScaffoldMessenger.of(context)
-                                .showSnackBar(const SnackBar(
-                              content: Text('Insert budget'),
-                              duration: Duration(seconds: 2),
-                            ));
-                          } else {
-                            if (!budgetExist) {
-                              await record()
-                                  .then((_) => ScaffoldMessenger.of(context)
-                                          .showSnackBar(const SnackBar(
-                                        content: Text('Budget recorded'),
-                                        duration: Duration(seconds: 2),
-                                      )))
-                                  .then((_) => setState(() {}));
-                              // .then((_) => Navigator.pushReplacementNamed(
-                              // context, '/home/transactionlist/budget'));
+                child: Text("Budget this month: \$ $budgetAmount",
+                    style: TextStyles.optionTextStyle),
+              ),
+              updateBudgetButton(currentBudget),
+              CustomCard(
+                title: 'Budget Overview',
+                child: remainingBudgetChart(totalExpense, budgetAmount),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  List<Transaction> _validTransactions(
+      List<Transaction> allTransactionList, int year, int month) {
+    return allTransactionList.where((transaction) {
+      final time = DateTime.parse(transaction.timeTransaction);
+      return transaction.isExpense && time.year == year && time.month == month;
+    }).toList();
+  }
+
+  CustomButton updateBudgetButton(Budget budget) {
+    return CustomButton(
+        text: "Update Budget",
+        onTap: () {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                scrollable: true,
+                title: const Text('Set Your Budget This Month'),
+                content: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Form(
+                    child: Column(
+                      children: <Widget>[
+                        NumericFormField(
+                            labelText: "Budget",
+                            hintText: "Insert amount",
+                            controller: _amountController),
+                        CustomButton(
+                          text: "Record",
+                          onTap: () async {
+                            if (_amountController.text.isEmpty) {
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(const SnackBar(
+                                content: Text('Insert budget'),
+                                duration: Duration(seconds: 2),
+                              ));
                             } else {
-                              String id = existingBudget?.id ?? "0";
+                              String id = budget.id;
                               //TO DO: POP UP WARNING MSG
-                              await update(id)
-                                  .then((_) => ScaffoldMessenger.of(context)
-                                          .showSnackBar(const SnackBar(
-                                        content: Text('Budget updated'),
-                                        duration: Duration(seconds: 2),
-                                      )))
-                                  .then((_) => setState(() {}));
-                              // .then((_) => Navigator.pushReplacementNamed(
-                              //     context, '/home/transactionlist/budget'));
+                              int selectedMonth = DateTime.now().month;
+                              int selectedYear = DateTime.now().year;
+                              Provider.of<BudgetListChangeNotifier>(context,
+                                      listen: false)
+                                  .updateBudget(
+                                      id: id,
+                                      amount: amount,
+                                      month: selectedMonth,
+                                      year: selectedYear);
+                              Navigator.of(context).pop();
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(const SnackBar(
+                                content: Text('Budget updated'),
+                                duration: Duration(seconds: 2),
+                              ));
                             }
-                          }
-                        },
-                      ),
-                    ],
+                          },
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            );
-          },
-        );
-      },
-    );
+              );
+            },
+          );
+        });
+  }
+
+  CustomButton insertBudgetButton() {
+    return CustomButton(
+        text: "Insert Budget",
+        onTap: () {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                scrollable: true,
+                title: const Text('Set Your Budget This Month'),
+                content: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Form(
+                    child: Column(
+                      children: <Widget>[
+                        NumericFormField(
+                            labelText: "Budget",
+                            hintText: "Insert amount",
+                            controller: _amountController),
+                        CustomButton(
+                          text: "Record",
+                          onTap: () async {
+                            if (_amountController.text.isEmpty) {
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(const SnackBar(
+                                content: Text('Insert budget'),
+                                duration: Duration(seconds: 2),
+                              ));
+                            } else {
+                              int selectedMonth = DateTime.now().month;
+                              int selectedYear = DateTime.now().year;
+                              Provider.of<BudgetListChangeNotifier>(context,
+                                      listen: false)
+                                  .insertBudget(
+                                      amount: amount,
+                                      month: selectedMonth,
+                                      year: selectedYear);
+                              Navigator.of(context).pop();
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(const SnackBar(
+                                content: Text('Budget recorded'),
+                                duration: Duration(seconds: 2),
+                              ));
+                            }
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
+          );
+        });
   }
 
   CircularPercentIndicator remainingBudgetChart(
       double sumExpense, double budgetThisMonth) {
     double remainingBudget = budgetThisMonth - sumExpense;
-    if(remainingBudget < 0) {
-      remainingBudget = 0;
-    }
     double percentBudgetRemaining = remainingBudget / budgetThisMonth;
     String percentBudgetRemainingString =
         "${(percentBudgetRemaining * 100).toStringAsFixed(2)}%";
@@ -217,7 +282,10 @@ class _BudgetHistoryPageState extends AuthRequiredState<BudgetHistoryPage> {
       radius: 100.0,
       lineWidth: 20.0,
       animation: true,
-      percent: percentBudgetRemaining,
+      percent: percentBudgetRemaining.abs() >= 1
+          ? 1.0
+          : percentBudgetRemaining.abs(),
+
       center: Text(
         percentBudgetRemainingString,
         style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
@@ -225,12 +293,14 @@ class _BudgetHistoryPageState extends AuthRequiredState<BudgetHistoryPage> {
       footer: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Text(
-          "Remaining Budget: \$$remainingBudget",
+          remainingBudget >= 0
+              ? "Remaining Budget: \$${remainingBudget.abs()}"
+              : "Exceed Budget: \$${remainingBudget.abs()}",
           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 17.0),
         ),
       ),
       circularStrokeCap: CircularStrokeCap.round,
-      progressColor: AppColors.steelteal,
+      progressColor: remainingBudget >= 0 ? AppColors.green : AppColors.red,
     );
   }
 }

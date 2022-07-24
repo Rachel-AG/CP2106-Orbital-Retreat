@@ -3,14 +3,13 @@ import 'package:retreat/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class TextStyles {
-  static const headerTextStyle = TextStyle(
-    color: AppColors.whiteshade,
+  static var headerTextStyle = TextStyle(
+    color: AppColors.custom.shade50,
     fontSize: 28,
     fontWeight: FontWeight.w700,
   );
 
   static const textFieldHeading = TextStyle(
-    color: AppColors.darkblue,
     fontSize: 16,
     fontWeight: FontWeight.w500,
   );
@@ -21,29 +20,33 @@ class TextStyles {
     fontWeight: FontWeight.w500,
   );
 
-  static const buttonTextStyle = TextStyle(
-    color: AppColors.whiteshade,
+  static var buttonTextStyle = TextStyle(
+    color: AppColors.custom.shade50,
     fontSize: 16,
     fontWeight: FontWeight.w600,
   );
 
   static const optionTextStyle = TextStyle(
-    color: AppColors.darkblue,
     fontSize: 16,
     fontWeight: FontWeight.w500,
   );
 
-  static const subOptionTextStyle = TextStyle(
-    color: AppColors.darkblue,
-    fontSize: 14,
-    fontWeight: FontWeight.w300,
-    height: 1.4
+  static const subOptionTextStyle =
+      TextStyle(fontSize: 14, fontWeight: FontWeight.w300, height: 1.4);
+
+  static const profileTextStyle = TextStyle(
+    fontSize: 20,
+    fontWeight: FontWeight.w600,
   );
 
   static const optionCategoryStyle = TextStyle(
-    color: AppColors.darkblue,
-    fontSize: 28,
-    fontWeight: FontWeight.w700,
+    fontSize: 22,
+    fontWeight: FontWeight.w600,
+  );
+
+  static const chartTitle = TextStyle(
+    fontSize: 22,
+    fontWeight: FontWeight.w600,
   );
 
   static TextStyle chartLabelStyle() => TextStyle(
@@ -53,4 +56,18 @@ class TextStyles {
         ..color = Colors.white.withOpacity(0.5)
         ..style = PaintingStyle.stroke
         ..strokeJoin = StrokeJoin.round);
+
+  static const incomeAmount = TextStyle(
+    fontSize: 15,
+    color: AppColors.green,
+    fontWeight: FontWeight.w600,
+  );
+
+  static const expenseAmount = TextStyle(
+    fontSize: 15,
+    color: AppColors.red,
+    fontWeight: FontWeight.w600,
+  );
+
+  static var percentage = TextStyle(color: AppColors.custom.shade100);
 }
