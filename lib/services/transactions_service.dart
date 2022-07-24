@@ -4,7 +4,7 @@ import 'package:retreat/models/transaction.dart';
 class TransactionService {
   static final client = Supabase.instance.client;
 
-  static Future<List<Transaction>> getAllTransactions() async {
+  Future<List<Transaction>> getAllTransactions() async {
     final result = await client
         .from('transactions')
         .select()
@@ -15,7 +15,7 @@ class TransactionService {
     return List.from(dataList.map((e) => Transaction.fromJson(e)).toList());
   }
 
-  static Future<bool> insertTransaction(
+  Future<bool> insertTransaction(
       {required double amount,
       String? notes,
       required int categoryId,
@@ -35,7 +35,7 @@ class TransactionService {
     return true;
   }
 
-  static Future<bool> deleteTransaction(String id) async {
+  Future<bool> deleteTransaction(String id) async {
     final result =
         await client.from('transactions').delete().eq('id', id).execute();
 
@@ -43,7 +43,7 @@ class TransactionService {
     return true;
   }
 
-  static Future<bool> updateTransaction(
+  Future<bool> updateTransaction(
       {required String id,
       required double amount,
       String? notes,

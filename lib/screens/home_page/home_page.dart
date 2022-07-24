@@ -10,7 +10,9 @@ import 'package:retreat/widgets/avatar.dart';
 import 'package:webview_flutter_plus/webview_flutter_plus.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  const HomePage({Key? key, required this.genIsland}) : super(key: key);
+
+  final bool genIsland;
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -24,23 +26,29 @@ class _HomePageState extends AuthRequiredState<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: const Text('Welcome'),
+          title: const Text('Home'),
           centerTitle: true,
         ),
         floatingActionButton: recordButton(),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         body: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Consumer<CurrentProfileChangeNotifier>(
-                builder: (context, value, child) => profileCard(value),
+                builder: (context, value, child) =>
+                    Expanded(flex: 2, child: profileCard(value)),
               ),
-              refreshButton(_controller),
+              Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [refreshButton(_controller)]),
               Consumer<IslandChangeNotifier>(
-                  builder: (context, value, child) =>
-                      islandWebView(value, _controller)),
+                  builder: (context, value, child) => Expanded(
+                      flex: 8,
+                      child: widget.genIsland
+                          ? islandWebView(value, _controller)
+                          : const SizedBox())),
             ],
           ),
         ),
@@ -49,13 +57,13 @@ class _HomePageState extends AuthRequiredState<HomePage> {
 
   FloatingActionButton recordButton() {
     return FloatingActionButton.extended(
-        backgroundColor: AppColors.steelteal,
+        key: const ValueKey('add-transaction'),
+        backgroundColor: AppColors.custom.shade400,
         elevation: 4.0,
         icon: const Icon(
           Icons.add,
-          color: AppColors.whiteshade,
         ),
-        label: const Text(
+        label: Text(
           'Record Transaction',
           style: TextStyles.buttonTextStyle,
         ),
@@ -66,25 +74,26 @@ class _HomePageState extends AuthRequiredState<HomePage> {
 
   BottomAppBar bottomNavBar() {
     return BottomAppBar(
-      color: AppColors.darkblue,
       child: Row(
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           IconButton(
+              key: const ValueKey('transaction-list'),
               onPressed: () {
                 Navigator.pushNamed(context, '/home/transactionlist');
               },
               icon: const Icon(
                 Icons.analytics_rounded,
-                color: AppColors.whiteshade,
               )),
           IconButton(
+            key: const ValueKey('settings'),
             onPressed: () {
               Navigator.pushNamed(context, '/home/settings');
             },
-            icon: const Icon(Icons.more_horiz),
-            color: AppColors.whiteshade,
+            icon: const Icon(
+              Icons.more_horiz,
+            ),
           )
         ],
       ),
@@ -93,37 +102,33 @@ class _HomePageState extends AuthRequiredState<HomePage> {
 
   Widget islandWebView(IslandChangeNotifier islandChangeNotifier,
       Completer<WebViewPlusController> _controller) {
-    return SizedBox(
-      width: MediaQuery.of(context).size.width,
-      height: MediaQuery.of(context).size.height * 0.6,
-      child: WebViewPlus(
-        zoomEnabled: false,
-        initialUrl: 'assets/www/index.html',
-        javascriptMode: JavascriptMode.unrestricted,
-        javascriptChannels: <JavascriptChannel>{
-          JavascriptChannel(
-              name: 'messageHandler',
-              onMessageReceived: (JavascriptMessage message) async {
-                print("message from webview: ${message.message}");
-                await islandChangeNotifier.getIsland();
-                print(islandChangeNotifier.javaScriptString);
-                await _controller.future.then((controller) async {
-                  await controller.webViewController
-                      .runJavascriptReturningResult(
-                          islandChangeNotifier.javaScriptString);
-                });
-              })
-        },
-        onWebViewCreated: (WebViewPlusController controller) async {
-          _controller.complete(controller);
-        },
-        onPageFinished: (_) async {},
-      ),
+    return WebViewPlus(
+      zoomEnabled: false,
+      initialUrl: 'assets/www/index.html',
+      javascriptMode: JavascriptMode.unrestricted,
+      javascriptChannels: <JavascriptChannel>{
+        JavascriptChannel(
+            name: 'messageHandler',
+            onMessageReceived: (JavascriptMessage message) async {
+              print("message from webview: ${message.message}");
+              await islandChangeNotifier.getIsland();
+              print(islandChangeNotifier.javaScriptString);
+              await _controller.future.then((controller) async {
+                await controller.webViewController.runJavascriptReturningResult(
+                    islandChangeNotifier.javaScriptString);
+              });
+            })
+      },
+      onWebViewCreated: (WebViewPlusController controller) async {
+        _controller.complete(controller);
+      },
+      onPageFinished: (_) async {},
     );
   }
 
   IconButton refreshButton(Completer<WebViewPlusController> controller) {
     return IconButton(
+        color: AppColors.custom,
         onPressed: () async {
           await controller.future
               .then((controller) => controller.webViewController.reload());
@@ -135,13 +140,16 @@ class _HomePageState extends AuthRequiredState<HomePage> {
     final username = currProfChangeNotifier.profile.username;
     final url = currProfChangeNotifier.profile.avatarUrl;
     return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-      color: AppColors.steelteal,
       child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Row(
             children: [
-              url != null ? Avatar(imageUrl: url) : const Avatar(),
+              url != null
+                  ? Avatar(
+                      imageUrl: url,
+                      size: 60,
+                    )
+                  : const Avatar(),
               const SizedBox(
                 width: 16.0,
               ),

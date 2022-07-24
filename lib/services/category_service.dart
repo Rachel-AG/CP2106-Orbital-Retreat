@@ -4,7 +4,7 @@ import 'package:retreat/models/category.dart';
 class CategoryService {
   static final client = Supabase.instance.client;
 
-  static Future<List<Category>> getExpenseCategories() async {
+  Future<List<Category>> getExpenseCategories() async {
     final result = await client
         .from('categories')
         .select()
@@ -15,7 +15,7 @@ class CategoryService {
     return dataList.map((e) => Category.fromJson(e)).toList();
   }
 
-  static Future<List<Category>> getIncomeCategories() async {
+  Future<List<Category>> getIncomeCategories() async {
     final result = await client
         .from('categories')
         .select()

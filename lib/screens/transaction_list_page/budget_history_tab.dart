@@ -13,7 +13,7 @@ import '../../widgets/custom_button.dart';
 import '../../widgets/custom_card.dart';
 
 class BudgetHistoryPage extends StatefulWidget {
-  const BudgetHistoryPage({Key? key}) : super(key: key); //??
+  const BudgetHistoryPage({Key? key}) : super(key: key);
 
   @override
   State<BudgetHistoryPage> createState() => _BudgetHistoryPageState();
@@ -43,11 +43,39 @@ class _BudgetHistoryPageState extends AuthRequiredState<BudgetHistoryPage> {
           builder: ((context, value, value2, child) {
         if (!value.isUpToDate) {
           value.budgetList;
-          return const CircularProgressIndicator();
+          return Column(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: const [
+                  CircularProgressIndicator(),
+                ],
+              ),
+            ],
+          );
         }
         if (!value2.isUpToDate) {
           value2.allTransactionList;
-          return const CircularProgressIndicator();
+          return Column(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: const [
+                  CircularProgressIndicator(),
+                ],
+              ),
+            ],
+          );
         }
 
         if (value.budgetList.isEmpty) {
@@ -70,44 +98,52 @@ class _BudgetHistoryPageState extends AuthRequiredState<BudgetHistoryPage> {
   }
 
   Widget noBudget() {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: ListView(
-        shrinkWrap: true,
-        scrollDirection: Axis.vertical,
-        children: [
-          const Padding(
-            padding: EdgeInsets.all(8.0),
-            child: Text("You have not recorded budget for this month",
-                style: TextStyles.optionTextStyle),
+    return ListView(
+      shrinkWrap: true,
+      scrollDirection: Axis.vertical,
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              const Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Text("You have not recorded budget for this month",
+                    style: TextStyles.optionTextStyle),
+              ),
+              insertBudgetButton(),
+            ],
           ),
-          insertBudgetButton(),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
   Widget updateBudget(Budget currentBudget, double totalExpense) {
     //user alr set budget
     double budgetAmount = currentBudget.amount;
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: ListView(
-        shrinkWrap: true,
-        scrollDirection: Axis.vertical,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text("Budget this month: \$ $budgetAmount",
-                style: TextStyles.optionTextStyle),
+    return ListView(
+      shrinkWrap: true,
+      scrollDirection: Axis.vertical,
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text("Budget this month: \$ $budgetAmount",
+                    style: TextStyles.optionTextStyle),
+              ),
+              updateBudgetButton(currentBudget),
+              CustomCard(
+                title: 'Budget Overview',
+                child: remainingBudgetChart(totalExpense, budgetAmount),
+              ),
+            ],
           ),
-          updateBudgetButton(currentBudget),
-          CustomCard(
-            title: 'Budget Overview',
-            child: remainingBudgetChart(totalExpense, budgetAmount),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -159,6 +195,7 @@ class _BudgetHistoryPageState extends AuthRequiredState<BudgetHistoryPage> {
                                       amount: amount,
                                       month: selectedMonth,
                                       year: selectedYear);
+                              Navigator.of(context).pop();
                               ScaffoldMessenger.of(context)
                                   .showSnackBar(const SnackBar(
                                 content: Text('Budget updated'),
@@ -214,6 +251,7 @@ class _BudgetHistoryPageState extends AuthRequiredState<BudgetHistoryPage> {
                                       amount: amount,
                                       month: selectedMonth,
                                       year: selectedYear);
+                              Navigator.of(context).pop();
                               ScaffoldMessenger.of(context)
                                   .showSnackBar(const SnackBar(
                                 content: Text('Budget recorded'),
@@ -242,7 +280,9 @@ class _BudgetHistoryPageState extends AuthRequiredState<BudgetHistoryPage> {
       radius: 100.0,
       lineWidth: 20.0,
       animation: true,
-      percent: percentBudgetRemaining.abs(),
+      percent: percentBudgetRemaining.abs() >= 1
+          ? 1.0
+          : percentBudgetRemaining.abs(),
       center: Text(
         percentBudgetRemainingString,
         style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
@@ -257,7 +297,7 @@ class _BudgetHistoryPageState extends AuthRequiredState<BudgetHistoryPage> {
         ),
       ),
       circularStrokeCap: CircularStrokeCap.round,
-      progressColor: remainingBudget >= 0 ? AppColors.steelteal : Colors.red,
+      progressColor: remainingBudget >= 0 ? AppColors.green : AppColors.red,
     );
   }
 }

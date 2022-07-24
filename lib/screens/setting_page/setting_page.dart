@@ -32,55 +32,69 @@ class _SettingPageState extends AuthRequiredState<SettingPage> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.pushReplacementNamed(context, '/home');
+            Navigator.pop(context);
           },
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: ListView(children: [
-          const SizedBox(
-            height: 8.0,
-          ),
-          settingTitle(
-              "Account",
-              const Icon(
-                Icons.person,
-                color: AppColors.darkblue,
-              )),
-          settingOption("Update Profile", () {
-            Navigator.pushNamed(context, '/home/settings/updateprofile');
-          }),
-          settingOption("Change Password", () {
-            Navigator.pushNamed(context, '/home/settings/changepassword');
-          }),
-          const SizedBox(
-            height: 12.0,
-          ),
-          settingTitle(
-              "Others",
-              const Icon(
-                Icons.article_rounded,
-                color: AppColors.darkblue,
-              )),
-          CustomButton(
-              text: 'Sign out',
-              onTap: () async {
-                Provider.of<BudgetListChangeNotifier>(context, listen: false)
-                    .reset();
-                Provider.of<CategoryListChangeNotifier>(context, listen: false)
-                    .reset();
-                Provider.of<CurrentProfileChangeNotifier>(context,
-                        listen: false)
-                    .reset();
-                Provider.of<IslandChangeNotifier>(context, listen: false)
-                    .reset();
-                Provider.of<TransactionListChangeNotifier>(context,
-                        listen: false)
-                    .reset();
-                await _supabaseClient.signOutUser(context);
+      body: ListView(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(children: [
+              const SizedBox(
+                height: 8.0,
+              ),
+              settingTitle(
+                  "Account",
+                  const Icon(
+                    Icons.person,
+                    color: AppColors.darkblue,
+                  )),
+              settingOption("Update Profile", () {
+                Navigator.pushNamed(context, '/home/settings/updateprofile');
               }),
-        ]),
+              settingOption("Change Password", () {
+                Navigator.pushNamed(context, '/home/settings/changepassword');
+              }),
+              const SizedBox(
+                height: 12.0,
+              ),
+              settingTitle(
+                  "Others",
+                  const Icon(
+                    Icons.article_rounded,
+                    color: AppColors.darkblue,
+                  )),
+              settingOption("Performance", () {
+                // TODO: MODIFY MAX ANIMALS
+                // TODO: MODIFY MAX CLOUDS
+              }),
+              settingOption("Credits", () {
+                // TODO: CREDITS AND CONTACTS
+              }),
+              CustomButton(
+                  key: const ValueKey('sign-out-button'),
+                  text: 'Sign out',
+                  onTap: () async {
+                    Provider.of<BudgetListChangeNotifier>(context,
+                            listen: false)
+                        .reset();
+                    Provider.of<CategoryListChangeNotifier>(context,
+                            listen: false)
+                        .reset();
+                    Provider.of<CurrentProfileChangeNotifier>(context,
+                            listen: false)
+                        .reset();
+                    Provider.of<IslandChangeNotifier>(context, listen: false)
+                        .reset();
+                    Provider.of<TransactionListChangeNotifier>(context,
+                            listen: false)
+                        .reset();
+                    await _supabaseClient.signOutUser(context);
+                  }),
+            ]),
+          ),
+        ],
       ),
     );
   }

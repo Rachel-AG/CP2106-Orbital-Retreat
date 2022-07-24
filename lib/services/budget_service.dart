@@ -4,7 +4,7 @@ import 'package:retreat/models/budget.dart';
 class BudgetService {
   static final client = Supabase.instance.client;
 
-  static Future<List<Budget>> getAllBudget() async {
+  Future<List<Budget>> getAllBudget() async {
     final result = await client
         .from('budgets')
         .select()
@@ -16,7 +16,7 @@ class BudgetService {
     return List.from(dataList.map((e) => Budget.fromJson(e)).toList());
   }
 
-  static Future<bool> insertBudget(
+  Future<bool> insertBudget(
       {required double amount, required int month, required int year}) async {
     final result = await client.from('budgets').insert([
       {'amount': amount, 'month': month, 'year': year}
@@ -26,7 +26,7 @@ class BudgetService {
     return true;
   }
 
-  static Future<bool> updateBudget(
+  Future<bool> updateBudget(
       {required String id,
       required double amount,
       required int month,
@@ -47,7 +47,7 @@ class BudgetService {
   }
 
   /// Deletes Budget
-  static Future<bool> deleteBudget({required String id}) async {
+  Future<bool> deleteBudget({required String id}) async {
     final result = await client.from('budgets').delete().eq('id', id).execute();
     if (result.error?.message != null) return false;
     return true;

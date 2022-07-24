@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:math';
 import 'package:retreat/models/island.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -10,7 +11,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 class IslandService {
   static final client = Supabase.instance.client;
 
-  static Future<bool> createIsland() async {
+  Future<bool> createIsland() async {
     final result = await client.from('islands').insert([
       {
         'created_by': client.auth.currentUser?.id,
@@ -27,18 +28,24 @@ class IslandService {
       }
     ]).execute();
 
-    if (result.error != null) return false;
+    if (result.error != null) {
+      return false;
+    }
     return true;
   }
 
-  static Future<Island> getIsland() async {
+  Future<Island> getIsland() async {
     final result = await client
         .from('islands')
         .select()
         .eq('created_by', client.auth.currentUser?.id)
         .execute();
 
-    if (result.error != null) print('Error retrieving island');
+    if (result.hasError) {
+      print('Error retrieving island');
+      print(result.error?.message);
+      print(result.error?.details);
+    }
 
     final dataList = result.data as List;
     if (dataList.isEmpty) {
@@ -49,7 +56,7 @@ class IslandService {
     }
   }
 
-  static Future<bool> updateIsland(Island newIsland) async {
+  Future<bool> updateIsland(Island newIsland) async {
     final result = await client
         .from('islands')
         .update({

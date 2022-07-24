@@ -17,6 +17,11 @@ import 'package:retreat/screens/splash_page/splash_page.dart';
 import 'package:retreat/screens/transaction_list_page/budget_history_tab.dart';
 import 'package:retreat/screens/transaction_list_page/transaction_list_page.dart';
 import 'package:retreat/screens/update_profile_page/update_profile_page.dart';
+import 'package:retreat/services/budget_service.dart';
+import 'package:retreat/services/category_service.dart';
+import 'package:retreat/services/island_service.dart';
+import 'package:retreat/services/profile_service.dart';
+import 'package:retreat/services/transactions_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 void main() async {
@@ -28,17 +33,24 @@ void main() async {
           'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp0anRyb3Zndnp1anZ3YmVpcHF2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE2NTI2MjY0NjYsImV4cCI6MTk2ODIwMjQ2Nn0.6pgk8Fm47Sf_7mFb-UouZFqro49gUBLbesw7bQg6Ae4');
 
   runApp(MultiProvider(providers: [
-    ChangeNotifierProvider(create: (context) => IslandChangeNotifier()),
-    ChangeNotifierProvider(create: (context) => CurrentProfileChangeNotifier()),
     ChangeNotifierProvider(
-        create: (context) => TransactionListChangeNotifier()),
-    ChangeNotifierProvider(create: (context) => CategoryListChangeNotifier()),
-    ChangeNotifierProvider(create: (context) => BudgetListChangeNotifier())
+        create: (context) => IslandChangeNotifier(IslandService())),
+    ChangeNotifierProvider(
+        create: (context) => CurrentProfileChangeNotifier(ProfileService())),
+    ChangeNotifierProvider(
+        create: (context) =>
+            TransactionListChangeNotifier(TransactionService())),
+    ChangeNotifierProvider(
+        create: (context) => CategoryListChangeNotifier(CategoryService())),
+    ChangeNotifierProvider(
+        create: (context) => BudgetListChangeNotifier(BudgetService()))
   ], child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({Key? key, this.genIsland = true}) : super(key: key);
+
+  final bool genIsland;
 
   // This widget is the root of your application.
   @override
@@ -46,30 +58,33 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Retreat',
       theme: ThemeData(
-        colorScheme: const ColorScheme(
-          brightness: Brightness.light,
-          primary: AppColors.darkblue,
-          onPrimary: AppColors.whiteshade,
-          // Colors that are not relevant to AppBar in LIGHT mode:
-          secondary: Colors.grey,
-          onSecondary: Colors.grey,
-          background: Colors.grey,
-          onBackground: Colors.grey,
-          surface: Colors.grey,
-          onSurface: Colors.grey,
-          error: Colors.grey,
-          onError: Colors.grey,
-        ),
-      ),
-      //home: const HomePage(),
-
+          colorScheme: ColorScheme.fromSwatch(
+            primarySwatch: AppColors.custom,
+            backgroundColor: AppColors.custom.shade50,
+            brightness: Brightness.light,
+          ),
+          scaffoldBackgroundColor: Colors.white,
+          iconTheme: IconThemeData(
+            color: AppColors.custom.shade50,
+          ),
+          cardTheme: CardTheme(
+            color: AppColors.custom.shade50,
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+            elevation: 4.0,
+            margin: const EdgeInsets.all(0.0),
+          ),
+          bottomAppBarTheme:
+              BottomAppBarTheme(color: AppColors.custom.shade500)),
       initialRoute: '/',
       routes: {
         '/': (_) => const SplashPage(),
         '/signin': (_) => const SignInPage(),
         '/forgetpassword': (_) => const ForgetPasswordPage(),
         '/signup': (_) => const SignUpPage(),
-        '/home': (_) => const HomePage(),
+        '/home': (_) => HomePage(
+              genIsland: genIsland,
+            ),
         '/home/settings': (_) => const SettingPage(),
         '/home/settings/changepassword': (_) => const ChangePasswordPage(),
         '/home/settings/updateprofile': (_) => const UpdateProfilePage(),

@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
+import 'package:retreat/constants/app_colors.dart';
 import 'package:retreat/constants/auth_required_state.dart';
 import 'package:retreat/constants/text_styles.dart';
 import 'package:retreat/models/transaction.dart';
+import 'package:retreat/notifiers/category_list_change_notifier.dart';
 import 'package:retreat/notifiers/transaction_list_change_notifier.dart';
 import 'package:retreat/screens/update_transaction_page/update_transaction_page.dart';
 
@@ -24,37 +26,60 @@ class _DisplayTransactionsPageState
         title: const Text('My Transactions'),
         centerTitle: true,
       ),
-      body: Consumer<TransactionListChangeNotifier>(
-        builder: (context, value, child) => transactionList(value),
+      body:
+          Consumer2<TransactionListChangeNotifier, CategoryListChangeNotifier>(
+        builder: (context, value, value2, child) =>
+            transactionList(value, value2),
       ),
     );
   }
 
   Widget transactionList(
-      TransactionListChangeNotifier transactionListChangeNotifier) {
+      TransactionListChangeNotifier transactionListChangeNotifier,
+      CategoryListChangeNotifier categoryListChangeNotifier) {
     List<Transaction> allTransactions =
         transactionListChangeNotifier.allTransactionList;
     if (!transactionListChangeNotifier.isUpToDate) {
-      return const CircularProgressIndicator();
+      return Column(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: const [
+          CircularProgressIndicator(),
+        ],
+      );
     }
     if (allTransactions.isEmpty) return const Text('No Transactions recorded');
 
+    String date = '';
+
     return ListView.builder(
-        itemCount: allTransactions.length * 2 - 1,
+        itemCount: allTransactions.length * 2,
         padding: const EdgeInsets.all(16.0),
         itemBuilder: (context, index) {
-          if (index.isOdd) return const Divider();
-          return _buildRow(
-              allTransactions[index ~/ 2], transactionListChangeNotifier);
+          if (index.isEven && index ~/ 2 < allTransactions.length) {
+            if (allTransactions[index ~/ 2].timeTransaction == date) {
+              return const SizedBox();
+            }
+            date = allTransactions[index ~/ 2].timeTransaction;
+            return Container(
+                color: AppColors.custom.shade100.withOpacity(0.4),
+                child: Text(date));
+          }
+          return _buildRow(allTransactions[index ~/ 2],
+              transactionListChangeNotifier, categoryListChangeNotifier);
         });
   }
 
-  Widget _buildRow(Transaction transaction,
-      TransactionListChangeNotifier transactionListChangeNotifier) {
+  Widget _buildRow(
+      Transaction transaction,
+      TransactionListChangeNotifier transactionListChangeNotifier,
+      CategoryListChangeNotifier categoryListChangeNotifier) {
     final actions = <Widget>[
       SlidableAction(
           label: 'Update',
-          foregroundColor: Colors.green,
+          autoClose: true,
+          foregroundColor: AppColors.green,
           icon: Icons.edit,
           onPressed: (context) {
             Navigator.of(context).push(MaterialPageRoute(
@@ -63,7 +88,7 @@ class _DisplayTransactionsPageState
           }),
       SlidableAction(
           label: 'Delete',
-          foregroundColor: Colors.red,
+          foregroundColor: AppColors.red,
           icon: Icons.delete,
           onPressed: (context) async {
             transactionListChangeNotifier.deleteTransaction(transaction.id);
@@ -74,6 +99,9 @@ class _DisplayTransactionsPageState
           })
     ];
 
+    String category = categoryListChangeNotifier
+        .getCategoryNameFromId(transaction.categoryId);
+
     return Slidable(
       endActionPane: ActionPane(
         motion: const DrawerMotion(),
@@ -81,13 +109,19 @@ class _DisplayTransactionsPageState
         children: actions,
       ),
       child: ListTile(
-        title:
-            Text("\$ ${transaction.amount}", style: TextStyles.optionTextStyle),
-        subtitle: Text(
-          "Notes: ${transaction.notes} \nTime: ${transaction.timeTransaction}",
-          style: TextStyles.subOptionTextStyle,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(category, style: TextStyles.optionTextStyle),
+            Text("\$ ${transaction.amount}",
+                style: transaction.isExpense
+                    ? TextStyles.expenseAmount
+                    : TextStyles.incomeAmount),
+          ],
         ),
-        isThreeLine: true,
+        subtitle: Text(
+          "Notes: ${transaction.notes}",
+        ),
       ),
     );
   }
