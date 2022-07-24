@@ -1,15 +1,17 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:retreat/models/gamestat.dart';
 
 class GamestatService {
-  final client = Supabase.instance.client;
+  static final client = Supabase.instance.client;
 
   ///Initialise gamestat to the database
-  Future<void> insertGamestat(context, {required String username}) async {
+  static Future<bool> insertGamestat() async {
     final result = await client.from('gamestats').insert([
       {
-        'created_by': username,
+        'created_by': client.auth.currentUser?.id,
         'island_level': 1,
         'gold': 0,
         'multiplier': 1,
@@ -17,17 +19,14 @@ class GamestatService {
       }
     ]).execute();
 
-    if (result.error?.message != null) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Error: ${result.error!.message.toString()}'),
-        duration: const Duration(seconds: 2),
-      ));
+    if (result.error?.message != null) return false;
+    return true;
     }
-  }
+  
 
-  //whichStat can be either gold, island_level, or streak
-  Future<bool> updateGamestat(context,
-      {required String whichStat, required int updatedValue}) async {
+  // whichStat can be either gold, island_level, or streak
+  static Future<bool> updateGamestat({required String whichStat, 
+  required int updatedValue}) async {
     bool updateMultiplier;
 
     if (whichStat == 'streak') {
@@ -39,7 +38,7 @@ class GamestatService {
     final result;
 
     if (updateMultiplier) {
-      double updatedMultiplier = 1/(1 + updatedValue); //check formula!
+      double updatedMultiplier = calculateMultiplier(updatedValue);
       result = await client
           .from('gamestats')
           .update({
@@ -59,32 +58,31 @@ class GamestatService {
     }
 
     // check if gamestat is updated successfully
-    if (result.error != null) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Error: ${result.error!.message.toString()}'),
-        duration: const Duration(seconds: 2),
-      ));
-      return false;
-    }
+    if (result.error != null) return false;
+    
     return true;
   }
 
   /// Retrieves user's gamestat
-  Future<Gamestat> getGamestat(context) async {
+  static Future<Gamestat> getCurrentGamestat() async {
     final result = await client
         .from('gamestats')
         .select()
         .eq('created_by', client.auth.currentUser?.id)
         .execute();
 
-    if (result.error?.message != null) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Error: ${result.error!.message.toString()}'),
-        duration: const Duration(seconds: 2),
-      ));
-    }
     final data = result.data;
 
     return data.map((e) => Gamestat.fromJson(e));
+  }
+
+  static double calculateMultiplier(int newStreak) {
+    int i = 1;
+    double result = 1;
+    while(i < newStreak) {
+      result = result + pow((1 / (1 + i)), 2);
+      i++;
+    }
+    return result;
   }
 }

@@ -76,6 +76,7 @@ flutter:
   - assets/www/index.html
   - assets/www/index.js
   - assets/www/styles/style.css
+  - assets/images/builder_shop/
 
   # To add assets to your application, add an assets section, like this:
   # assets:
