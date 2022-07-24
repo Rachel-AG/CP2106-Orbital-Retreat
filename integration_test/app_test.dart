@@ -17,7 +17,11 @@ import 'package:retreat/services/transactions_service.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 void main() {
-  final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+  IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+
+  Future<void> addDelay(int ms) async {
+    await Future<void>.delayed(Duration(milliseconds: ms));
+  }
 
   Future<void> initSupabase() async {
     await Supabase.initialize(
@@ -48,10 +52,6 @@ void main() {
         )));
   }
 
-  Future<void> addDelay(int ms) async {
-    await Future<void>.delayed(Duration(milliseconds: ms));
-  }
-
   void onCurrentPage(WidgetTester tester, String page) {
     expect(find.text(page), findsOneWidget);
     tester.printToConsole('-----$page page opened successfully-----');
@@ -59,7 +59,8 @@ void main() {
 
   group('Authentication Test', () {
     final timeBasedEmail = '${DateTime.now().microsecondsSinceEpoch}@test.com';
-    final timeBasedPassword = '${DateTime.now().microsecondsSinceEpoch}';
+    final timeBasedPassword =
+        '${DateTime.now().microsecondsSinceEpoch..toString().substring(0, 15)}';
 
     testWidgets('Sign-up using a randomly generated email and sign-out',
         (WidgetTester tester) async {
@@ -75,25 +76,26 @@ void main() {
       onCurrentPage(tester, 'Sign Up');
 
       await tester.enterText(find.byKey(const ValueKey('username-field')),
-          'Tester-$timeBasedPassword');
+          'Tester-${timeBasedPassword.substring(0, 6)}');
       await tester.enterText(
           find.byKey(const ValueKey('email-field')), timeBasedEmail);
       await tester.enterText(
           find.byKey(const ValueKey('password-field')), 'test123');
 
       await tester.tap(find.byKey(const ValueKey('sign-up-button')));
-      await addDelay(3000);
+      await addDelay(10000);
       await tester.pumpAndSettle();
 
       onCurrentPage(tester, 'Home');
 
       await tester.tap(find.byKey(const ValueKey('settings')));
+      await addDelay(3000);
       await tester.pumpAndSettle();
 
       onCurrentPage(tester, 'Settings');
 
       await tester.tap(find.byKey(const ValueKey('sign-out-button')));
-      await addDelay(3000);
+      await addDelay(10000);
       await tester.pumpAndSettle();
 
       onCurrentPage(tester, 'Sign In');
@@ -112,18 +114,19 @@ void main() {
           find.byKey(const ValueKey('password-field')), 'test123');
 
       await tester.tap(find.byKey(const ValueKey('sign-in-button')));
-      await addDelay(3000);
+      await addDelay(10000);
       await tester.pumpAndSettle();
 
       onCurrentPage(tester, 'Home');
 
       await tester.tap(find.byKey(const ValueKey('settings')));
+      await addDelay(3000);
       await tester.pumpAndSettle();
 
       onCurrentPage(tester, 'Settings');
 
       await tester.tap(find.byKey(const ValueKey('sign-out-button')));
-      await addDelay(3000);
+      await addDelay(10000);
       await tester.pumpAndSettle();
 
       onCurrentPage(tester, 'Sign In');
@@ -156,6 +159,7 @@ void main() {
       onCurrentPage(tester, 'Sign In');
 
       await tester.tap(find.byKey(const ValueKey('sign-up-link')));
+      await addDelay(3000);
       await tester.pumpAndSettle();
 
       onCurrentPage(tester, 'Sign Up');
@@ -191,12 +195,13 @@ void main() {
           find.byKey(const ValueKey('password-field')), password);
 
       await tester.tap(find.byKey(const ValueKey('sign-in-button')));
-      await addDelay(3000);
+      await addDelay(10000);
       await tester.pumpAndSettle();
 
       onCurrentPage(tester, 'Home');
 
       await tester.tap(find.byKey(const ValueKey('add-transaction')));
+      await addDelay(10000);
       await tester.pumpAndSettle();
 
       onCurrentPage(tester, 'Record Transaction');
@@ -211,7 +216,7 @@ void main() {
       await tester.enterText(find.byKey(const ValueKey('notes-field')), notes);
 
       await tester.tap(find.byKey(const ValueKey('record-button')));
-      await addDelay(3000);
+      await addDelay(10000);
       await tester.pumpAndSettle();
 
       await tester.tap(find.byIcon(Icons.arrow_back));
@@ -225,7 +230,7 @@ void main() {
       onCurrentPage(tester, 'Settings');
 
       await tester.tap(find.byKey(const ValueKey('sign-out-button')));
-      await addDelay(3000);
+      await addDelay(10000);
       await tester.pumpAndSettle();
 
       onCurrentPage(tester, 'Sign In');
@@ -242,17 +247,19 @@ void main() {
           find.byKey(const ValueKey('password-field')), password);
 
       await tester.tap(find.byKey(const ValueKey('sign-in-button')));
-      await addDelay(3000);
+      await addDelay(10000);
       await tester.pumpAndSettle();
 
       onCurrentPage(tester, 'Home');
 
       await tester.tap(find.byKey(const ValueKey('transaction-list')));
+      await addDelay(10000);
       await tester.pumpAndSettle();
 
       onCurrentPage(tester, 'Overview');
 
       await tester.tap(find.byIcon(Icons.list_alt_rounded));
+      await addDelay(5000);
       await tester.pumpAndSettle();
 
       onCurrentPage(tester, 'My Transactions');
@@ -271,7 +278,7 @@ void main() {
       onCurrentPage(tester, 'Settings');
 
       await tester.tap(find.byKey(const ValueKey('sign-out-button')));
-      await addDelay(3000);
+      await addDelay(10000);
       await tester.pumpAndSettle();
 
       onCurrentPage(tester, 'Sign In');
@@ -288,22 +295,24 @@ void main() {
           find.byKey(const ValueKey('password-field')), password);
 
       await tester.tap(find.byKey(const ValueKey('sign-in-button')));
-      await addDelay(3000);
+      await addDelay(10000);
       await tester.pumpAndSettle();
 
       onCurrentPage(tester, 'Home');
 
       await tester.tap(find.byKey(const ValueKey('transaction-list')));
+      await addDelay(10000);
       await tester.pumpAndSettle();
 
       onCurrentPage(tester, 'Overview');
 
       await tester.tap(find.byIcon(Icons.list_alt_rounded));
+      await addDelay(5000);
       await tester.pumpAndSettle();
 
       onCurrentPage(tester, 'My Transactions');
 
-      await addDelay(5000);
+      await addDelay(8000);
       expect(find.text('Notes: $notes'), findsOneWidget);
 
       await tester.drag(find.widgetWithText(Slidable, 'Notes: $notes'),
@@ -311,6 +320,7 @@ void main() {
       await tester.pumpAndSettle();
 
       await tester.tap(find.widgetWithIcon(SlidableAction, Icons.edit));
+      await addDelay(5000);
       await tester.pumpAndSettle();
 
       onCurrentPage(tester, 'Update Transaction');
@@ -332,6 +342,7 @@ void main() {
       expect(find.text('Notes: $notes-updated'), findsOneWidget);
 
       await tester.tap(find.byIcon(Icons.arrow_back));
+      await addDelay(5000);
       await tester.pumpAndSettle();
 
       onCurrentPage(tester, 'Home');
@@ -342,7 +353,7 @@ void main() {
       onCurrentPage(tester, 'Settings');
 
       await tester.tap(find.byKey(const ValueKey('sign-out-button')));
-      await addDelay(3000);
+      await addDelay(10000);
       await tester.pumpAndSettle();
 
       onCurrentPage(tester, 'Sign In');
@@ -359,17 +370,19 @@ void main() {
           find.byKey(const ValueKey('password-field')), password);
 
       await tester.tap(find.byKey(const ValueKey('sign-in-button')));
-      await addDelay(3000);
+      await addDelay(10000);
       await tester.pumpAndSettle();
 
       onCurrentPage(tester, 'Home');
 
       await tester.tap(find.byKey(const ValueKey('transaction-list')));
+      await addDelay(10000);
       await tester.pumpAndSettle();
 
       onCurrentPage(tester, 'Overview');
 
       await tester.tap(find.byIcon(Icons.list_alt_rounded));
+      await addDelay(5000);
       await tester.pumpAndSettle();
 
       onCurrentPage(tester, 'My Transactions');
@@ -389,6 +402,7 @@ void main() {
       expect(find.text('Notes: $notes'), findsNothing);
 
       await tester.tap(find.byIcon(Icons.arrow_back));
+      await addDelay(5000);
       await tester.pumpAndSettle();
 
       onCurrentPage(tester, 'Home');
@@ -399,7 +413,7 @@ void main() {
       onCurrentPage(tester, 'Settings');
 
       await tester.tap(find.byKey(const ValueKey('sign-out-button')));
-      await addDelay(3000);
+      await addDelay(10000);
       await tester.pumpAndSettle();
 
       onCurrentPage(tester, 'Sign In');
