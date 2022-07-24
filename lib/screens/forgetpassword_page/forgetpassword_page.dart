@@ -44,7 +44,17 @@ class _ForgetPasswordPageState extends AuthState<ForgetPasswordPage> {
               CustomButton(
                 text: "Confirm",
                 onTap: () async {
-                  await _supabaseClient.magicLink(context, email: email);
+                  await _supabaseClient.magicLink(context, email: email).then(
+                    (value) {
+                      if (value) {
+                        ScaffoldMessenger.of(context)
+                            .showSnackBar(const SnackBar(
+                          content: Text('Sent login link to email'),
+                          duration: Duration(seconds: 2),
+                        ));
+                      }
+                    },
+                  );
                 },
               ),
             ]),

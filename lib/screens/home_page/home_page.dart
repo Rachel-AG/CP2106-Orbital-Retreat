@@ -4,8 +4,7 @@ import 'package:retreat/constants/auth_required_state.dart';
 import 'package:retreat/constants/text_styles.dart';
 import 'package:retreat/models/profile.dart';
 import 'package:retreat/services/profile_service.dart';
-import 'package:retreat/services/authentication_service.dart';
-import 'package:retreat/widgets/custom_button.dart';
+import 'package:retreat/widgets/avatar.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -15,62 +14,92 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends AuthRequiredState<HomePage> {
-  final _profileClient = ProfileService();
-  final _supabaseClient = AuthenticationService();
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Welcome to Retreat'),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.pushNamed(context, '/record');
-        },
-        tooltip: 'Button',
-        child: const Icon(Icons.add),
-      ),
-      body: Column(
-        children: [
-          FutureBuilder<Profile>(
-            future: _profileClient.getProfile(context),
-            builder: (context, AsyncSnapshot<Profile> snapshot) {
-              return Card(
-                color: AppColors.steelteal,
-                margin: const EdgeInsets.all(24),
-                child: SizedBox(
-                  height: 100,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        'Hello, ${snapshot.data?.username}!',
-                        style: TextStyles.headerTextStyle,
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            },
+        appBar: AppBar(
+          title: const Text('Welcome'),
+          centerTitle: true,
+        ),
+        floatingActionButton: FloatingActionButton.extended(
+          backgroundColor: AppColors.steelteal,
+          elevation: 4.0,
+          icon: const Icon(
+            Icons.add,
+            color: AppColors.whiteshade,
           ),
-          CustomButton(
-              text: 'My Transactions',
-              onTap: () {
-                Navigator.pushNamed(context, '/display');
-              }),
-          CustomButton(
-              text: 'Change Password',
-              onTap: () {
-                Navigator.pushNamed(context, '/changepassword');
-              }),
-          CustomButton(
-              text: 'Sign out',
-              onTap: () async {
-                await _supabaseClient.signOutUser(context);
-              }),
-        ],
-      ),
-    );
+          label: const Text(
+            'Record Transaction',
+            style: TextStyles.buttonTextStyle,
+          ),
+          onPressed: () {
+            Navigator.pushNamed(context, '/home/record');
+          },
+        ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        body: Container(
+          padding: const EdgeInsets.all(24.0),
+          width: MediaQuery.of(context).size.width,
+          child: Card(
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+            color: AppColors.steelteal,
+            child: Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: FutureBuilder<Profile>(
+                future: ProfileService.getCurrentUserProfile(context),
+                builder: (context, AsyncSnapshot<Profile> snapshot) {
+                  if (snapshot.connectionState == ConnectionState.done) {
+                    return Row(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        if (snapshot.data?.avatarUrl != null)
+                          Avatar(
+                            imageUrl: snapshot.data!.avatarUrl!,
+                          )
+                        else
+                          const Avatar(),
+                        const SizedBox(
+                          width: 16.0,
+                        ),
+                        Text(
+                          'Hello, ${snapshot.data?.username}!',
+                          style: TextStyles.headerTextStyle,
+                        ),
+                      ],
+                    );
+                  } else {
+                    return const SizedBox();
+                  }
+                },
+              ),
+            ),
+          ),
+        ),
+        bottomNavigationBar: BottomAppBar(
+          color: AppColors.darkblue,
+          child: Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              IconButton(
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/home/transactionlist');
+                  },
+                  icon: const Icon(
+                    Icons.analytics_rounded,
+                    color: AppColors.whiteshade,
+                  )),
+              IconButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, '/home/settings');
+                },
+                icon: const Icon(Icons.more_horiz),
+                color: AppColors.whiteshade,
+              )
+            ],
+          ),
+        ));
   }
 }
