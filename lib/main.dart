@@ -6,9 +6,11 @@ import 'package:retreat/screens/home_page/home_page.dart';
 import 'package:retreat/screens/setting_page/setting_page.dart';
 import 'package:retreat/screens/signin_page/signin_page.dart';
 import 'package:retreat/screens/signup_page/signup_page.dart';
-import 'package:retreat/screens/record_transactions_page/record_transactions_page.dart';
-import 'package:retreat/screens/display_transactions_page/display_transactions_page.dart';
+import 'package:retreat/screens/record_transactions_page/record_transaction_page.dart';
 import 'package:retreat/screens/splash_page/splash_page.dart';
+import 'package:retreat/screens/transaction_list_page/budget_history_tab.dart';
+import 'package:retreat/screens/transaction_list_page/transaction_list_page.dart';
+import 'package:retreat/screens/update_profile_page/update_profile_page.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 void main() async {
@@ -56,9 +58,12 @@ class MyApp extends StatelessWidget {
         '/signup': (_) => const SignUpPage(),
         '/home': (_) => const HomePage(),
         '/home/settings': (_) => const SettingPage(),
-        '/changepassword': (_) => const ChangePasswordPage(),
-        '/record': (_) => const RecordTransactionsPage(),
-        '/display': (_) => const DisplayTransactionsPage(),
+        '/home/settings/changepassword': (_) => const ChangePasswordPage(),
+        '/home/settings/updateprofile': (_) => const UpdateProfilePage(),
+        '/home/record': (_) => const RecordTransactionPage(),
+        '/home/transactionlist': (_) => const TransactionListPage(),
+        '/home/transactionlist/budget': (_) => const BudgetHistoryPage(),
+        //'/home/transactionlist/displaytransactions': (_) => const DisplayTransactionsPage(),
       },
     );
   }

@@ -57,7 +57,18 @@ class _ChangePasswordPageState extends AuthRequiredState<ChangePasswordPage> {
                 text: "Confirm",
                 onTap: () async {
                   if (validatePassword()) {
-                    _supabaseClient.changePassword(context, password: password);
+                    await _supabaseClient
+                        .changePassword(context, password: password)
+                        .then((value) {
+                      if (value) {
+                        ScaffoldMessenger.of(context)
+                            .showSnackBar(const SnackBar(
+                          content: Text('Successfully changed password'),
+                          duration: Duration(seconds: 2),
+                        ));
+                        Navigator.pop(context);
+                      }
+                    });
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                       content: Text('Password does not match'),
