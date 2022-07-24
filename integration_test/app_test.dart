@@ -19,6 +19,10 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
+  Future<void> addDelay(int ms) async {
+    await Future<void>.delayed(Duration(milliseconds: ms));
+  }
+
   Future<void> initSupabase() async {
     await Supabase.initialize(
         url: 'https://ztjtrovgvzujvwbeipqv.supabase.co',
@@ -46,10 +50,6 @@ void main() {
         child: const MyApp(
           genIsland: false,
         )));
-  }
-
-  Future<void> addDelay(int ms) async {
-    await Future<void>.delayed(Duration(milliseconds: ms));
   }
 
   void onCurrentPage(WidgetTester tester, String page) {
