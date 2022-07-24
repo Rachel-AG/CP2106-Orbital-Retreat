@@ -59,7 +59,8 @@ void main() {
 
   group('Authentication Test', () {
     final timeBasedEmail = '${DateTime.now().microsecondsSinceEpoch}@test.com';
-    final timeBasedPassword = '${DateTime.now().microsecondsSinceEpoch}';
+    final timeBasedPassword =
+        '${DateTime.now().microsecondsSinceEpoch..toString().substring(0, 15)}';
 
     testWidgets('Sign-up using a randomly generated email and sign-out',
         (WidgetTester tester) async {
@@ -75,7 +76,7 @@ void main() {
       onCurrentPage(tester, 'Sign Up');
 
       await tester.enterText(find.byKey(const ValueKey('username-field')),
-          'Tester-$timeBasedPassword');
+          'Tester-${timeBasedPassword.substring(0, 6)}');
       await tester.enterText(
           find.byKey(const ValueKey('email-field')), timeBasedEmail);
       await tester.enterText(
