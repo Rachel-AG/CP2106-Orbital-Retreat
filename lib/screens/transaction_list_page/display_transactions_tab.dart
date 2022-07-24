@@ -19,6 +19,7 @@ class DisplayTransactionsPage extends StatefulWidget {
 
 class _DisplayTransactionsPageState
     extends AuthRequiredState<DisplayTransactionsPage> {
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

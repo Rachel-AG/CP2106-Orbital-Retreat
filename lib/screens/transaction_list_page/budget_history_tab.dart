@@ -28,12 +28,14 @@ class _BudgetHistoryPageState extends AuthRequiredState<BudgetHistoryPage> {
     super.dispose();
   }
 
+
   double get amount => double.parse(_amountController.text);
 
   @override
   Widget build(BuildContext context) {
     int currentMonth = DateTime.now().month;
     int currentYear = DateTime.now().year;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('My Budget'),
@@ -283,6 +285,7 @@ class _BudgetHistoryPageState extends AuthRequiredState<BudgetHistoryPage> {
       percent: percentBudgetRemaining.abs() >= 1
           ? 1.0
           : percentBudgetRemaining.abs(),
+
       center: Text(
         percentBudgetRemainingString,
         style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),

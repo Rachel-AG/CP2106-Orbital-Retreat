@@ -53,6 +53,7 @@ class _UpdateTransactionTabState
       hint: "Select a category",
     );
     return dropdownButton;
+
   }
 
   @override

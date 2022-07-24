@@ -19,8 +19,10 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends AuthRequiredState<HomePage> {
+
   final Completer<WebViewPlusController> _controller =
       Completer<WebViewPlusController>();
+
 
   @override
   Widget build(BuildContext context) {

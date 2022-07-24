@@ -8,6 +8,7 @@ class AuthenticationService {
 
   Future<bool> signUpUser(context,
       {required String email, required String password}) async {
+
     final result1 = await client.auth.signUp(email, password);
 
     // check if email is registered successfully

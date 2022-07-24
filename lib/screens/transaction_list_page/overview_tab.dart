@@ -171,6 +171,7 @@ class _OverviewPageState extends AuthRequiredState<OverviewPage> {
     final categories = breakdownByCategoryData.keys.toList();
     final amount = breakdownByCategoryData.values.toList();
     final totalAmount = amount.reduce((value, element) => value + element);
+
     return List.generate(
         categories.length,
         (index) => Column(
@@ -277,6 +278,7 @@ class _OverviewPageState extends AuthRequiredState<OverviewPage> {
   //------------------
   // BAR CHART METHODS
   //------------------
+
   List<BarChartGroupData> barChartGroupMainData(
       List<double> totalExpenseList, List<double> totalIncomeList) {
     return List.generate(
@@ -290,6 +292,7 @@ class _OverviewPageState extends AuthRequiredState<OverviewPage> {
                   toY: totalIncomeList[index],
                   color: AppColors.green,
                   width: 6.0)
+
             ]));
   }
 

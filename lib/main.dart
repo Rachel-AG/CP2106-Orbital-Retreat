@@ -91,7 +91,6 @@ class MyApp extends StatelessWidget {
         '/home/record': (_) => const RecordTransactionPage(),
         '/home/transactionlist': (_) => const TransactionListPage(),
         '/home/transactionlist/budget': (_) => const BudgetHistoryPage(),
-        //'/home/transactionlist/displaytransactions': (_) => const DisplayTransactionsPage(),
       },
     );
   }
