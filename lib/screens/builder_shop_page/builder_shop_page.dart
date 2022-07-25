@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:retreat/constants/auth_required_state.dart';
-import 'package:retreat/constants/text_styles.dart';
 import 'package:retreat/models/island.dart';
 import 'package:retreat/models/item.dart';
 import 'package:retreat/models/gamestat.dart';
@@ -92,10 +91,10 @@ class _BuilderShopPageState extends AuthRequiredState<BuilderShopPage> {
                             whichStat: "gold",
                             updatedValue: (gamestat.gold - e.price));
 
-                    // update user's island 
+                    // update user's island
                     buyItem(islandChangeNotifier, e);
 
-                    // notify user on successful purchase 
+                    // notify user on successful purchase
                     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                       content: Text('Item bought successfully!'),
                       duration: Duration(seconds: 3),
@@ -133,7 +132,8 @@ class _BuilderShopPageState extends AuthRequiredState<BuilderShopPage> {
 
   bool haveBoughtBlock(List ratio, String blockName) {
     if (blockName == 'grass') {
-      if (ratio[2] == 2.0) { //based on value on init island
+      if (ratio[2] == 2.0) {
+        //based on value on init island
         return false;
       } else {
         return true;
@@ -147,7 +147,6 @@ class _BuilderShopPageState extends AuthRequiredState<BuilderShopPage> {
     }
   }
 
-
   bool haveBoughtItem(Island island, Item item) {
     if (item.type == 'animal') {
       return haveBoughtAnimal(island.animalList, item.name);
@@ -157,44 +156,45 @@ class _BuilderShopPageState extends AuthRequiredState<BuilderShopPage> {
       return island.cloudBool;
     } else if (item.type == "block") {
       return haveBoughtBlock(island.ratio, item.name.toLowerCase());
-    } else { //expand, refresh can be bought multiple times
+    } else {
+      //expand, refresh can be bought multiple times
       return false;
     }
   }
- 
-  Future<void> buyItem(IslandChangeNotifier islandChangeNotifier, Item item) async {
+
+  Future<void> buyItem(
+      IslandChangeNotifier islandChangeNotifier, Item item) async {
     Island current = islandChangeNotifier.island;
     if (item.type == 'animal') {
       current.animalList.add(item.name.toLowerCase());
       Provider.of<IslandChangeNotifier>(context, listen: false)
-      .updateIsland(animalList: current.animalList);
+          .updateIsland(animalList: current.animalList);
     } else if (item.type == "environment") {
       current.envList.add(item.name.toLowerCase());
       Provider.of<IslandChangeNotifier>(context, listen: false)
-      .updateIsland(envList: current.envList);
+          .updateIsland(envList: current.envList);
     } else if (item.type == "cloud") {
       Provider.of<IslandChangeNotifier>(context, listen: false)
-      .updateIsland(cloudBool: true);
+          .updateIsland(cloudBool: true);
     } else if (item.type == "block") {
       if (item.name == "Grass") {
         current.ratio[2] = 0.45;
         Provider.of<IslandChangeNotifier>(context, listen: false)
-        .updateIsland(ratio: current.ratio);
+            .updateIsland(ratio: current.ratio);
       } else {
         current.ratio[4] = 0.8;
         Provider.of<IslandChangeNotifier>(context, listen: false)
-        .updateIsland(ratio: current.ratio);
+            .updateIsland(ratio: current.ratio);
       }
     } else if (item.type == "expand") {
       int newRadius = current.gridRadius + 3;
       Provider.of<IslandChangeNotifier>(context, listen: false)
-        .updateIsland(gridRadius: newRadius);
-    } else { //refresh
+          .updateIsland(gridRadius: newRadius);
+    } else {
+      //refresh
       String newSeed = islandChangeNotifier.generateRandomStr(4);
       Provider.of<IslandChangeNotifier>(context, listen: false)
-        .updateIsland(seed: newSeed);   
+          .updateIsland(seed: newSeed);
     }
   }
-
-
 }

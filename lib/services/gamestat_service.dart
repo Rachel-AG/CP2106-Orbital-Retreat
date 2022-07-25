@@ -1,6 +1,4 @@
 import 'dart:math';
-
-import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:retreat/models/gamestat.dart';
 
@@ -21,12 +19,11 @@ class GamestatService {
 
     if (result.error?.message != null) return false;
     return true;
-    }
-  
+  }
 
   // whichStat can be either gold, island_level, or streak
-  Future<bool> updateGamestat({required String whichStat, 
-  required int updatedValue}) async {
+  Future<bool> updateGamestat(
+      {required String whichStat, required int updatedValue}) async {
     bool updateMultiplier;
 
     if (whichStat == 'streak') {
@@ -59,7 +56,7 @@ class GamestatService {
 
     // check if gamestat is updated successfully
     if (result.error != null) return false;
-    
+
     return true;
   }
 
@@ -72,8 +69,8 @@ class GamestatService {
         .execute();
 
     final data = result.data;
-    if(! data.isEmpty ) {
-    return data.map((e) => Gamestat.fromJson(e)).toList().elementAt(0);
+    if (!data.isEmpty) {
+      return data.map((e) => Gamestat.fromJson(e)).toList().elementAt(0);
     } else {
       insertGamestat();
       Future<Gamestat> newGamestat = getCurrentGamestat();
@@ -84,7 +81,7 @@ class GamestatService {
   static double calculateMultiplier(int newStreak) {
     int i = 1;
     double result = 1;
-    while(i < newStreak) {
+    while (i < newStreak) {
       result = result + pow((1 / (1 + i)), 2);
       i++;
     }

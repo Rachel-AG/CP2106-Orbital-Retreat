@@ -22,20 +22,17 @@ class GamestatChangeNotifier extends ChangeNotifier {
   }
 
   Future<void> insertGamestat(context) async {
-    await _gamestatService.insertGamestat();
     isUpToDate = false;
-    getGamestat();
+    await _gamestatService.insertGamestat();
+    await getGamestat();
   }
 
   Future<void> updateGamestat(
-      {required String whichStat,
-      required int updatedValue}) async {
-    await _gamestatService.updateGamestat(
-      whichStat: whichStat, 
-      updatedValue: updatedValue
-    );
+      {required String whichStat, required int updatedValue}) async {
     isUpToDate = false;
-    getGamestat();
+    await _gamestatService.updateGamestat(
+        whichStat: whichStat, updatedValue: updatedValue);
+    await getGamestat();
   }
 
   void reset() {
