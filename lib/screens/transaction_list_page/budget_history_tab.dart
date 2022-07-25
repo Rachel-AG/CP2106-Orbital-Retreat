@@ -4,8 +4,10 @@ import 'package:provider/provider.dart';
 import 'package:retreat/constants/auth_required_state.dart';
 import 'package:retreat/constants/text_styles.dart';
 import 'package:retreat/models/budget.dart';
+import 'package:retreat/models/gamestat.dart';
 import 'package:retreat/models/transaction.dart';
 import 'package:retreat/notifiers/budget_list_change_notifier.dart';
+import 'package:retreat/notifiers/gamestat_change_notifier.dart';
 import 'package:retreat/notifiers/transaction_list_change_notifier.dart';
 import 'package:retreat/widgets/numeric_formfield.dart';
 import '../../constants/app_colors.dart';
@@ -289,6 +291,15 @@ class _BudgetHistoryPageState extends AuthRequiredState<BudgetHistoryPage> {
                               ScaffoldMessenger.of(context)
                                   .showSnackBar(const SnackBar(
                                 content: Text('Budget recorded'),
+                                duration: Duration(seconds: 2),
+                              ));
+                              Gamestat currentGamestat = Provider.of<GamestatChangeNotifier>(context, listen: false).gamestat;
+                              int newGold = ((200 * currentGamestat.multiplier).round()); 
+                              Provider.of<GamestatChangeNotifier>(context, listen: false)
+                              .updateGamestat(whichStat: "gold", updatedValue: currentGamestat.gold + newGold);
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(SnackBar(
+                                content: Text("You have received $newGold gold. Keep it up!"),
                                 duration: Duration(seconds: 2),
                               ));
                             }

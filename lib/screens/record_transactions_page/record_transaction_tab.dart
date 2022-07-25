@@ -3,8 +3,11 @@ import 'package:provider/provider.dart';
 import 'package:retreat/constants/auth_required_state.dart';
 import 'package:retreat/constants/text_styles.dart';
 import 'package:retreat/models/category.dart';
+import 'package:retreat/models/gamestat.dart';
 import 'package:retreat/notifiers/category_list_change_notifier.dart';
 import 'package:retreat/notifiers/transaction_list_change_notifier.dart';
+import 'package:retreat/notifiers/gamestat_change_notifier.dart';
+import 'package:retreat/services/gamestat_service.dart';
 import 'package:retreat/widgets/custom_formfield.dart';
 import 'package:retreat/widgets/custom_dropdown.dart';
 import 'package:retreat/widgets/numeric_formfield.dart';
@@ -159,6 +162,14 @@ class _RecordTransactionTabState
             content: Text('Transaction recorded'),
             duration: Duration(seconds: 2),
           ));
+          Gamestat currentGamestat = Provider.of<GamestatChangeNotifier>(context, listen: false).gamestat;
+          Provider.of<GamestatChangeNotifier>(context, listen: false)
+          .updateGamestat(whichStat: "gold", updatedValue: currentGamestat.gold + ((20 * currentGamestat.multiplier).round()));
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text('You have received 20 golds. Keep it up!'),
+            duration: Duration(seconds: 2),
+            ));
+
           Navigator.pushReplacementNamed(context, '/home/transactionlist');
         }
       },

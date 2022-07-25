@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:retreat/constants/app_colors.dart';
 import 'package:retreat/constants/text_styles.dart';
 
 class ItemTile extends StatelessWidget {
@@ -38,19 +39,27 @@ class ItemTile extends StatelessWidget {
                     ),
                   ),
                 ),
-                Column(
+                Row(
                   children: [
-                    Row(
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        Text(
-                          title,
-                          style: TextStyles.optionTextStyle,
+                        Padding(
+                          padding: const EdgeInsets.all(1.0),
+                          child: Text(
+                            title,
+                            style: TextStyles.optionTextStyle,
+                          ),
                         ),
-                        Text('\$$price', style: TextStyles.subOptionTextStyle),
+                        Padding(
+                          padding: const EdgeInsets.all(1.0),
+                          child: Text('\$$price', style: TextStyles.subOptionTextStyle, textAlign: TextAlign.start,),
+                        ),
                       ],
                     ),
+                    Spacer(),
                     IconButton(
-                      icon: const Icon(Icons.add), 
+                      icon: const Icon(Icons.add, color: AppColors.darkblue), 
                       onPressed: onPressed,
                     ),
                   ],
