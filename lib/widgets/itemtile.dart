@@ -35,11 +35,11 @@ class ItemTile extends StatelessWidget {
                   child: Image(
                     image: AssetImage(
                       imageUrl,
-                      
                     ),
                   ),
                 ),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Column(
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -53,13 +53,16 @@ class ItemTile extends StatelessWidget {
                         ),
                         Padding(
                           padding: const EdgeInsets.all(1.0),
-                          child: Text('\$$price', style: TextStyles.subOptionTextStyle, textAlign: TextAlign.start,),
+                          child: Text(
+                            '\$$price',
+                            textAlign: TextAlign.start,
+                          ),
                         ),
                       ],
                     ),
                     Spacer(),
                     IconButton(
-                      icon: const Icon(Icons.add, color: AppColors.darkblue), 
+                      icon: const Icon(Icons.add),
                       onPressed: onPressed,
                     ),
                   ],

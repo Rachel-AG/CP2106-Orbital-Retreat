@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:retreat/constants/app_colors.dart';
+import 'package:retreat/constants/app_theme.dart';
 import 'package:retreat/notifiers/budget_list_change_notifier.dart';
 import 'package:retreat/notifiers/category_list_change_notifier.dart';
 import 'package:retreat/notifiers/current_profile_change_notifier.dart';
@@ -53,7 +53,7 @@ void main() async {
         create: (context) => GamestatChangeNotifier(GamestatService())),
     ChangeNotifierProvider(
         create: (context) => ShopItemsChangeNotifier(ShopService())),
-  ], child: const MyApp(genIsland: false)));
+  ], child: const MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -66,25 +66,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Retreat',
-      theme: ThemeData(
-          colorScheme: ColorScheme.fromSwatch(
-            primarySwatch: AppColors.custom,
-            backgroundColor: AppColors.custom.shade50,
-            brightness: Brightness.light,
-          ),
-          scaffoldBackgroundColor: Colors.white,
-          iconTheme: IconThemeData(
-            color: AppColors.custom.shade50,
-          ),
-          cardTheme: CardTheme(
-            color: AppColors.custom.shade50,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-            elevation: 4.0,
-            margin: const EdgeInsets.all(0.0),
-          ),
-          bottomAppBarTheme:
-              BottomAppBarTheme(color: AppColors.custom.shade500)),
+      theme: AppTheme.darkMode,
       initialRoute: '/',
       routes: {
         '/': (_) => const SplashPage(),

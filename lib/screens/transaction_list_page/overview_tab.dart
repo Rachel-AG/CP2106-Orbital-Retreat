@@ -128,13 +128,14 @@ class _OverviewPageState extends AuthRequiredState<OverviewPage> {
     return IconButton(
         icon: const Icon(
           Icons.calendar_month,
-          color: AppColors.custom,
         ),
         onPressed: () {
           showDialog(
             context: context,
             builder: (context) => AlertDialog(
-              title: const Text("Select Timeline"),
+              title: const Text(
+                "Select Timeline",
+              ),
               actions: <Widget>[
                 selectMonth,
                 selectYear,

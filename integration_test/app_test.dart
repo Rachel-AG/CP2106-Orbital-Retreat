@@ -56,7 +56,7 @@ void main() {
   }
 
   void onCurrentPage(WidgetTester tester, String page) {
-    expect(find.text(page), findsOneWidget);
+    expect(find.text(page), findsWidgets);
     tester.printToConsole('-----$page page opened successfully-----');
   }
 
@@ -84,6 +84,12 @@ void main() {
           find.byKey(const ValueKey('email-field')), timeBasedEmail);
       await tester.enterText(
           find.byKey(const ValueKey('password-field')), 'test123');
+
+      await tester.dragUntilVisible(
+        find.byKey(const ValueKey('sign-up-button')),
+        find.byType(SingleChildScrollView),
+        const Offset(0, 50),
+      );
 
       await tester.tap(find.byKey(const ValueKey('sign-up-button')));
       await addDelay(10000);
@@ -116,6 +122,12 @@ void main() {
       await tester.enterText(
           find.byKey(const ValueKey('password-field')), 'test123');
 
+      await tester.dragUntilVisible(
+        find.byKey(const ValueKey('sign-in-button')),
+        find.byType(SingleChildScrollView),
+        const Offset(0, 50),
+      );
+
       await tester.tap(find.byKey(const ValueKey('sign-in-button')));
       await addDelay(10000);
       await tester.pumpAndSettle();
@@ -147,6 +159,12 @@ void main() {
       await tester.enterText(
           find.byKey(const ValueKey('password-field')), timeBasedPassword);
 
+      await tester.dragUntilVisible(
+        find.byKey(const ValueKey('sign-in-button')),
+        find.byType(SingleChildScrollView),
+        const Offset(0, 50),
+      );
+
       await tester.tap(find.byKey(const ValueKey('sign-in-button')));
       await addDelay(10000);
       await tester.pumpAndSettle();
@@ -174,6 +192,12 @@ void main() {
       await tester.enterText(
           find.byKey(const ValueKey('password-field')), 'test123');
 
+      await tester.dragUntilVisible(
+        find.byKey(const ValueKey('sign-up-button')),
+        find.byType(SingleChildScrollView),
+        const Offset(0, 50),
+      );
+
       await tester.tap(find.byKey(const ValueKey('sign-up-button')));
       await addDelay(3000);
       await tester.pumpAndSettle();
@@ -196,6 +220,12 @@ void main() {
       await tester.enterText(find.byKey(const ValueKey('email-field')), email);
       await tester.enterText(
           find.byKey(const ValueKey('password-field')), password);
+
+      await tester.dragUntilVisible(
+        find.byKey(const ValueKey('sign-in-button')),
+        find.byType(SingleChildScrollView),
+        const Offset(0, 50),
+      );
 
       await tester.tap(find.byKey(const ValueKey('sign-in-button')));
       await addDelay(10000);
@@ -249,6 +279,12 @@ void main() {
       await tester.enterText(
           find.byKey(const ValueKey('password-field')), password);
 
+      await tester.dragUntilVisible(
+        find.byKey(const ValueKey('sign-in-button')),
+        find.byType(SingleChildScrollView),
+        const Offset(0, 50),
+      );
+
       await tester.tap(find.byKey(const ValueKey('sign-in-button')));
       await addDelay(10000);
       await tester.pumpAndSettle();
@@ -296,6 +332,12 @@ void main() {
       await tester.enterText(find.byKey(const ValueKey('email-field')), email);
       await tester.enterText(
           find.byKey(const ValueKey('password-field')), password);
+
+      await tester.dragUntilVisible(
+        find.byKey(const ValueKey('sign-in-button')),
+        find.byType(SingleChildScrollView),
+        const Offset(0, 50),
+      );
 
       await tester.tap(find.byKey(const ValueKey('sign-in-button')));
       await addDelay(10000);
@@ -371,6 +413,12 @@ void main() {
       await tester.enterText(find.byKey(const ValueKey('email-field')), email);
       await tester.enterText(
           find.byKey(const ValueKey('password-field')), password);
+
+      await tester.dragUntilVisible(
+        find.byKey(const ValueKey('sign-in-button')),
+        find.byType(SingleChildScrollView),
+        const Offset(0, 50),
+      );
 
       await tester.tap(find.byKey(const ValueKey('sign-in-button')));
       await addDelay(10000);
@@ -448,6 +496,12 @@ void main() {
           find.byKey(const ValueKey('email-field')), timeBasedEmail);
       await tester.enterText(
           find.byKey(const ValueKey('password-field')), timeBasedPassword);
+
+      await tester.dragUntilVisible(
+        find.byKey(const ValueKey('sign-up-button')),
+        find.byType(SingleChildScrollView),
+        const Offset(0, 50),
+      );
 
       await tester.tap(find.byKey(const ValueKey('sign-up-button')));
       await addDelay(10000);
@@ -547,6 +601,12 @@ void main() {
       await tester.enterText(
           find.byKey(const ValueKey('password-field')), timeBasedPassword);
 
+      await tester.dragUntilVisible(
+        find.byKey(const ValueKey('sign-up-button')),
+        find.byType(SingleChildScrollView),
+        const Offset(0, 50),
+      );
+
       await tester.tap(find.byKey(const ValueKey('sign-up-button')));
       await addDelay(10000);
       await tester.pumpAndSettle();
@@ -588,6 +648,12 @@ void main() {
       await tester.enterText(find.byKey(const ValueKey('email-field')), email);
       await tester.enterText(
           find.byKey(const ValueKey('password-field')), password);
+
+      await tester.dragUntilVisible(
+        find.byKey(const ValueKey('sign-in-button')),
+        find.byType(SingleChildScrollView),
+        const Offset(0, 50),
+      );
 
       await tester.tap(find.byKey(const ValueKey('sign-in-button')));
       await addDelay(10000);
@@ -661,6 +727,12 @@ void main() {
           find.byKey(const ValueKey('email-field')), timeBasedEmail);
       await tester.enterText(
           find.byKey(const ValueKey('password-field')), timeBasedPassword);
+
+      await tester.dragUntilVisible(
+        find.byKey(const ValueKey('sign-up-button')),
+        find.byType(SingleChildScrollView),
+        const Offset(0, 50),
+      );
 
       await tester.tap(find.byKey(const ValueKey('sign-up-button')));
       await addDelay(10000);

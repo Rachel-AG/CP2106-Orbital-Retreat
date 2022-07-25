@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:retreat/constants/auth_state.dart';
+import 'package:retreat/constants/text_styles.dart';
 import 'package:retreat/notifiers/current_profile_change_notifier.dart';
 import 'package:retreat/services/authentication_service.dart';
 import 'package:retreat/widgets/custom_button.dart';
@@ -42,7 +43,14 @@ class _SignUpPageState extends AuthState<SignUpPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 const SizedBox(
-                  height: 24,
+                  height: 80,
+                ),
+                const Text(
+                  "Sign Up",
+                  style: TextStyles.title,
+                ),
+                const SizedBox(
+                  height: 30,
                 ),
                 // username form
                 CustomFormField(

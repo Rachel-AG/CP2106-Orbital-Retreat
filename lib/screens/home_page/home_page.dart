@@ -145,7 +145,6 @@ class _HomePageState extends AuthRequiredState<HomePage> {
 
   IconButton refreshButton(Completer<WebViewPlusController> controller) {
     return IconButton(
-        color: AppColors.custom,
         onPressed: () async {
           await controller.future
               .then((controller) => controller.webViewController.reload());

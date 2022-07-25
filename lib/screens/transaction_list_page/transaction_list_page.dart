@@ -60,7 +60,7 @@ class _TransactionListPageState extends AuthRequiredState<TransactionListPage>
         children: _nTabPages,
       ),
       bottomNavigationBar: Material(
-        color: AppColors.custom.shade500,
+        color: AppColors.custom.shade800,
         child: TabBar(
           indicator: BoxDecoration(
             color: AppColors.custom.shade400,

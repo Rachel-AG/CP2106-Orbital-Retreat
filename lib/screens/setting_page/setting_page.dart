@@ -48,7 +48,6 @@ class _SettingPageState extends AuthRequiredState<SettingPage> {
                   "Account",
                   const Icon(
                     Icons.person,
-                    color: AppColors.darkblue,
                   )),
               settingOption("Update Profile", () {
                 Navigator.pushNamed(context, '/home/settings/updateprofile');
@@ -63,7 +62,6 @@ class _SettingPageState extends AuthRequiredState<SettingPage> {
                   "Others",
                   const Icon(
                     Icons.article_rounded,
-                    color: AppColors.darkblue,
                   )),
               // settingOption("Performance", () {
               //   // TODO: MODIFY MAX ANIMALS
@@ -136,7 +134,6 @@ class _SettingPageState extends AuthRequiredState<SettingPage> {
             ),
             const Icon(
               Icons.arrow_forward_ios_rounded,
-              color: Colors.grey,
             )
           ],
         ),
