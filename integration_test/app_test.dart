@@ -518,4 +518,121 @@ void main() {
       onCurrentPage(tester, 'Sign In');
     });
   });
+
+  group('Overview Test', () {
+    final timeBasedEmail = '${DateTime.now().microsecondsSinceEpoch}@test.com';
+    final timeBasedPassword =
+        '${DateTime.now().microsecondsSinceEpoch..toString().substring(0, 15)}';
+
+    const email = 'retreat.test123@gmail.com';
+    const password = 'test123';
+
+    testWidgets('Initial Overview', (WidgetTester tester) async {
+      initProvider();
+      await tester.pumpAndSettle();
+
+      onCurrentPage(tester, 'Sign In');
+
+      await tester.tap(find.byKey(const ValueKey('sign-up-link')));
+      await tester.pumpAndSettle();
+
+      // create Account
+      onCurrentPage(tester, 'Sign Up');
+
+      await tester.enterText(find.byKey(const ValueKey('username-field')),
+          'Tester-${timeBasedPassword.substring(0, 6)}');
+      await tester.enterText(
+          find.byKey(const ValueKey('email-field')), timeBasedEmail);
+      await tester.enterText(
+          find.byKey(const ValueKey('password-field')), timeBasedPassword);
+
+      await tester.tap(find.byKey(const ValueKey('sign-up-button')));
+      await addDelay(10000);
+      await tester.pumpAndSettle();
+
+      // successful login
+      onCurrentPage(tester, 'Home');
+
+      await tester.tap(find.byKey(const ValueKey('transaction-list')));
+      await addDelay(10000);
+      await tester.pumpAndSettle();
+
+      onCurrentPage(tester, 'Overview');
+
+      expect(find.text('No Transactions Recorded'), findsNWidgets(3));
+
+      await tester.tap(find.byIcon(Icons.arrow_back));
+      await tester.pumpAndSettle();
+
+      onCurrentPage(tester, 'Home');
+
+      await tester.tap(find.byKey(const ValueKey('settings')));
+      await tester.pumpAndSettle();
+
+      onCurrentPage(tester, 'Settings');
+
+      await tester.tap(find.byKey(const ValueKey('sign-out-button')));
+      await addDelay(10000);
+      await tester.pumpAndSettle();
+
+      onCurrentPage(tester, 'Sign In');
+    });
+
+    testWidgets('Overview with Data', (WidgetTester tester) async {
+      initProvider();
+      await tester.pumpAndSettle();
+
+      onCurrentPage(tester, 'Sign In');
+
+      await tester.enterText(find.byKey(const ValueKey('email-field')), email);
+      await tester.enterText(
+          find.byKey(const ValueKey('password-field')), password);
+
+      await tester.tap(find.byKey(const ValueKey('sign-in-button')));
+      await addDelay(10000);
+      await tester.pumpAndSettle();
+
+      onCurrentPage(tester, 'Home');
+
+      await tester.tap(find.byKey(const ValueKey('transaction-list')));
+      await addDelay(10000);
+      await tester.pumpAndSettle();
+
+      onCurrentPage(tester, 'Overview');
+
+      expect(find.byKey(const ValueKey('bar-chart')), findsOneWidget);
+
+      await tester.dragFrom(
+          tester.getCenter(find.byKey(const ValueKey('bar-chart'))),
+          const Offset(0, -700));
+      await addDelay(8000);
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(const ValueKey('expense-chart')), findsOneWidget);
+
+      await tester.dragFrom(
+          tester.getCenter(find.byKey(const ValueKey('expense-chart'))),
+          const Offset(0, -700));
+      await addDelay(8000);
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(const ValueKey('income-chart')), findsOneWidget);
+
+      await tester.tap(find.byIcon(Icons.arrow_back));
+      await tester.pumpAndSettle();
+
+      onCurrentPage(tester, 'Home');
+
+      await tester.tap(find.byKey(const ValueKey('settings')));
+      await tester.pumpAndSettle();
+
+      onCurrentPage(tester, 'Settings');
+
+      await tester.tap(find.byKey(const ValueKey('sign-out-button')));
+      await addDelay(10000);
+      await tester.pumpAndSettle();
+
+      onCurrentPage(tester, 'Sign In');
+    });
+  });
 }
