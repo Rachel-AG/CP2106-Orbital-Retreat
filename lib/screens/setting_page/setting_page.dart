@@ -65,13 +65,13 @@ class _SettingPageState extends AuthRequiredState<SettingPage> {
                     Icons.article_rounded,
                     color: AppColors.darkblue,
                   )),
-              settingOption("Performance", () {
-                // TODO: MODIFY MAX ANIMALS
-                // TODO: MODIFY MAX CLOUDS
-              }),
-              settingOption("Credits", () {
-                // TODO: CREDITS AND CONTACTS
-              }),
+              // settingOption("Performance", () {
+              //   // TODO: MODIFY MAX ANIMALS
+              //   // TODO: MODIFY MAX CLOUDS
+              // }),
+              // settingOption("Credits", () {
+              //   // TODO: CREDITS AND CONTACTS
+              // }),
               CustomButton(
                   key: const ValueKey('sign-out-button'),
                   text: 'Sign out',

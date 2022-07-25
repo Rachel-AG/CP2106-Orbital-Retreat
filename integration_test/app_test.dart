@@ -18,6 +18,7 @@ import 'package:retreat/services/island_service.dart';
 import 'package:retreat/services/profile_service.dart';
 import 'package:retreat/services/shop_service.dart';
 import 'package:retreat/services/transactions_service.dart';
+import 'package:retreat/widgets/avatar.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 void main() {
@@ -622,6 +623,84 @@ void main() {
       await tester.pumpAndSettle();
 
       onCurrentPage(tester, 'Home');
+
+      await tester.tap(find.byKey(const ValueKey('settings')));
+      await tester.pumpAndSettle();
+
+      onCurrentPage(tester, 'Settings');
+
+      await tester.tap(find.byKey(const ValueKey('sign-out-button')));
+      await addDelay(10000);
+      await tester.pumpAndSettle();
+
+      onCurrentPage(tester, 'Sign In');
+    });
+  });
+
+  group('Profile Test', () {
+    final timeBasedEmail = '${DateTime.now().microsecondsSinceEpoch}@test.com';
+    final timeBasedPassword =
+        '${DateTime.now().microsecondsSinceEpoch..toString().substring(0, 15)}';
+
+    testWidgets('Correct initial profile and change username',
+        (WidgetTester tester) async {
+      initProvider();
+      await tester.pumpAndSettle();
+
+      onCurrentPage(tester, 'Sign In');
+
+      await tester.tap(find.byKey(const ValueKey('sign-up-link')));
+      await tester.pumpAndSettle();
+
+      // create Account
+      onCurrentPage(tester, 'Sign Up');
+
+      await tester.enterText(find.byKey(const ValueKey('username-field')),
+          'Tester-${timeBasedPassword.substring(0, 6)}');
+      await tester.enterText(
+          find.byKey(const ValueKey('email-field')), timeBasedEmail);
+      await tester.enterText(
+          find.byKey(const ValueKey('password-field')), timeBasedPassword);
+
+      await tester.tap(find.byKey(const ValueKey('sign-up-button')));
+      await addDelay(10000);
+      await tester.pumpAndSettle();
+
+      // successful login
+      onCurrentPage(tester, 'Home');
+
+      expect(find.text('Tester-${timeBasedPassword.substring(0, 6)}'),
+          findsOneWidget);
+      expect(find.byType(Avatar), findsOneWidget);
+
+      await tester.tap(find.byKey(const ValueKey('settings')));
+      await tester.pumpAndSettle();
+
+      onCurrentPage(tester, 'Settings');
+
+      await tester.tap(find.text("Update Profile"));
+      await addDelay(10000);
+      await tester.pumpAndSettle();
+
+      await tester.enterText(
+          find.byKey(const ValueKey('new-username-field')), 'Updated User');
+      await addDelay(5000);
+
+      await tester.tap(find.byKey(const ValueKey('update-username-button')));
+      await addDelay(8000);
+      await tester.pumpAndSettle();
+
+      expect(find.text('Updated User'), findsWidgets);
+
+      await tester.tap(find.byIcon(Icons.arrow_back));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byIcon(Icons.arrow_back));
+      await tester.pumpAndSettle();
+
+      onCurrentPage(tester, 'Home');
+
+      expect(find.text('Updated User'), findsWidgets);
 
       await tester.tap(find.byKey(const ValueKey('settings')));
       await tester.pumpAndSettle();
