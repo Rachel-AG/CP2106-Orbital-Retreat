@@ -50,7 +50,17 @@ class _DisplayTransactionsPageState
         ],
       );
     }
-    if (allTransactions.isEmpty) return const Text('No Transactions recorded');
+    if (allTransactions.isEmpty) {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: const [
+          Text(
+            'No Transactions recorded',
+            style: TextStyles.chartTitle,
+          ),
+        ],
+      );
+    }
 
     String date = '';
 

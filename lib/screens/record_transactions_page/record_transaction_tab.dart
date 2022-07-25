@@ -167,8 +167,7 @@ class _RecordTransactionTabState
                   .gamestat;
           Provider.of<GamestatChangeNotifier>(context, listen: false)
               .updateGamestat(
-                  whichStat: "gold",
-                  updatedValue: currentGamestat.gold +
+                  gold: currentGamestat.gold +
                       ((20 * currentGamestat.multiplier).round()));
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
             content: Text('You have received 20 golds. Keep it up!'),

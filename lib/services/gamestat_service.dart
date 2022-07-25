@@ -22,39 +22,18 @@ class GamestatService {
   }
 
   // whichStat can be either gold, island_level, or streak
-  Future<bool> updateGamestat(
-      {required String whichStat, required int updatedValue}) async {
-    bool updateMultiplier;
+  Future<bool> updateGamestat(Gamestat newGamestat) async {
+    final result = await client
+        .from('gamestats')
+        .update({
+          'island_level': newGamestat.level,
+          'gold': newGamestat.gold,
+          'multiplier': newGamestat.multiplier,
+          'streak': newGamestat.streak,
+        })
+        .eq('created_by', client.auth.currentUser?.id)
+        .execute();
 
-    if (whichStat == 'streak') {
-      updateMultiplier = true;
-    } else {
-      updateMultiplier = false;
-    }
-
-    final result;
-
-    if (updateMultiplier) {
-      double updatedMultiplier = calculateMultiplier(updatedValue);
-      result = await client
-          .from('gamestats')
-          .update({
-            whichStat: updatedValue,
-            'multiplier': updatedMultiplier,
-          })
-          .eq('created_by', client.auth.currentUser?.id)
-          .execute();
-    } else {
-      result = await client
-          .from('gamestats')
-          .update({
-            whichStat: updatedValue,
-          })
-          .eq('created_by', client.auth.currentUser?.id)
-          .execute();
-    }
-
-    // check if gamestat is updated successfully
     if (result.error != null) return false;
 
     return true;
@@ -76,15 +55,5 @@ class GamestatService {
       Future<Gamestat> newGamestat = getCurrentGamestat();
       return newGamestat;
     }
-  }
-
-  static double calculateMultiplier(int newStreak) {
-    int i = 1;
-    double result = 1;
-    while (i < newStreak) {
-      result = result + pow((1 / (1 + i)), 2);
-      i++;
-    }
-    return result;
   }
 }

@@ -6,7 +6,9 @@ import 'package:retreat/constants/text_styles.dart';
 import 'package:retreat/notifiers/budget_list_change_notifier.dart';
 import 'package:retreat/notifiers/category_list_change_notifier.dart';
 import 'package:retreat/notifiers/current_profile_change_notifier.dart';
+import 'package:retreat/notifiers/gamestat_change_notifier.dart';
 import 'package:retreat/notifiers/island_change_notifier.dart';
+import 'package:retreat/notifiers/shop_items_change_notifier.dart';
 import 'package:retreat/notifiers/transaction_list_change_notifier.dart';
 import 'package:retreat/services/authentication_service.dart';
 import 'package:retreat/widgets/custom_button.dart';
@@ -87,6 +89,10 @@ class _SettingPageState extends AuthRequiredState<SettingPage> {
                         .reset();
                     Provider.of<TransactionListChangeNotifier>(context,
                             listen: false)
+                        .reset();
+                    Provider.of<GamestatChangeNotifier>(context, listen: false)
+                        .reset();
+                    Provider.of<ShopItemsChangeNotifier>(context, listen: false)
                         .reset();
                     await _supabaseClient.signOutUser(context);
                   }),

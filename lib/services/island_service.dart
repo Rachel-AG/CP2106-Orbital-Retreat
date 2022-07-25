@@ -19,8 +19,8 @@ class IslandService {
         'max_height': 10,
         'steepness': 1,
         'seed': "seed",
-        'ratio': jsonEncode([0.0, 0.2, 2.0, 0.6, 2.0]),
-        'max_animal': 0,
+        'ratio': jsonEncode([0.0, 0.2, 2.0, 0.7, 2.0]),
+        'max_animal': 8,
         'animal_list': jsonEncode([]),
         'env_list': jsonEncode([]),
         'day_bool': true,
@@ -77,5 +77,4 @@ class IslandService {
     if (result.error != null) return false;
     return true;
   }
-
 }

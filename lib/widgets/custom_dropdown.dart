@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:retreat/constants/app_colors.dart';
 import 'package:retreat/notifiers/theme_mode_change_notifier.dart';
 
 class CustomDropdownButton extends StatefulWidget {
@@ -28,8 +29,7 @@ class _CustomDropdownButtonState extends State<CustomDropdownButton> {
             value: value,
             child: Text(
               value,
-              style:
-                  TextStyle(color: ThemeModeChangeNotifier().textDefaultColor),
+              style: TextStyle(color: AppColors.custom.shade300),
             ),
           ),
         )
@@ -38,7 +38,7 @@ class _CustomDropdownButtonState extends State<CustomDropdownButton> {
     return Column(
       children: <Widget>[
         ListTile(
-          tileColor: ThemeModeChangeNotifier().oppTextDefaultColor,
+          // tileColor: ThemeModeChangeNotifier().oppTextDefaultColor,
           title: Text(
             widget.title ?? "Items: ",
           ),
@@ -46,8 +46,7 @@ class _CustomDropdownButtonState extends State<CustomDropdownButton> {
             value: widget.btnSelectedVal,
             hint: Text(
               widget.hint ?? "Choose",
-              style:
-                  TextStyle(color: ThemeModeChangeNotifier().textDefaultColor),
+              style: TextStyle(color: AppColors.custom.shade300),
             ),
             onChanged: (String? newValue) {
               if (newValue != null) {

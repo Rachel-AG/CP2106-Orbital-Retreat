@@ -293,13 +293,20 @@ class _BudgetHistoryPageState extends AuthRequiredState<BudgetHistoryPage> {
                                 content: Text('Budget recorded'),
                                 duration: Duration(seconds: 2),
                               ));
-                              Gamestat currentGamestat = Provider.of<GamestatChangeNotifier>(context, listen: false).gamestat;
-                              int newGold = ((200 * currentGamestat.multiplier).round()); 
-                              Provider.of<GamestatChangeNotifier>(context, listen: false)
-                              .updateGamestat(whichStat: "gold", updatedValue: currentGamestat.gold + newGold);
+                              Gamestat currentGamestat =
+                                  Provider.of<GamestatChangeNotifier>(context,
+                                          listen: false)
+                                      .gamestat;
+                              int newGold =
+                                  ((200 * currentGamestat.multiplier).round());
+                              Provider.of<GamestatChangeNotifier>(context,
+                                      listen: false)
+                                  .updateGamestat(
+                                      gold: currentGamestat.gold + newGold);
                               ScaffoldMessenger.of(context)
                                   .showSnackBar(SnackBar(
-                                content: Text("You have received $newGold gold. Keep it up!"),
+                                content: Text(
+                                    "You have received $newGold gold. Keep it up!"),
                                 duration: Duration(seconds: 2),
                               ));
                             }

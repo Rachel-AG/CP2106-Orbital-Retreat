@@ -60,12 +60,14 @@ class _HomePageState extends AuthRequiredState<HomePage> {
                       ),
                     ]),
               ),
-              Consumer<IslandChangeNotifier>(
-                  builder: (context, value, child) => Expanded(
-                      flex: 10,
-                      child: widget.genIsland
-                          ? islandWebView(value, _controller)
-                          : const SizedBox())),
+              Consumer<IslandChangeNotifier>(builder: (context, value, child) {
+                // if (value.isUpToDate) _refreshWebview(_controller);
+                return Expanded(
+                    flex: 10,
+                    child: widget.genIsland
+                        ? islandWebView(value, _controller)
+                        : const SizedBox());
+              }),
             ],
           ),
         ),
@@ -146,8 +148,7 @@ class _HomePageState extends AuthRequiredState<HomePage> {
   IconButton refreshButton(Completer<WebViewPlusController> controller) {
     return IconButton(
         onPressed: () async {
-          await controller.future
-              .then((controller) => controller.webViewController.reload());
+          await _refreshWebview(controller);
         },
         icon: const Icon(Icons.refresh_rounded));
   }
@@ -219,5 +220,11 @@ class _HomePageState extends AuthRequiredState<HomePage> {
         onPressed: () async {
           Navigator.pushNamed(context, '/shop');
         });
+  }
+
+  Future<void> _refreshWebview(
+      Completer<WebViewPlusController> controller) async {
+    await controller.future
+        .then((controller) => controller.webViewController.reload());
   }
 }

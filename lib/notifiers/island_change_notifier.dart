@@ -7,8 +7,8 @@ class IslandChangeNotifier extends ChangeNotifier {
   final IslandService _islandService;
   IslandChangeNotifier(this._islandService);
 
-  Island _island =
-      Island('test', 0, 0, 0, 'null', [], 0, [], [], true, true, 'tester_id');
+  Island _island = const Island(
+      'test', 0, 0, 0, 'null', [], 0, [], [], true, true, 'tester_id');
   Island get island {
     isUpToDate ? true : getIsland();
     return _island;
@@ -24,8 +24,10 @@ class IslandChangeNotifier extends ChangeNotifier {
 
   Future<void> getIsland() async {
     _island = await _islandService.getIsland();
+    var animalStrList = island.animalList.map((e) => "'" + e + "'").toList();
+    var envStrList = island.envList.map((e) => "'" + e + "'").toList();
     _javaScriptString =
-        "init(${_island.gridRadius}, ${_island.maxHeight}, ${_island.steepness}, '${_island.seed}', ${_island.ratio}, ${_island.maxAnimal}, ${_island.animalList}, ${_island.envList}, ${_island.dayBool}, ${_island.cloudBool})";
+        "init(${island.gridRadius}, ${island.maxHeight}, ${island.steepness}, '${island.seed}', ${island.ratio}, ${island.maxAnimal}, $animalStrList, $envStrList, ${island.dayBool}, ${island.cloudBool})";
     isUpToDate = true;
     // notify listeners when most up to date island is retrieved
     notifyListeners();
@@ -77,8 +79,8 @@ class IslandChangeNotifier extends ChangeNotifier {
   }
 
   void reset() {
-    _island =
-        Island('test', 0, 0, 0, 'null', [], 0, [], [], true, true, 'tester_id');
+    _island = const Island(
+        'test', 0, 0, 0, 'null', [], 0, [], [], true, true, 'tester_id');
     _javaScriptString = '';
     isUpToDate = false;
   }
