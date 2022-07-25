@@ -71,6 +71,7 @@ flutter:
   assets:
     - assets/images/builder_shop/animals/
     - assets/images/builder_shop/environment/
+    - assets/images/builder_shop/others/
     - assets/www/textures/Ground048_1K-JPG/
     - assets/www/textures/Gravel024_1K-JPG/
     - assets/www/textures/Grass001_1K-JPG/
