@@ -4,8 +4,10 @@ import 'package:provider/provider.dart';
 import 'package:retreat/constants/auth_required_state.dart';
 import 'package:retreat/constants/text_styles.dart';
 import 'package:retreat/models/budget.dart';
+import 'package:retreat/models/gamestat.dart';
 import 'package:retreat/models/transaction.dart';
 import 'package:retreat/notifiers/budget_list_change_notifier.dart';
+import 'package:retreat/notifiers/gamestat_change_notifier.dart';
 import 'package:retreat/notifiers/transaction_list_change_notifier.dart';
 import 'package:retreat/widgets/numeric_formfield.dart';
 import '../../constants/app_colors.dart';
@@ -108,7 +110,7 @@ class _BudgetHistoryPageState extends AuthRequiredState<BudgetHistoryPage> {
             children: [
               const Padding(
                 padding: EdgeInsets.all(8.0),
-                child: Text("You have not recorded budget for this month",
+                child: Text("No recorded budget for this month",
                     style: TextStyles.optionTextStyle),
               ),
               insertBudgetButton(),
@@ -157,6 +159,7 @@ class _BudgetHistoryPageState extends AuthRequiredState<BudgetHistoryPage> {
 
   CustomButton updateBudgetButton(Budget budget) {
     return CustomButton(
+        key: const ValueKey('update-button'),
         text: "Update Budget",
         onTap: () {
           showDialog(
@@ -171,11 +174,13 @@ class _BudgetHistoryPageState extends AuthRequiredState<BudgetHistoryPage> {
                     child: Column(
                       children: <Widget>[
                         NumericFormField(
+                            key: const ValueKey('update-field'),
                             labelText: "Budget",
                             hintText: "Insert amount",
                             controller: _amountController),
                         CustomButton(
-                          text: "Record",
+                          key: const ValueKey('update-budget-button'),
+                          text: "Update",
                           onTap: () async {
                             if (_amountController.text.isEmpty) {
                               ScaffoldMessenger.of(context)
@@ -184,23 +189,51 @@ class _BudgetHistoryPageState extends AuthRequiredState<BudgetHistoryPage> {
                                 duration: Duration(seconds: 2),
                               ));
                             } else {
-                              String id = budget.id;
-                              //TO DO: POP UP WARNING MSG
-                              int selectedMonth = DateTime.now().month;
-                              int selectedYear = DateTime.now().year;
-                              Provider.of<BudgetListChangeNotifier>(context,
-                                      listen: false)
-                                  .updateBudget(
-                                      id: id,
-                                      amount: amount,
-                                      month: selectedMonth,
-                                      year: selectedYear);
-                              Navigator.of(context).pop();
-                              ScaffoldMessenger.of(context)
-                                  .showSnackBar(const SnackBar(
-                                content: Text('Budget updated'),
-                                duration: Duration(seconds: 2),
-                              ));
+                              Dialog alert = Dialog(
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    const Padding(
+                                      padding: EdgeInsets.all(8.0),
+                                      child: Text(
+                                        "WARNING! Updating your budget now would reset the current COINS multiplier. Do you want to proceed?",
+                                        softWrap: true,
+                                      ),
+                                    ),
+                                    TextButton(
+                                      key: const ValueKey('yes-button'),
+                                      child: const Text('Yes'),
+                                      onPressed: () {
+                                        String id = budget.id;
+                                        //TODO: reset multiplier here
+                                        int selectedMonth =
+                                            DateTime.now().month;
+                                        int selectedYear = DateTime.now().year;
+                                        Provider.of<BudgetListChangeNotifier>(
+                                                context,
+                                                listen: false)
+                                            .updateBudget(
+                                                id: id,
+                                                amount: amount,
+                                                month: selectedMonth,
+                                                year: selectedYear);
+                                        Navigator.of(context).pop();
+                                        Navigator.of(context).pop();
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(const SnackBar(
+                                          content: Text('Budget updated'),
+                                          duration: Duration(seconds: 2),
+                                        ));
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              );
+                              showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return alert;
+                                  });
                             }
                           },
                         ),
@@ -216,6 +249,7 @@ class _BudgetHistoryPageState extends AuthRequiredState<BudgetHistoryPage> {
 
   CustomButton insertBudgetButton() {
     return CustomButton(
+        key: const ValueKey('insert-button'),
         text: "Insert Budget",
         onTap: () {
           showDialog(
@@ -230,10 +264,12 @@ class _BudgetHistoryPageState extends AuthRequiredState<BudgetHistoryPage> {
                     child: Column(
                       children: <Widget>[
                         NumericFormField(
+                            key: const ValueKey('insert-field'),
                             labelText: "Budget",
                             hintText: "Insert amount",
                             controller: _amountController),
                         CustomButton(
+                          key: const ValueKey('record-budget-button'),
                           text: "Record",
                           onTap: () async {
                             if (_amountController.text.isEmpty) {
@@ -257,6 +293,15 @@ class _BudgetHistoryPageState extends AuthRequiredState<BudgetHistoryPage> {
                                 content: Text('Budget recorded'),
                                 duration: Duration(seconds: 2),
                               ));
+                              Gamestat currentGamestat = Provider.of<GamestatChangeNotifier>(context, listen: false).gamestat;
+                              int newGold = ((200 * currentGamestat.multiplier).round()); 
+                              Provider.of<GamestatChangeNotifier>(context, listen: false)
+                              .updateGamestat(whichStat: "gold", updatedValue: currentGamestat.gold + newGold);
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(SnackBar(
+                                content: Text("You have received $newGold gold. Keep it up!"),
+                                duration: Duration(seconds: 2),
+                              ));
                             }
                           },
                         ),
@@ -277,6 +322,7 @@ class _BudgetHistoryPageState extends AuthRequiredState<BudgetHistoryPage> {
     String percentBudgetRemainingString =
         "${(percentBudgetRemaining * 100).toStringAsFixed(2)}%";
     return CircularPercentIndicator(
+      key: const ValueKey('budget-chart'),
       radius: 100.0,
       lineWidth: 20.0,
       animation: true,
@@ -291,8 +337,8 @@ class _BudgetHistoryPageState extends AuthRequiredState<BudgetHistoryPage> {
         padding: const EdgeInsets.all(16.0),
         child: Text(
           remainingBudget >= 0
-              ? "Remaining Budget: \$${remainingBudget.abs()}"
-              : "Exceed Budget: \$${remainingBudget.abs()}",
+              ? "Remaining Budget: \$${remainingBudget.abs().toStringAsFixed(2)}"
+              : "Exceed Budget: \$${remainingBudget.abs().toStringAsFixed(2)}",
           style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 17.0),
         ),
       ),

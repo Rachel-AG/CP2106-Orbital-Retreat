@@ -83,7 +83,7 @@ class _OverviewPageState extends AuthRequiredState<OverviewPage> {
                 }
                 Map<Category, double> expenseBreakdownByCat =
                     _breakDownByCategory(expenseCatList, expenseList);
-                return customPieChart(expenseBreakdownByCat);
+                return customPieChart(expenseBreakdownByCat, 'expense-chart');
               },
             ),
           ),
@@ -105,9 +105,9 @@ class _OverviewPageState extends AuthRequiredState<OverviewPage> {
                 if (incomeCatList.isEmpty) {
                   return const CircularProgressIndicator();
                 }
-                Map<Category, double> expenseBreakdownByCat =
+                Map<Category, double> incomeBreakdownByCat =
                     _breakDownByCategory(incomeCatList, incomeList);
-                return customPieChart(expenseBreakdownByCat);
+                return customPieChart(incomeBreakdownByCat, 'income-chart');
               },
             ),
           ),
@@ -128,13 +128,14 @@ class _OverviewPageState extends AuthRequiredState<OverviewPage> {
     return IconButton(
         icon: const Icon(
           Icons.calendar_month,
-          color: AppColors.custom,
         ),
         onPressed: () {
           showDialog(
             context: context,
             builder: (context) => AlertDialog(
-              title: const Text("Select Timeline"),
+              title: const Text(
+                "Select Timeline",
+              ),
               actions: <Widget>[
                 selectMonth,
                 selectYear,
@@ -230,7 +231,7 @@ class _OverviewPageState extends AuthRequiredState<OverviewPage> {
     );
   }
 
-  Widget customPieChart(Map<Category, double> breakdownByCategory) {
+  Widget customPieChart(Map<Category, double> breakdownByCategory, String key) {
     if (breakdownByCategory.values.fold(
         true, (previousValue, element) => previousValue && element == 0.0)) {
       return const Text(
@@ -240,6 +241,7 @@ class _OverviewPageState extends AuthRequiredState<OverviewPage> {
     return Column(
       children: [
         Padding(
+          key: ValueKey(key),
           padding: const EdgeInsets.symmetric(horizontal: 48.0),
           child: AspectRatio(
               aspectRatio: 1,
@@ -341,6 +343,7 @@ class _OverviewPageState extends AuthRequiredState<OverviewPage> {
       height: 240.0,
       width: 500.0,
       child: BarChart(
+          key: const ValueKey('bar-chart'),
           barChartMainData(barChartGroupMainData(expenseList, incomeList))),
     );
   }

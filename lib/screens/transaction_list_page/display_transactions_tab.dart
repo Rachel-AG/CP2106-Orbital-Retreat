@@ -6,6 +6,7 @@ import 'package:retreat/constants/auth_required_state.dart';
 import 'package:retreat/constants/text_styles.dart';
 import 'package:retreat/models/transaction.dart';
 import 'package:retreat/notifiers/category_list_change_notifier.dart';
+import 'package:retreat/notifiers/theme_mode_change_notifier.dart';
 import 'package:retreat/notifiers/transaction_list_change_notifier.dart';
 import 'package:retreat/screens/update_transaction_page/update_transaction_page.dart';
 
@@ -63,7 +64,7 @@ class _DisplayTransactionsPageState
             }
             date = allTransactions[index ~/ 2].timeTransaction;
             return Container(
-                color: AppColors.custom.shade100.withOpacity(0.4),
+                color: AppColors.custom.shade200.withOpacity(0.1),
                 child: Text(date));
           }
           return _buildRow(allTransactions[index ~/ 2],
@@ -79,7 +80,8 @@ class _DisplayTransactionsPageState
       SlidableAction(
           label: 'Update',
           autoClose: true,
-          foregroundColor: AppColors.green,
+          backgroundColor: AppColors.green,
+          foregroundColor: AppColors.custom.shade50,
           icon: Icons.edit,
           onPressed: (context) {
             Navigator.of(context).push(MaterialPageRoute(
@@ -88,7 +90,8 @@ class _DisplayTransactionsPageState
           }),
       SlidableAction(
           label: 'Delete',
-          foregroundColor: AppColors.red,
+          backgroundColor: AppColors.red,
+          foregroundColor: AppColors.custom.shade50,
           icon: Icons.delete,
           onPressed: (context) async {
             transactionListChangeNotifier.deleteTransaction(transaction.id);

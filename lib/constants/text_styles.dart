@@ -1,27 +1,27 @@
 import 'package:retreat/constants/app_colors.dart';
 
 import 'package:flutter/material.dart';
+import 'package:retreat/notifiers/theme_mode_change_notifier.dart';
 
 class TextStyles {
-  static var headerTextStyle = TextStyle(
-    color: AppColors.custom.shade50,
+  static var headerTextStyle = const TextStyle(
     fontSize: 28,
     fontWeight: FontWeight.w700,
   );
 
-  static const textFieldHeading = TextStyle(
+  static TextStyle textFieldHeading = TextStyle(
     fontSize: 16,
     fontWeight: FontWeight.w500,
+    color: ThemeModeChangeNotifier().textDefaultColor,
   );
 
-  static const textFieldHintStyle = TextStyle(
-    color: AppColors.hintText,
+  static TextStyle textFieldHintStyle = TextStyle(
     fontSize: 14,
-    fontWeight: FontWeight.w500,
+    fontWeight: FontWeight.w300,
+    color: ThemeModeChangeNotifier().textDefaultColor,
   );
 
-  static var buttonTextStyle = TextStyle(
-    color: AppColors.custom.shade50,
+  static var buttonTextStyle = const TextStyle(
     fontSize: 16,
     fontWeight: FontWeight.w600,
   );
@@ -36,7 +36,7 @@ class TextStyles {
 
   static const profileTextStyle = TextStyle(
     fontSize: 20,
-    fontWeight: FontWeight.w600,
+    fontWeight: FontWeight.w500,
   );
 
   static const optionCategoryStyle = TextStyle(
@@ -46,6 +46,11 @@ class TextStyles {
 
   static const chartTitle = TextStyle(
     fontSize: 22,
+    fontWeight: FontWeight.w600,
+  );
+
+  static const title = TextStyle(
+    fontSize: 42,
     fontWeight: FontWeight.w600,
   );
 
@@ -67,6 +72,12 @@ class TextStyles {
     fontSize: 15,
     color: AppColors.red,
     fontWeight: FontWeight.w600,
+  );
+
+  static const coinsDisplay = TextStyle(
+    color: Colors.amber,
+    fontWeight: FontWeight.w800,
+    fontSize: 20,
   );
 
   static var percentage = TextStyle(color: AppColors.custom.shade100);

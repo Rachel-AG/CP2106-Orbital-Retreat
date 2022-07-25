@@ -40,27 +40,30 @@ class _UpdateProfilePage extends AuthRequiredState<UpdateProfilePage> {
           },
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-        child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              const SizedBox(
-                height: 24,
-              ),
-              Consumer<CurrentProfileChangeNotifier>(
-                builder: (context, value, child) => profileDisplay(value),
-              ),
-              updateAvatarButton(),
-              const SizedBox(
-                height: 24,
-              ),
-              CustomFormField(
-                labelText: 'New Username',
-                controller: _usernameController,
-              ),
-              updateUsernameButton(),
-            ]),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+          child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                const SizedBox(
+                  height: 24,
+                ),
+                Consumer<CurrentProfileChangeNotifier>(
+                  builder: (context, value, child) => profileDisplay(value),
+                ),
+                updateAvatarButton(),
+                const SizedBox(
+                  height: 24,
+                ),
+                CustomFormField(
+                  key: const ValueKey('new-username-field'),
+                  labelText: 'New Username',
+                  controller: _usernameController,
+                ),
+                updateUsernameButton(),
+              ]),
+        ),
       ),
     );
   }
@@ -91,6 +94,7 @@ class _UpdateProfilePage extends AuthRequiredState<UpdateProfilePage> {
   CustomButton updateUsernameButton() {
     return CustomButton(
         text: "Confirm",
+        key: const ValueKey('update-username-button'),
         onTap: () {
           Provider.of<CurrentProfileChangeNotifier>(context, listen: false)
               .updateProfile(username: username);

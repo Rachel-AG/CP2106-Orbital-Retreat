@@ -5,6 +5,7 @@ import 'package:retreat/constants/app_colors.dart';
 import 'package:retreat/constants/auth_required_state.dart';
 import 'package:retreat/constants/text_styles.dart';
 import 'package:retreat/notifiers/current_profile_change_notifier.dart';
+import 'package:retreat/notifiers/gamestat_change_notifier.dart';
 import 'package:retreat/notifiers/island_change_notifier.dart';
 import 'package:retreat/widgets/avatar.dart';
 import 'package:webview_flutter_plus/webview_flutter_plus.dart';
@@ -38,14 +39,30 @@ class _HomePageState extends AuthRequiredState<HomePage> {
             children: [
               Consumer<CurrentProfileChangeNotifier>(
                 builder: (context, value, child) =>
-                    Expanded(flex: 2, child: profileCard(value)),
+                    Expanded(flex: 3, child: profileCard(value)),
               ),
-              Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [refreshButton(_controller)]),
+              Expanded(
+                flex: 2,
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      refreshButton(_controller),
+                      Row(
+                        children: [
+                          Consumer<GamestatChangeNotifier>(
+                              builder: (context, value, child) =>
+                                  coinsDisplay(value)),
+                          const SizedBox(
+                            width: 16.0,
+                          ),
+                          shopButton(),
+                        ],
+                      ),
+                    ]),
+              ),
               Consumer<IslandChangeNotifier>(
                   builder: (context, value, child) => Expanded(
-                      flex: 8,
+                      flex: 10,
                       child: widget.genIsland
                           ? islandWebView(value, _controller)
                           : const SizedBox())),
@@ -128,7 +145,6 @@ class _HomePageState extends AuthRequiredState<HomePage> {
 
   IconButton refreshButton(Completer<WebViewPlusController> controller) {
     return IconButton(
-        color: AppColors.custom,
         onPressed: () async {
           await controller.future
               .then((controller) => controller.webViewController.reload());
@@ -140,6 +156,7 @@ class _HomePageState extends AuthRequiredState<HomePage> {
     final username = currProfChangeNotifier.profile.username;
     final url = currProfChangeNotifier.profile.avatarUrl;
     return Card(
+      key: const ValueKey('profile-card'),
       child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Row(
@@ -160,5 +177,47 @@ class _HomePageState extends AuthRequiredState<HomePage> {
             ],
           )),
     );
+  }
+
+  Widget coinsDisplay(GamestatChangeNotifier gamestatChangeNotifier) {
+    return Row(
+      key: const ValueKey('amount-of-coin'),
+      children: [
+        const Icon(
+          Icons.currency_exchange,
+          color: Colors.amber,
+        ),
+        const SizedBox(
+          width: 8.0,
+        ),
+        Text(
+          "${gamestatChangeNotifier.gamestat.gold}",
+          style: TextStyles.coinsDisplay,
+        ),
+      ],
+    );
+  }
+
+  ElevatedButton shopButton() {
+    return ElevatedButton(
+        style: ButtonStyle(
+          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+              RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(18.0),
+          )),
+        ),
+        key: const ValueKey('shop-button'),
+        child: Row(children: const [
+          Icon(
+            Icons.store,
+          ),
+          SizedBox(
+            width: 8.0,
+          ),
+          Text("Shop")
+        ]),
+        onPressed: () async {
+          Navigator.pushNamed(context, '/shop');
+        });
   }
 }
