@@ -21,6 +21,7 @@ class ItemTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      color: Colors.white,
       child: Container(
         height: 290,
         decoration: BoxDecoration(borderRadius: BorderRadius.circular(20)),
@@ -48,7 +49,9 @@ class ItemTile extends StatelessWidget {
                           padding: const EdgeInsets.all(1.0),
                           child: Text(
                             title,
-                            style: TextStyles.optionTextStyle,
+                            style: const TextStyle(
+                                color: AppColors.custom,
+                                fontWeight: FontWeight.w700),
                           ),
                         ),
                         Padding(
@@ -56,13 +59,19 @@ class ItemTile extends StatelessWidget {
                           child: Text(
                             '\$$price',
                             textAlign: TextAlign.start,
+                            style: const TextStyle(
+                                color: AppColors.custom,
+                                fontWeight: FontWeight.w500),
                           ),
                         ),
                       ],
                     ),
                     Spacer(),
                     IconButton(
-                      icon: const Icon(Icons.add),
+                      icon: const Icon(
+                        Icons.add,
+                        color: AppColors.custom,
+                      ),
                       onPressed: onPressed,
                     ),
                   ],

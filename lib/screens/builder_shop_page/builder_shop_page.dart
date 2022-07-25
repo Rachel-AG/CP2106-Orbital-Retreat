@@ -87,9 +87,7 @@ class _BuilderShopPageState extends AuthRequiredState<BuilderShopPage> {
                   } else {
                     // deduct user's gold based on the price of item
                     Provider.of<GamestatChangeNotifier>(context, listen: false)
-                        .updateGamestat(
-                            whichStat: "gold",
-                            updatedValue: (gamestat.gold - e.price));
+                        .updateGamestat(gold: gamestat.gold - e.price);
 
                     // update user's island
                     buyItem(islandChangeNotifier, e);
@@ -178,13 +176,15 @@ class _BuilderShopPageState extends AuthRequiredState<BuilderShopPage> {
           .updateIsland(cloudBool: true);
     } else if (item.type == "block") {
       if (item.name == "Grass") {
-        current.ratio[2] = 0.45;
+        List<double> newRatio = List.from(current.ratio);
+        newRatio[2] = 0.4;
         Provider.of<IslandChangeNotifier>(context, listen: false)
-            .updateIsland(ratio: current.ratio);
+            .updateIsland(ratio: newRatio);
       } else {
-        current.ratio[4] = 0.8;
+        List<double> newRatio = List.from(current.ratio);
+        newRatio[4] = 0.8;
         Provider.of<IslandChangeNotifier>(context, listen: false)
-            .updateIsland(ratio: current.ratio);
+            .updateIsland(ratio: newRatio);
       }
     } else if (item.type == "expand") {
       int newRadius = current.gridRadius + 3;
