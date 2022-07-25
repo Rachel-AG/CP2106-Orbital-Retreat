@@ -61,7 +61,6 @@ class _HomePageState extends AuthRequiredState<HomePage> {
                     ]),
               ),
               Consumer<IslandChangeNotifier>(builder: (context, value, child) {
-                // if (value.isUpToDate) _refreshWebview(_controller);
                 return Expanded(
                     flex: 10,
                     child: widget.genIsland
