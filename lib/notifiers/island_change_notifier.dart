@@ -24,11 +24,11 @@ class IslandChangeNotifier extends ChangeNotifier {
 
   Future<void> getIsland() async {
     _island = await _islandService.getIsland();
+    isUpToDate = true;
     var animalStrList = island.animalList.map((e) => "'" + e + "'").toList();
     var envStrList = island.envList.map((e) => "'" + e + "'").toList();
     _javaScriptString =
         "init(${island.gridRadius}, ${island.maxHeight}, ${island.steepness}, '${island.seed}', ${island.ratio}, ${island.maxAnimal}, $animalStrList, $envStrList, ${island.dayBool}, ${island.cloudBool})";
-    isUpToDate = true;
     // notify listeners when most up to date island is retrieved
     notifyListeners();
   }
