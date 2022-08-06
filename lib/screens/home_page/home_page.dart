@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:retreat/constants/app_colors.dart';
-import 'package:retreat/constants/auth_required_state.dart';
+import 'package:retreat/models/auth_required_state.dart';
 import 'package:retreat/constants/text_styles.dart';
 import 'package:retreat/notifiers/current_profile_change_notifier.dart';
 import 'package:retreat/notifiers/gamestat_change_notifier.dart';

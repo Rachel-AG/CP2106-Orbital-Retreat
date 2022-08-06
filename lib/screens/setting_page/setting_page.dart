@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:retreat/constants/app_colors.dart';
-import 'package:retreat/constants/auth_required_state.dart';
+import 'package:retreat/models/auth_required_state.dart';
 import 'package:retreat/constants/text_styles.dart';
 import 'package:retreat/notifiers/budget_list_change_notifier.dart';
 import 'package:retreat/notifiers/category_list_change_notifier.dart';

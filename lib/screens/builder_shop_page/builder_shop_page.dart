@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:retreat/constants/auth_required_state.dart';
+import 'package:retreat/models/auth_required_state.dart';
 import 'package:retreat/models/island.dart';
 import 'package:retreat/models/item.dart';
 import 'package:retreat/models/gamestat.dart';

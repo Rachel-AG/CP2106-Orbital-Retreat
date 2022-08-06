@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:retreat/constants/auth_state.dart';
+import 'package:retreat/models/auth_state.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({Key? key}) : super(key: key);

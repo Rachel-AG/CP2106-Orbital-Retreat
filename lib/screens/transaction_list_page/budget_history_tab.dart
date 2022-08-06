@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:provider/provider.dart';
-import 'package:retreat/constants/auth_required_state.dart';
+import 'package:retreat/models/auth_required_state.dart';
 import 'package:retreat/constants/text_styles.dart';
 import 'package:retreat/models/budget.dart';
 import 'package:retreat/models/gamestat.dart';

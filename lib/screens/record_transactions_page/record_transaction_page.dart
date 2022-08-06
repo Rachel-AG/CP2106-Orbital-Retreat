@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:retreat/constants/auth_required_state.dart';
+import 'package:retreat/models/auth_required_state.dart';
 import 'package:retreat/screens/record_transactions_page/record_transaction_tab.dart';
 
 class RecordTransactionPage extends StatefulWidget {

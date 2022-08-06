@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:retreat/constants/auth_required_state.dart';
+import 'package:retreat/models/auth_required_state.dart';
 import 'package:retreat/services/authentication_service.dart';
 import 'package:retreat/widgets/custom_button.dart';
 import 'package:retreat/widgets/custom_formfield.dart';
