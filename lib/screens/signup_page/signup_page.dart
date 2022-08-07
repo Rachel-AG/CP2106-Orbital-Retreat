@@ -15,6 +15,7 @@ class SignUpPage extends StatefulWidget {
   State<SignUpPage> createState() => _SignUpPageState();
 }
 
+/// this class represents Sign Up page
 class _SignUpPageState extends AuthState<SignUpPage> {
   final _supabaseClient = AuthenticationService();
   final TextEditingController _usernameController = TextEditingController();

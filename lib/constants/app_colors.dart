@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+/// to store the colours that are used in Retreat
 class AppColors {
   static const darkblue = Color(0xff172a3a);
   static const hintText = Color(0xffc7c7cd);

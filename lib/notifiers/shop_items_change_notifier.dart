@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:retreat/models/item.dart';
 import 'package:retreat/services/shop_service.dart';
 
+/// this class manages the state of item list on the Builder Store
 class ShopItemsChangeNotifier extends ChangeNotifier {
   final ShopService _shopService;
   ShopItemsChangeNotifier(this._shopService);

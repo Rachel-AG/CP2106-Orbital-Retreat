@@ -14,6 +14,7 @@ import '../../constants/app_colors.dart';
 import '../../widgets/custom_button.dart';
 import '../../widgets/custom_card.dart';
 
+/// this class represents Budget History tab
 class BudgetHistoryPage extends StatefulWidget {
   const BudgetHistoryPage({Key? key}) : super(key: key);
 
@@ -99,6 +100,8 @@ class _BudgetHistoryPageState extends AuthRequiredState<BudgetHistoryPage> {
     );
   }
 
+  /// returns an instance of the widgets displayed when the user has not recorded any budget\
+  /// this month
   Widget noBudget() {
     return ListView(
       shrinkWrap: true,
@@ -121,6 +124,8 @@ class _BudgetHistoryPageState extends AuthRequiredState<BudgetHistoryPage> {
     );
   }
 
+  /// returns an instance of the set of widgets displayed when the user has already record a budget
+  /// for this month 
   Widget updateBudget(Budget currentBudget, double totalExpense) {
     //user alr set budget
     double budgetAmount = currentBudget.amount;
@@ -149,6 +154,7 @@ class _BudgetHistoryPageState extends AuthRequiredState<BudgetHistoryPage> {
     );
   }
 
+  /// returns a list of transactions based on the month and year
   List<Transaction> _validTransactions(
       List<Transaction> allTransactionList, int year, int month) {
     return allTransactionList.where((transaction) {
@@ -157,6 +163,7 @@ class _BudgetHistoryPageState extends AuthRequiredState<BudgetHistoryPage> {
     }).toList();
   }
 
+  /// returns an instance of Update Budget button
   CustomButton updateBudgetButton(Budget budget) {
     return CustomButton(
         key: const ValueKey('update-button'),
@@ -247,6 +254,7 @@ class _BudgetHistoryPageState extends AuthRequiredState<BudgetHistoryPage> {
         });
   }
 
+  /// returns an instance of Insert Budget button
   CustomButton insertBudgetButton() {
     return CustomButton(
         key: const ValueKey('insert-button'),
@@ -322,6 +330,7 @@ class _BudgetHistoryPageState extends AuthRequiredState<BudgetHistoryPage> {
         });
   }
 
+  /// returns an instance of chart which display the remaining budget this month
   CircularPercentIndicator remainingBudgetChart(
       double sumExpense, double budgetThisMonth) {
     double remainingBudget = budgetThisMonth - sumExpense;

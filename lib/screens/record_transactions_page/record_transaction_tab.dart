@@ -12,6 +12,8 @@ import 'package:retreat/widgets/custom_dropdown.dart';
 import 'package:retreat/widgets/numeric_formfield.dart';
 import 'package:retreat/widgets/custom_button.dart';
 
+/// this class represents the tabs under the Record Transaction page, which consists of Expense 
+/// and Income tabs
 class RecordTransactionTab extends StatefulWidget {
   const RecordTransactionTab({Key? key, required this.isExpense})
       : super(key: key);
@@ -42,6 +44,7 @@ class _RecordTransactionTabState
 
   late CustomDropdownButton dropdownButton;
 
+  /// returns drop down button for the category list
   Widget dropDownCategory(List<Category> categoryList) {
     if (categoryList.isEmpty) return const LinearProgressIndicator();
 
@@ -126,6 +129,7 @@ class _RecordTransactionTabState
     );
   }
 
+  /// returns an instance of Record button which insert the transaction to the database upon pressed
   CustomButton recordButton() {
     return CustomButton(
       key: const ValueKey('record-button'),

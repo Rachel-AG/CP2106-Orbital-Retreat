@@ -12,6 +12,7 @@ class ChangePasswordPage extends StatefulWidget {
   State<ChangePasswordPage> createState() => _ChangePasswordPageState();
 }
 
+/// this class represents the Change Password page
 class _ChangePasswordPageState extends AuthRequiredState<ChangePasswordPage> {
   final _supabaseClient = AuthenticationService();
   final TextEditingController _passwordCopyController = TextEditingController();
@@ -27,6 +28,7 @@ class _ChangePasswordPageState extends AuthRequiredState<ChangePasswordPage> {
     super.dispose();
   }
 
+  /// checks whether password typed in the formfields match each other
   bool validatePassword() {
     return password == passwordCopy;
   }

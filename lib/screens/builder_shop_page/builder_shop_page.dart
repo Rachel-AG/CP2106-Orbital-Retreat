@@ -9,6 +9,7 @@ import 'package:retreat/widgets/itemtile.dart';
 import 'package:retreat/notifiers/shop_items_change_notifier.dart';
 import 'package:retreat/notifiers/gamestat_change_notifier.dart';
 
+/// this class represents the Builder Shop page
 class BuilderShopPage extends StatefulWidget {
   const BuilderShopPage({Key? key}) : super(key: key); //??
 
@@ -46,6 +47,7 @@ class _BuilderShopPageState extends AuthRequiredState<BuilderShopPage> {
     );
   }
 
+  /// this method returns grid view of all the item tiles on the Builder Shop
   Widget shopGridView(
       GamestatChangeNotifier gamestatChangeNotifier,
       ShopItemsChangeNotifier shopItemsChangeNotifier,
@@ -102,10 +104,14 @@ class _BuilderShopPageState extends AuthRequiredState<BuilderShopPage> {
             .toList());
   }
 
+  /// this method checks whether the user has enough gold to buy the item
   bool canBuy(int currentGold, int price) {
     return (currentGold - price) >= 0;
   }
 
+  /// this method checks whether the user has already purchased the selected animal
+  /// 
+  /// this is done by checking whether animalName exists in the user's animalList
   bool haveBoughtAnimal(List animalList, String animalName) {
     String lowerCaseName = animalName.toLowerCase();
 
@@ -117,6 +123,9 @@ class _BuilderShopPageState extends AuthRequiredState<BuilderShopPage> {
     return false;
   }
 
+  /// this method checks whether the user has already purchased the selected environment
+  /// 
+  /// this is done by checking whether envName exists in the user's envList
   bool haveBoughtEnvironment(List envList, String envName) {
     String lowerCaseName = envName.toLowerCase();
 
@@ -128,6 +137,10 @@ class _BuilderShopPageState extends AuthRequiredState<BuilderShopPage> {
     return false;
   }
 
+  /// this method checks whether the user has already purchased the selected block
+  /// 
+  /// this is done by checking whether the corresponding index in the ratio list
+  /// equals to the initial value which we have set, which is 2.0
   bool haveBoughtBlock(List ratio, String blockName) {
     if (blockName == 'grass') {
       if (ratio[2] == 2.0) {
@@ -145,6 +158,12 @@ class _BuilderShopPageState extends AuthRequiredState<BuilderShopPage> {
     }
   }
 
+  /// checks whether the user has already purchased the selected item on the Builder Store
+  /// 
+  /// if the selected item can only be purchased once and the user has not purchased the item 
+  /// before, this method returns false. if the selected item can only be purchased once and 
+  /// the user has purchased the item before, this method returns true. else if the selected item 
+  /// can be purchased multiple times, this method always returns false.
   bool haveBoughtItem(Island island, Item item) {
     if (item.type == 'animal') {
       return haveBoughtAnimal(island.animalList, item.name);
@@ -160,6 +179,10 @@ class _BuilderShopPageState extends AuthRequiredState<BuilderShopPage> {
     }
   }
 
+  /// buys the selected item 
+  /// 
+  /// this method updates the island database of the user when he/she successfully buy an item from
+  /// the Builder Shop
   Future<void> buyItem(
       IslandChangeNotifier islandChangeNotifier, Item item) async {
     Island current = islandChangeNotifier.island;

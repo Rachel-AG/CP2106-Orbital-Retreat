@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:retreat/models/island.dart';
 import 'package:retreat/services/island_service.dart';
 
+/// this class manages the state of island for the currently authenticated user
 class IslandChangeNotifier extends ChangeNotifier {
   final IslandService _islandService;
   IslandChangeNotifier(this._islandService);
@@ -14,6 +15,7 @@ class IslandChangeNotifier extends ChangeNotifier {
     return _island;
   }
 
+  /// javaScriptString represent javaScript command to render the 3D island in the webview
   String _javaScriptString = '';
   String get javaScriptString {
     isUpToDate ? true : getIsland();

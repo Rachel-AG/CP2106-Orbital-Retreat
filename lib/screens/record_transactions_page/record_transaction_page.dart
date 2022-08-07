@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:retreat/models/auth_required_state.dart';
 import 'package:retreat/screens/record_transactions_page/record_transaction_tab.dart';
 
+/// this class represents record transaction page
 class RecordTransactionPage extends StatefulWidget {
   const RecordTransactionPage({Key? key}) : super(key: key);
 

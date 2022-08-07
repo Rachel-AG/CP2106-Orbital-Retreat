@@ -1,3 +1,4 @@
+/// a model class for item in Builder Store
 class Item {
   final String id;
   final String name;
@@ -7,6 +8,7 @@ class Item {
 
   Item(this.id, this.name, this.price, this.imageUrl, this.type);
 
+  /// factory method to convert json data to this class
   factory Item.fromJson(Map<String, dynamic> json) {
     return Item(
         json['id'].toString() as String,

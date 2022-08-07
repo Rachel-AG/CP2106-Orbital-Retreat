@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:retreat/models/gamestat.dart';
 import 'package:retreat/services/gamestat_service.dart';
 
+/// this class manages the state of gamestat for the currently authenticated user
 class GamestatChangeNotifier extends ChangeNotifier {
   final GamestatService _gamestatService;
   GamestatChangeNotifier(this._gamestatService);

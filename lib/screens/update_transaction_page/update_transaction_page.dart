@@ -3,6 +3,7 @@ import 'package:retreat/models/auth_required_state.dart';
 import 'package:retreat/screens/update_transaction_page/update_transaction_tab.dart';
 import 'package:retreat/models/transaction.dart';
 
+/// this class represents the Update Transaction page which contains 2 tabs, Expense and Income
 class UpdateTransactionPage extends StatefulWidget {
   const UpdateTransactionPage({Key? key, required this.initialTransaction})
       : super(key: key);

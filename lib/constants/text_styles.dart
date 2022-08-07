@@ -1,8 +1,8 @@
 import 'package:retreat/constants/app_colors.dart';
-
 import 'package:flutter/material.dart';
 import 'package:retreat/notifiers/theme_mode_change_notifier.dart';
 
+/// to store the fonts used in Retreat
 class TextStyles {
   static var headerTextStyle = const TextStyle(
     fontSize: 28,

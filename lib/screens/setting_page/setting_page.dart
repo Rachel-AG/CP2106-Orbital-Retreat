@@ -13,6 +13,7 @@ import 'package:retreat/notifiers/transaction_list_change_notifier.dart';
 import 'package:retreat/services/authentication_service.dart';
 import 'package:retreat/widgets/custom_button.dart';
 
+/// this class represents Setting page
 class SettingPage extends StatefulWidget {
   const SettingPage({Key? key}) : super(key: key);
 
@@ -103,6 +104,7 @@ class _SettingPageState extends AuthRequiredState<SettingPage> {
     );
   }
 
+  /// returns an instance of setting title, such as 'Account' and 'Others'
   Widget settingTitle(String text, Icon icon) {
     return Column(
       children: [
@@ -126,6 +128,7 @@ class _SettingPageState extends AuthRequiredState<SettingPage> {
     );
   }
 
+  /// returns an instance of setting option, such as 'Update Profile' and 'Change Password'
   Widget settingOption(String text, Function() onTap) {
     return GestureDetector(
       onTap: onTap,

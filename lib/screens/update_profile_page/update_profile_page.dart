@@ -8,6 +8,7 @@ import 'package:retreat/widgets/avatar.dart';
 import 'package:retreat/widgets/custom_button.dart';
 import 'package:retreat/widgets/custom_formfield.dart';
 
+/// this page represents the Update Profile page
 class UpdateProfilePage extends StatefulWidget {
   const UpdateProfilePage({Key? key}) : super(key: key);
 

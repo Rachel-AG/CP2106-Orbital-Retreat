@@ -8,6 +8,7 @@ import 'package:retreat/widgets/custom_button.dart';
 import 'package:retreat/widgets/custom_formfield.dart';
 import 'package:retreat/widgets/password_field.dart';
 
+/// this class represents Sign In page
 class SignInPage extends StatefulWidget {
   const SignInPage({Key? key}) : super(key: key);
 

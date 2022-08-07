@@ -11,6 +11,7 @@ import 'package:retreat/widgets/numeric_formfield.dart';
 import 'package:retreat/widgets/custom_button.dart';
 import 'package:retreat/models/transaction.dart';
 
+/// this class represents Update Transaction tabs, which are Expense and Income
 class UpdateTransactionTab extends StatefulWidget {
   const UpdateTransactionTab(
       {Key? key, required this.isExpense, required this.initialTransaction})
@@ -43,6 +44,7 @@ class _UpdateTransactionTabState
 
   late CustomDropdownButton dropdownButton;
 
+  /// returns an instance of drowpdown button which contains the list of transaction categories
   Widget dropDownCategory(List<Category> categoryList) {
     if (categoryList.isEmpty) return const LinearProgressIndicator();
 
@@ -135,6 +137,8 @@ class _UpdateTransactionTabState
     );
   }
 
+  /// returns an instance of Update button to update the database based on the updated transaction 
+  /// details
   CustomButton updateButton() {
     return CustomButton(
       key: const ValueKey('update-button'),

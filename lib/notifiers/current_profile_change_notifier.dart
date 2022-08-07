@@ -3,6 +3,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:retreat/models/profile.dart';
 import 'package:retreat/services/profile_service.dart';
 
+/// this class manages the state of profile change for the currently authenticated user
 class CurrentProfileChangeNotifier extends ChangeNotifier {
   final ProfileService _profileService;
   CurrentProfileChangeNotifier(this._profileService);

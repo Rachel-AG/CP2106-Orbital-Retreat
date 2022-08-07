@@ -1,6 +1,7 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:retreat/models/item.dart';
 
+/// this class represents Shop Service which interacts with the shop database
 class ShopService {
   static final client = Supabase.instance.client;
 
