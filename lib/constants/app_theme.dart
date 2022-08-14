@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:retreat/constants/app_colors.dart';
 
+/// to store the theme colours and widget shapes 
 class AppTheme {
   static final lightMode = ThemeData(
       colorScheme: ColorScheme.fromSwatch(

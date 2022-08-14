@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:retreat/models/budget.dart';
 import 'package:retreat/services/budget_service.dart';
 
+/// this class manages the state of budget list for the currently authenticated user
 class BudgetListChangeNotifier extends ChangeNotifier {
   final BudgetService _budgetService;
   BudgetListChangeNotifier(this._budgetService);
@@ -48,6 +49,7 @@ class BudgetListChangeNotifier extends ChangeNotifier {
     await getAllBudget();
   }
 
+  ///sorts budget with the most recent budget being at the start of the list
   void _sortFromLatestToEarliest() {
     _budgetList.sort(
       (a, b) {

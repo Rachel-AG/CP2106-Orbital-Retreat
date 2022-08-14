@@ -1,3 +1,4 @@
+/// a model class for gamestat
 class Gamestat {
   final String id;
   final String createdBy;

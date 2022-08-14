@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:equatable/equatable.dart';
 
+
+/// a model class for island
 class Island extends Equatable {
   final String id;
   final int gridRadius;
@@ -46,6 +48,7 @@ class Island extends Equatable {
         createdBy
       ];
 
+  /// factory method to convert json data to this class
   factory Island.fromJson(Map<String, dynamic> json) {
     List ratio = jsonDecode(json['ratio']);
     List animalList = jsonDecode(json['animal_list']);

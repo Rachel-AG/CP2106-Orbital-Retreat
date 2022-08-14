@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:retreat/constants/auth_state.dart';
+import 'package:retreat/models/auth_state.dart';
 
 import 'package:retreat/services/authentication_service.dart';
 import 'package:retreat/widgets/custom_button.dart';
 import 'package:retreat/widgets/custom_formfield.dart';
 
+/// this class represents the Forge Password page
 class ForgetPasswordPage extends StatefulWidget {
   const ForgetPasswordPage({Key? key}) : super(key: key);
 

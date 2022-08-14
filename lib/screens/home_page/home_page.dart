@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:retreat/constants/app_colors.dart';
-import 'package:retreat/constants/auth_required_state.dart';
+import 'package:retreat/models/auth_required_state.dart';
 import 'package:retreat/constants/text_styles.dart';
 import 'package:retreat/notifiers/current_profile_change_notifier.dart';
 import 'package:retreat/notifiers/gamestat_change_notifier.dart';
@@ -10,6 +10,7 @@ import 'package:retreat/notifiers/island_change_notifier.dart';
 import 'package:retreat/widgets/avatar.dart';
 import 'package:webview_flutter_plus/webview_flutter_plus.dart';
 
+/// this class represents the home page
 class HomePage extends StatefulWidget {
   const HomePage({Key? key, required this.genIsland}) : super(key: key);
 
@@ -73,6 +74,7 @@ class _HomePageState extends AuthRequiredState<HomePage> {
         bottomNavigationBar: bottomNavBar());
   }
 
+  ///creates an instance of Record Transaction button
   FloatingActionButton recordButton() {
     return FloatingActionButton.extended(
         key: const ValueKey('add-transaction'),
@@ -90,6 +92,7 @@ class _HomePageState extends AuthRequiredState<HomePage> {
         });
   }
 
+  ///creates an instance of bottom navigation bar
   BottomAppBar bottomNavBar() {
     return BottomAppBar(
       child: Row(
@@ -118,6 +121,7 @@ class _HomePageState extends AuthRequiredState<HomePage> {
     );
   }
 
+  /// creates an instance of the island webview which displays user's island
   Widget islandWebView(IslandChangeNotifier islandChangeNotifier,
       Completer<WebViewPlusController> _controller) {
     return WebViewPlus(
@@ -144,6 +148,7 @@ class _HomePageState extends AuthRequiredState<HomePage> {
     );
   }
 
+  /// creates an instance of refresh button to reload the island
   IconButton refreshButton(Completer<WebViewPlusController> controller) {
     return IconButton(
         onPressed: () async {
@@ -152,6 +157,7 @@ class _HomePageState extends AuthRequiredState<HomePage> {
         icon: const Icon(Icons.refresh_rounded));
   }
 
+  /// creates an instance of user profile card which contains username and display picture
   Card profileCard(CurrentProfileChangeNotifier currProfChangeNotifier) {
     final username = currProfChangeNotifier.profile.username;
     final url = currProfChangeNotifier.profile.avatarUrl;
@@ -179,6 +185,7 @@ class _HomePageState extends AuthRequiredState<HomePage> {
     );
   }
 
+  /// creates an instance of coin display
   Widget coinsDisplay(GamestatChangeNotifier gamestatChangeNotifier) {
     return Row(
       key: const ValueKey('amount-of-coin'),
@@ -198,6 +205,7 @@ class _HomePageState extends AuthRequiredState<HomePage> {
     );
   }
 
+  /// creates an instance of Shop button 
   ElevatedButton shopButton() {
     return ElevatedButton(
         style: ButtonStyle(
@@ -221,6 +229,7 @@ class _HomePageState extends AuthRequiredState<HomePage> {
         });
   }
 
+  /// function to refresh the island webview
   Future<void> _refreshWebview(
       Completer<WebViewPlusController> controller) async {
     await controller.future

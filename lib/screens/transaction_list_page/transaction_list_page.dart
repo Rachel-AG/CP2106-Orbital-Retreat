@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:retreat/constants/app_colors.dart';
-import 'package:retreat/constants/auth_required_state.dart';
+import 'package:retreat/models/auth_required_state.dart';
 import 'package:retreat/screens/transaction_list_page/budget_history_tab.dart';
 import 'package:retreat/screens/transaction_list_page/display_transactions_tab.dart';
 import 'package:retreat/screens/transaction_list_page/overview_tab.dart';
 
+/// this class represents the Transaction List page, which contains Budget History tab, Display
+/// Transction tab and Overview tab
 class TransactionListPage extends StatefulWidget {
   const TransactionListPage({Key? key}) : super(key: key);
 

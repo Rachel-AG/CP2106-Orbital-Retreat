@@ -2,7 +2,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:retreat/constants/app_colors.dart';
-import 'package:retreat/constants/auth_required_state.dart';
+import 'package:retreat/models/auth_required_state.dart';
 import 'package:retreat/constants/text_styles.dart';
 import 'package:retreat/models/category.dart';
 import 'package:retreat/models/month.dart';
@@ -12,6 +12,8 @@ import 'package:retreat/notifiers/transaction_list_change_notifier.dart';
 import 'package:retreat/widgets/custom_card.dart';
 import 'package:retreat/widgets/custom_dropdown.dart';
 
+/// this class represents the Overview tab which contains multiple charts to visualise user's
+/// transactions
 class OverviewPage extends StatefulWidget {
   const OverviewPage({Key? key}) : super(key: key); //??
 
@@ -116,6 +118,7 @@ class _OverviewPageState extends AuthRequiredState<OverviewPage> {
     );
   }
 
+  /// returns an instance of the calendar button
   IconButton monthYearPopUpButton() {
     CustomDropdownButton selectMonth = CustomDropdownButton(
       menuItems: Month.monthString,

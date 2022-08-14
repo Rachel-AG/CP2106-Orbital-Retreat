@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:provider/provider.dart';
 import 'package:retreat/constants/app_colors.dart';
-import 'package:retreat/constants/auth_required_state.dart';
+import 'package:retreat/models/auth_required_state.dart';
 import 'package:retreat/constants/text_styles.dart';
 import 'package:retreat/models/transaction.dart';
 import 'package:retreat/notifiers/category_list_change_notifier.dart';
@@ -10,6 +10,7 @@ import 'package:retreat/notifiers/theme_mode_change_notifier.dart';
 import 'package:retreat/notifiers/transaction_list_change_notifier.dart';
 import 'package:retreat/screens/update_transaction_page/update_transaction_page.dart';
 
+/// returns an instance of Display Transactions tab which displays the transactions as a sorted list
 class DisplayTransactionsPage extends StatefulWidget {
   const DisplayTransactionsPage({Key? key}) : super(key: key); //??
 
@@ -35,6 +36,7 @@ class _DisplayTransactionsPageState
     );
   }
 
+  /// returns an instance of widgets which display the list of user transactions
   Widget transactionList(
       TransactionListChangeNotifier transactionListChangeNotifier,
       CategoryListChangeNotifier categoryListChangeNotifier) {
@@ -82,6 +84,7 @@ class _DisplayTransactionsPageState
         });
   }
 
+  /// returns a slidable tile which contains user transaction details
   Widget _buildRow(
       Transaction transaction,
       TransactionListChangeNotifier transactionListChangeNotifier,

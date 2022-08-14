@@ -1,3 +1,4 @@
+/// a model class for month
 class Month {
   static const monthString = <String>[
     'January',

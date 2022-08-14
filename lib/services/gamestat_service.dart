@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:retreat/models/gamestat.dart';
 
+/// this class represents the Gamestat Service which interacts with the gamestat database 
 class GamestatService {
   static final client = Supabase.instance.client;
 
@@ -21,7 +22,9 @@ class GamestatService {
     return true;
   }
 
-  // whichStat can be either gold, island_level, or streak
+  /// create an Update Gamestat function which would update the database accordingly 
+  /// 
+  /// whichStat can be either 'gold', 'island_level', or 'streak'
   Future<bool> updateGamestat(Gamestat newGamestat) async {
     final result = await client
         .from('gamestats')

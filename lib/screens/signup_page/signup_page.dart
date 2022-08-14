@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:retreat/constants/auth_state.dart';
+import 'package:retreat/models/auth_state.dart';
 import 'package:retreat/constants/text_styles.dart';
 import 'package:retreat/notifiers/current_profile_change_notifier.dart';
 import 'package:retreat/services/authentication_service.dart';
@@ -15,6 +15,7 @@ class SignUpPage extends StatefulWidget {
   State<SignUpPage> createState() => _SignUpPageState();
 }
 
+/// this class represents Sign Up page
 class _SignUpPageState extends AuthState<SignUpPage> {
   final _supabaseClient = AuthenticationService();
   final TextEditingController _usernameController = TextEditingController();

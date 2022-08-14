@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:retreat/models/island.dart';
 import 'package:retreat/services/island_service.dart';
 
+/// this class manages the state of island for the currently authenticated user
 class IslandChangeNotifier extends ChangeNotifier {
   final IslandService _islandService;
   IslandChangeNotifier(this._islandService);
@@ -14,6 +15,7 @@ class IslandChangeNotifier extends ChangeNotifier {
     return _island;
   }
 
+  /// javaScriptString represent javaScript command to render the 3D island in the webview
   String _javaScriptString = '';
   String get javaScriptString {
     isUpToDate ? true : getIsland();
@@ -24,11 +26,11 @@ class IslandChangeNotifier extends ChangeNotifier {
 
   Future<void> getIsland() async {
     _island = await _islandService.getIsland();
+    isUpToDate = true;
     var animalStrList = island.animalList.map((e) => "'" + e + "'").toList();
     var envStrList = island.envList.map((e) => "'" + e + "'").toList();
     _javaScriptString =
         "init(${island.gridRadius}, ${island.maxHeight}, ${island.steepness}, '${island.seed}', ${island.ratio}, ${island.maxAnimal}, $animalStrList, $envStrList, ${island.dayBool}, ${island.cloudBool})";
-    isUpToDate = true;
     // notify listeners when most up to date island is retrieved
     notifyListeners();
   }

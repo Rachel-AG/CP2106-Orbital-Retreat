@@ -1,13 +1,14 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:retreat/constants/app_colors.dart';
-import 'package:retreat/constants/auth_state.dart';
+import 'package:retreat/models/auth_state.dart';
 import 'package:retreat/constants/text_styles.dart';
 import 'package:retreat/services/authentication_service.dart';
 import 'package:retreat/widgets/custom_button.dart';
 import 'package:retreat/widgets/custom_formfield.dart';
 import 'package:retreat/widgets/password_field.dart';
 
+/// this class represents Sign In page
 class SignInPage extends StatefulWidget {
   const SignInPage({Key? key}) : super(key: key);
 

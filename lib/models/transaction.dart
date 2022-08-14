@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 
+/// a model class for user transaction
 class Transaction extends Equatable {
   final String id;
   final String notes;
@@ -25,6 +26,7 @@ class Transaction extends Equatable {
         categoryId
       ];
 
+  /// factory method to convert json data to this class
   factory Transaction.fromJson(Map<String, dynamic> json) {
     return Transaction(
         json['id'] as String,

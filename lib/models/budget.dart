@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 
+/// a model class for budget 
 class Budget extends Equatable {
   final String id;
   final String createdAt;
@@ -14,6 +15,7 @@ class Budget extends Equatable {
   @override
   List<Object> get props => [id, createdAt, createdBy, amount, month, year];
 
+  /// factory method to convert json data to this class
   factory Budget.fromJson(Map<String, dynamic> json) {
     return Budget(
         json['id'] as String,

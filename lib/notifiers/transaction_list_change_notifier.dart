@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:retreat/models/transaction.dart';
 import 'package:retreat/services/transactions_service.dart';
 
+/// this class manages the state of transaction list for the currently authenticated user
 class TransactionListChangeNotifier extends ChangeNotifier {
   final TransactionService _transactionService;
   TransactionListChangeNotifier(this._transactionService);

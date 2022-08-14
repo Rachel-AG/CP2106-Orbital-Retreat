@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 
+/// a model class for user profile
 class Profile extends Equatable {
   final String id;
   final String username;
@@ -11,6 +12,7 @@ class Profile extends Equatable {
   @override
   List<Object?> get props => [id, username, updatedAt, avatarUrl];
 
+  /// factory method to convert json data to this class
   factory Profile.fromJson(Map<String, dynamic> json) {
     return Profile(json['id'] as String, json['username'] as String,
         json['updated_at'] as String, json['avatar_url']);

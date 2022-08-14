@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:retreat/models/category.dart';
 import 'package:retreat/services/category_service.dart';
 
+/// this class manages the state of category list 
 class CategoryListChangeNotifier extends ChangeNotifier {
   final CategoryService _categoryService;
   CategoryListChangeNotifier(this._categoryService);
@@ -27,6 +28,7 @@ class CategoryListChangeNotifier extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// retrieve the category name from its corresponding integer id
   String getCategoryNameFromId(int id) {
     final list = expenseCatList + incomeCatList;
     if (list.isEmpty) {
